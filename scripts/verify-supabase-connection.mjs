@@ -1,17 +1,27 @@
+import { lookup } from "node:dns/promises";
 import { createClient } from "@supabase/supabase-js";
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const serviceRoleKey =
-  process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
+const url = getSupabaseUrl();
+const publishableKey = requireEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY");
+const secretKey = requireEnv("SUPABASE_SECRET_KEY");
 
-if (!url || !serviceRoleKey) {
+await verifyHostLookup(url);
+
+if (!publishableKey.startsWith("sb_publishable_")) {
   console.error(
-    "Missing Supabase connection env vars. Expected NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SECRET_KEY.",
+    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY must be a Supabase publishable key that starts with sb_publishable_.",
   );
   process.exit(1);
 }
 
-const supabase = createClient(url, serviceRoleKey, {
+if (!secretKey.startsWith("sb_secret_")) {
+  console.error(
+    "SUPABASE_SECRET_KEY must be a Supabase secret key that starts with sb_secret_.",
+  );
+  process.exit(1);
+}
+
+const supabase = createClient(url, secretKey, {
   auth: {
     autoRefreshToken: false,
     persistSession: false,
@@ -32,9 +42,70 @@ const { data, error } = await supabase.rpc("phase3_table_check", {
 });
 
 if (error) {
-  console.error("Supabase verification failed:", error.message);
+  console.error(`Supabase verification failed for ${url}:`, error.message);
   process.exit(1);
 }
 
-console.log("Supabase connection verified.");
+console.log(`Supabase connection verified for ${url}.`);
 console.log(JSON.stringify(data, null, 2));
+
+function requireEnv(key) {
+  const value = process.env[key]?.trim();
+
+  if (!value) {
+    console.error(`Missing Supabase connection env var: ${key}`);
+    process.exit(1);
+  }
+
+  return value;
+}
+
+function getSupabaseUrl() {
+  const value = requireEnv("NEXT_PUBLIC_SUPABASE_URL");
+  let url;
+
+  try {
+    url = new URL(value);
+  } catch {
+    console.error(
+      "NEXT_PUBLIC_SUPABASE_URL must be a valid URL such as https://<project_ref>.supabase.co.",
+    );
+    process.exit(1);
+  }
+
+  if (isHostedSupabaseUrl(url)) {
+    return `https://${url.hostname}`;
+  }
+
+  if (isLocalSupabaseUrl(url)) {
+    return `${url.protocol}//${url.host}`;
+  }
+
+  console.error(
+    "NEXT_PUBLIC_SUPABASE_URL must use either https://<project_ref>.supabase.co or a local Supabase URL like http://127.0.0.1:54321.",
+  );
+  process.exit(1);
+}
+
+function isHostedSupabaseUrl(url) {
+  return url.protocol === "https:" && url.hostname.endsWith(".supabase.co") && url.pathname === "/";
+}
+
+function isLocalSupabaseUrl(url) {
+  return (
+    (url.protocol === "http:" || url.protocol === "https:") &&
+    (url.hostname === "127.0.0.1" || url.hostname === "localhost") &&
+    url.pathname === "/"
+  );
+}
+
+async function verifyHostLookup(url) {
+  const hostname = new URL(url).hostname;
+
+  try {
+    await lookup(hostname);
+  } catch (error) {
+    console.error(`Supabase host lookup failed for ${hostname}:`, error.code ?? error.message);
+    process.exit(1);
+  }
+}
