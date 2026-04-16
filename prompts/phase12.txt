@@ -1,0 +1,19 @@
+Work ONLY on PHASE 12.
+
+Verify Phase 1–11.
+
+GOAL:
+Claim checker.
+
+TASKS:
+
+* Form
+* /api/check-claim
+* Claude validation
+* Show issues
+
+SUCCESS:
+
+* Invalid claims show warnings
+
+STOP after Phase 12.

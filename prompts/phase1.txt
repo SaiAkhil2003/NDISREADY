@@ -1,0 +1,42 @@
+You are a senior full-stack engineer.
+
+Work ONLY on PHASE 1.
+
+---
+
+## GOAL
+
+Create base Next.js app and UI skeleton.
+
+---
+
+## TASKS
+
+* Create Next.js app (App Router + TypeScript)
+
+* Setup Tailwind CSS
+
+* Setup shadcn/ui
+
+* Create folders:
+  app/
+  components/
+  lib/
+  styles/
+
+* Create:
+
+  * Homepage
+  * Dashboard layout
+  * Sidebar
+  * Workers, Participants, Notes pages (UI only)
+
+---
+
+## SUCCESS
+
+* App runs
+* Sidebar works
+* Pages load
+
+STOP after Phase 1.

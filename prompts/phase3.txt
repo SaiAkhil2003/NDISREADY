@@ -1,0 +1,23 @@
+Work ONLY on PHASE 3.
+
+Verify Phase 1–2.
+
+GOAL:
+Setup Supabase.
+
+TASKS:
+
+* Install Supabase
+* Create client files
+* Create tables:
+  organisaions, workers, participants, progress_notes, claims, reports
+* Adparticipant_d UUID  timestamps
+* Add basic RLS
+
+SUCCESS:
+
+* DB connected
+* Tables created
+* Previous phases work
+
+STOP after Phase 3.

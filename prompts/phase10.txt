@@ -1,0 +1,17 @@
+Work ONLY on PHASE 10.
+
+Verify Phase 1–9.
+
+GOAL:
+Notes list.
+
+TASKS:
+
+* Show notes
+* Filters
+
+SUCCESS:
+
+* Notes visible
+
+STOP after Phase 10.

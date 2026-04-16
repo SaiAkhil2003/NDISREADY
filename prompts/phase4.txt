@@ -1,0 +1,19 @@
+Work ONLY on PHASE 4.
+
+Verify Phase 1–3.
+
+GOAL:
+Dashboard layout.
+
+TASKS:
+
+* Sidebar navigation
+* Dashboard page UI
+* Routing
+
+SUCCESS:
+
+* Navigation works
+* Pages load
+
+STOP after Phase 4.

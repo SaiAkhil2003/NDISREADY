@@ -1,0 +1,19 @@
+Work ONLY on PHASE 11.
+
+Verify Phase 1–10.
+
+GOAL:
+Dashboard logic.
+
+TASKS:
+
+* Count workers
+* Count participants
+* Count notes
+* Compliance score
+
+SUCCESS:
+
+* Dashboard shows data
+
+STOP after Phase 11.

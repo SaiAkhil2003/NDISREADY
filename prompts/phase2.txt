@@ -1,0 +1,21 @@
+Work ONLY on PHASE 2.
+
+Verify Phase 1 works.
+
+GOAL:
+Add Clerk authentication.
+
+TASKS:
+
+* Install Clerk
+* Setup login/signup
+* Protect dashboard routes
+* Redirect to /dashboard
+
+SUCCESS:
+
+* Login works
+* Dashboard protected
+* Phase 1 still works
+
+STOP after Phase 2.

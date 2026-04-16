@@ -1,0 +1,19 @@
+Work ONLY on PHASE 8.
+
+Verify Phase 1–7.
+
+GOAL:
+AI note generation.
+
+TASKS:
+
+* /api/generate-note
+* Fetch participant goals
+* Call Claude
+* Return ai_draft
+
+SUCCESS:
+
+* Text → AI note
+
+STOP after Phase 8.

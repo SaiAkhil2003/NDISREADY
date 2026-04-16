@@ -1,0 +1,19 @@
+Work ONLY on PHASE 6.
+
+Verify Phase 1–5.
+
+GOAL:
+Participants module.
+
+TASKS:
+
+* Add Participant form
+* Store goals JSON
+* List page
+* Detail page
+
+SUCCESS:
+
+* Participant saved and visible
+
+STOP after Phase 6.

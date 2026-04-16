@@ -1,0 +1,18 @@
+Work ONLY on PHASE 5.
+
+Verify Phase 1–4.
+
+GOAL:
+Workers module.
+
+TASKS:
+
+* Add Worker form
+* Save to Supabase
+* Show list
+
+SUCCESS:
+
+* Worker added and visible
+
+STOP after Phase 5.

@@ -1,0 +1,19 @@
+Work ONLY on PHASE 13.
+
+Verify Phase 1–12.
+
+GOAL:
+Demo polish.
+
+TASKS:
+
+* Fix UI
+* Improve spacing
+* Mobile responsive
+* Fix bugs
+
+SUCCESS:
+
+* App looks demo ready
+
+STOP after Phase 13.

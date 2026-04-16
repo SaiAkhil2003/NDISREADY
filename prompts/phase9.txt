@@ -1,0 +1,21 @@
+Work ONLY on PHASE 9.
+
+Verify Phase 1–8.
+
+GOAL:
+Save notes.
+
+TASKS:
+
+* Save:
+  raw_input
+  ai_draft
+  final_note
+  goals_addressed
+  approved_at
+
+SUCCESS:
+
+* Notes saved
+
+STOP after Phase 9.

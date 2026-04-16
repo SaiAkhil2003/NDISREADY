@@ -1,0 +1,20 @@
+Work ONLY on PHASE 7.
+
+Verify Phase 1–6.
+
+GOAL:
+Notes UI.
+
+TASKS:
+
+* notes/new page
+* textarea
+* dropdowns
+* generate button (mock)
+* approve button
+
+SUCCESS:
+
+* UI works
+
+STOP after Phase 7.
