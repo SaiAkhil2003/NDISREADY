@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import {
   CheckCircle2,
   CircleAlert,
@@ -20,13 +21,17 @@ import {
 import {
   formatWorkerRole,
   formatWorkerStatus,
-  listWorkers,
   type WorkerListItem,
   workerRoleOptions,
   workerStatusOptions,
 } from "@/lib/workers";
+import { loadWorkersDirectory } from "@/lib/workspace-data";
 
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+  title: "Workers",
+  description: "View and add NDIS support workers in the NDISReady.ai public demo workspace.",
+};
 
 type WorkersPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -34,15 +39,8 @@ type WorkersPageProps = {
 
 export default async function WorkersPage({ searchParams }: WorkersPageProps) {
   const params = searchParams ? await searchParams : {};
-  let workers: WorkerListItem[] = [];
-  let workersLoadError = false;
-
-  try {
-    workers = await listWorkers();
-  } catch (error) {
-    workersLoadError = true;
-    console.error("Failed to load workers:", error);
-  }
+  const workersResult = await loadWorkersDirectory();
+  const workers = workersResult.data as WorkerListItem[];
 
   const totalWorkers = workers.length;
   const activeWorkers = workers.filter((worker) => worker.status === "active").length;
@@ -57,14 +55,14 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
   const statusMessage = getStatusMessage(params);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+    <div className="space-y-8">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="space-y-2">
           <Badge className="w-fit">Workers</Badge>
           <h1 className="text-3xl font-semibold tracking-tight text-slate-950">
             Worker management
           </h1>
-          <p className="max-w-2xl text-sm leading-6 text-slate-600">
+          <p className="max-w-2xl text-base leading-7 text-slate-600">
             Add workers to the shared roster, store them in Supabase, and review the
             saved list from the dashboard.
           </p>
@@ -72,14 +70,14 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
 
         <div className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
           <UserPlus className="size-4" />
-          Phase 5 live worker module
+          Live roster
         </div>
       </div>
 
       <div className="space-y-3">
         {statusMessage ? (
           <div
-            className={`flex items-start gap-3 rounded-3xl border px-4 py-4 text-sm shadow-sm ${
+            className={`flex items-start gap-3 rounded-3xl border px-4 py-4 text-base shadow-sm ${
               statusMessage.tone === "success"
                 ? "border-emerald-200 bg-emerald-50 text-emerald-950"
                 : "border-rose-200 bg-rose-50 text-rose-950"
@@ -94,22 +92,21 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
           </div>
         ) : null}
 
-        {workersLoadError ? (
-          <div className="flex items-start gap-3 rounded-3xl border border-rose-200 bg-rose-50 px-4 py-4 text-sm text-rose-950 shadow-sm">
+        {workersResult.notice ? (
+          <div className="flex items-start gap-3 rounded-3xl border border-amber-200 bg-amber-50 px-4 py-4 text-base text-amber-950 shadow-sm">
             <CircleAlert className="mt-0.5 size-4 shrink-0" />
-            <p>
-              Workers could not be loaded from Supabase right now. The form remains
-              available, but the database connection needs to be restored before the
-              roster can refresh.
-            </p>
+            <div className="space-y-1">
+              <p className="font-semibold">{workersResult.notice.title}</p>
+              <p>{workersResult.notice.message}</p>
+            </div>
           </div>
         ) : null}
       </div>
 
-      <section className="grid gap-4 md:grid-cols-3">
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {workerCards.map(({ title, value, icon: Icon }) => (
           <Card key={title} className="border-white/70 bg-white/80">
-            <CardHeader className="flex flex-row items-start justify-between space-y-0">
+            <CardHeader className="flex flex-col gap-4 space-y-0 md:flex-row md:items-start md:justify-between">
               <div>
                 <CardDescription>{title}</CardDescription>
                 <CardTitle className="pt-2 text-3xl">{value}</CardTitle>
@@ -132,14 +129,14 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
           </CardHeader>
           <CardContent>
             <form action={createWorkerAction} className="grid gap-4">
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-4 md:grid-cols-2">
                 <label className="space-y-2 text-sm">
                   <span className="font-medium text-slate-700">First name</span>
                   <input
                     required
                     name="firstName"
                     autoComplete="given-name"
-                    className="h-11 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15"
+                    className="field-control"
                     placeholder="Olivia"
                   />
                 </label>
@@ -150,7 +147,7 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
                     required
                     name="lastName"
                     autoComplete="family-name"
-                    className="h-11 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15"
+                    className="field-control"
                     placeholder="Martin"
                   />
                 </label>
@@ -163,7 +160,7 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
                   type="email"
                   name="email"
                   autoComplete="email"
-                  className="h-11 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15"
+                  className="field-control"
                   placeholder="worker@ndisready.com"
                 />
               </label>
@@ -173,18 +170,18 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
                 <input
                   name="phone"
                   autoComplete="tel"
-                  className="h-11 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15"
+                  className="field-control"
                   placeholder="0400 000 000"
                 />
               </label>
 
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-4 md:grid-cols-2">
                 <label className="space-y-2 text-sm">
                   <span className="font-medium text-slate-700">Role</span>
                   <select
                     name="role"
                     defaultValue={workerRoleOptions[0].value}
-                    className="h-11 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15"
+                    className="field-control"
                   >
                     {workerRoleOptions.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -199,7 +196,7 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
                   <select
                     name="status"
                     defaultValue={workerStatusOptions[0].value}
-                    className="h-11 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15"
+                    className="field-control"
                   >
                     {workerStatusOptions.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -212,7 +209,7 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
 
               <button
                 type="submit"
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-3 text-base font-medium text-primary-foreground transition hover:bg-primary/90 md:w-auto"
               >
                 <UserPlus className="size-4" />
                 Save worker
@@ -229,12 +226,8 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {workersLoadError ? (
-              <div className="rounded-3xl border border-dashed border-rose-200 bg-rose-50 px-6 py-12 text-center text-sm text-rose-900">
-                Supabase data could not be loaded for the worker roster.
-              </div>
-            ) : workers.length === 0 ? (
-              <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center text-sm text-slate-500">
+            {workers.length === 0 ? (
+              <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center text-base text-slate-500">
                 No workers saved yet. Submit the form to create the first worker.
               </div>
             ) : (
@@ -251,7 +244,7 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
                   {workers.map((worker) => (
                     <div
                       key={worker.id}
-                      className="grid gap-4 px-4 py-4 text-sm text-slate-700 md:grid-cols-[1.2fr_0.8fr_0.7fr_1fr_0.9fr] md:items-center"
+                      className="grid gap-4 px-4 py-4 text-base text-slate-700 md:grid-cols-[1.2fr_0.8fr_0.7fr_1fr_0.9fr] md:items-center"
                     >
                       <div>
                         <p className="font-medium text-slate-950">
@@ -289,7 +282,7 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
                         </span>
                         <div className="flex items-center gap-2 pt-1 md:pt-0">
                           <Mail className="size-4 text-slate-400" />
-                          <span className="truncate">{worker.email}</span>
+                          <span className="break-all md:truncate">{worker.email}</span>
                         </div>
                       </div>
 

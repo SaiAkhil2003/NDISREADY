@@ -1,13 +1,18 @@
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
-import { ClerkProvider } from "@clerk/nextjs";
 
 import "@/styles/globals.css";
-import { signInUrl } from "@/lib/routes";
+import { siteDescription, siteName } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "NDIS Ready",
-  description: "Phase 2 app shell with Clerk authentication for the NDIS operations workspace.",
+  title: {
+    default: siteName,
+    template: `%s | ${siteName}`,
+  },
+  description: siteDescription,
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -16,10 +21,8 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <ClerkProvider afterSignOutUrl={signInUrl}>
-      <html lang="en">
-        <body>{children}</body>
-      </html>
-    </ClerkProvider>
+    <html lang="en" data-scroll-behavior="smooth">
+      <body>{children}</body>
+    </html>
   );
 }

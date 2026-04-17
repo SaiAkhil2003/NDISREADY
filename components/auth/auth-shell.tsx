@@ -23,8 +23,8 @@ export function AuthShell({
 }: AuthShellProps) {
   return (
     <main className="relative overflow-hidden px-4 py-8 sm:px-6 lg:px-8">
-      <div className="container">
-        <section className="page-shell bg-hero-grid grid gap-8 px-6 py-10 sm:px-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+      <div className="mx-auto w-full max-w-7xl">
+        <section className="page-shell bg-hero-grid grid gap-8 px-5 py-8 sm:px-8 sm:py-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:px-10 lg:py-12">
           <div className="space-y-6">
             <Link
               href="/"
@@ -46,8 +46,8 @@ export function AuthShell({
             </div>
             <Card className="border-white/70 bg-white/80">
               <CardContent className="space-y-2 py-6">
-                <p className="text-sm font-semibold text-slate-900">Next destination</p>
-                <p className="text-sm leading-6 text-slate-600">
+                <p className="text-base font-semibold text-slate-900">Next destination</p>
+                <p className="text-base leading-7 text-slate-600">
                   Successful authentication redirects straight to <code>/dashboard</code>.
                 </p>
                 <Link
@@ -60,7 +60,9 @@ export function AuthShell({
             </Card>
           </div>
 
-          <div className="flex justify-center lg:justify-end">{children}</div>
+          <div className="flex w-full justify-center lg:justify-end [&_.cl-rootBox]:w-full [&_.cl-card]:w-full [&_.cl-card]:max-w-md [&_.cl-card]:shadow-[0_30px_80px_-52px_rgba(15,23,42,0.48)]">
+            {children}
+          </div>
         </section>
       </div>
     </main>

@@ -1,6 +1,5 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -9,15 +8,9 @@ import {
   isWorkerRole,
   isWorkerStatus,
 } from "@/lib/workers";
-import { signInUrl, workersUrl } from "@/lib/routes";
+import { workersUrl } from "@/lib/routes";
 
 export async function createWorkerAction(formData: FormData) {
-  const { userId } = await auth();
-
-  if (!userId) {
-    redirect(signInUrl);
-  }
-
   const firstName = getTextField(formData, "firstName");
   const lastName = getTextField(formData, "lastName");
   const email = getTextField(formData, "email").toLowerCase();

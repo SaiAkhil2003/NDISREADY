@@ -1,12 +1,11 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-
-const DEFAULT_ORGANISATION_SLUG = "ndis-ready-workspace";
-const DEFAULT_ORGANISATION_NAME = "NDIS Ready Workspace";
+import { getWorkspaceOrganisationId } from "@/lib/workspace";
 
 export const workerRoleOptions = [
   { value: "support_worker", label: "Support Worker" },
-  { value: "team_lead", label: "Team Lead" },
+  { value: "nurse", label: "Nurse" },
   { value: "coordinator", label: "Coordinator" },
+  { value: "team_lead", label: "Team Lead" },
   { value: "admin", label: "Admin" },
 ] as const;
 
@@ -29,6 +28,8 @@ export type WorkerListItem = {
   status: string;
   createdAt: string;
 };
+
+export type WorkerDetail = WorkerListItem;
 
 type CreateWorkerInput = {
   firstName: string;
@@ -88,16 +89,29 @@ export async function listWorkers() {
 
   const workers = (data ?? []) as WorkersTableRow[];
 
-  return workers.map((worker) => ({
-    id: worker.id,
-    firstName: worker.first_name,
-    lastName: worker.last_name,
-    email: worker.email,
-    phone: worker.phone,
-    role: worker.role,
-    status: worker.status,
-    createdAt: worker.created_at,
-  })) satisfies WorkerListItem[];
+  return workers.map(mapWorkerRow) satisfies WorkerListItem[];
+}
+
+export async function getWorkerById(workerId: string) {
+  const organisationId = await getWorkspaceOrganisationId();
+
+  if (!organisationId) {
+    return null;
+  }
+
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("workers")
+    .select("id, first_name, last_name, email, phone, role, status, created_at")
+    .eq("organisation_id", organisationId)
+    .eq("id", workerId)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data ? mapWorkerRow(data as WorkersTableRow) : null;
 }
 
 export async function createWorker(input: CreateWorkerInput) {
@@ -123,54 +137,17 @@ export async function createWorker(input: CreateWorkerInput) {
   }
 }
 
-async function getWorkspaceOrganisationId(options?: { createIfMissing?: boolean }) {
-  const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("organisations")
-    .select("id")
-    .eq("slug", DEFAULT_ORGANISATION_SLUG)
-    .maybeSingle();
-
-  if (error) {
-    throw error;
-  }
-
-  if (data?.id) {
-    return data.id;
-  }
-
-  if (!options?.createIfMissing) {
-    return null;
-  }
-
-  const { data: inserted, error: insertError } = await supabase
-    .from("organisations")
-    .insert({
-      name: DEFAULT_ORGANISATION_NAME,
-      slug: DEFAULT_ORGANISATION_SLUG,
-    })
-    .select("id")
-    .single();
-
-  if (!insertError) {
-    return inserted.id;
-  }
-
-  if (insertError.code !== "23505") {
-    throw insertError;
-  }
-
-  const { data: existing, error: existingError } = await supabase
-    .from("organisations")
-    .select("id")
-    .eq("slug", DEFAULT_ORGANISATION_SLUG)
-    .single();
-
-  if (existingError) {
-    throw existingError;
-  }
-
-  return existing.id;
+function mapWorkerRow(worker: WorkersTableRow) {
+  return {
+    id: worker.id,
+    firstName: worker.first_name,
+    lastName: worker.last_name,
+    email: worker.email,
+    phone: worker.phone,
+    role: worker.role,
+    status: worker.status,
+    createdAt: worker.created_at,
+  } satisfies WorkerListItem;
 }
 
 function formatLabel(value: string) {

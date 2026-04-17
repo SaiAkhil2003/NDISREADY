@@ -1,8 +1,8 @@
-import { auth } from "@clerk/nextjs/server";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { ArrowRight, ClipboardList, FileText, LogIn, ShieldCheck, UserPlus, Users } from "lucide-react";
+import { ArrowRight, ClipboardCheck, Mic, ShieldCheck, UsersRound } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,131 +11,116 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { dashboardUrl, signInUrl, signUpUrl } from "@/lib/routes";
+import { dashboardUrl } from "@/lib/routes";
+import { siteDescription, siteName, siteTagline } from "@/lib/site";
 
-const previewCards = [
-  {
-    title: "Workers",
-    description: "Roster snapshots, status tags, and operational filters.",
-    icon: Users,
-  },
-  {
-    title: "Participants",
-    description: "Participant summaries and intake checkpoints.",
-    icon: ClipboardList,
-  },
-  {
-    title: "Notes",
-    description: "Quick view of logs, actions, and follow-ups.",
-    icon: FileText,
-  },
-];
+export const metadata: Metadata = {
+  title: siteName,
+  description:
+    "Public NDISReady.ai demo for voice notes, participant tracking, worker management, and claim review.",
+};
 
-export default async function HomePage() {
-  const { userId } = await auth();
-
-  if (userId) {
-    redirect(dashboardUrl);
-  }
-
+export default function HomePage() {
   return (
-    <main className="relative overflow-hidden px-4 py-8 sm:px-6 lg:px-8">
-      <div className="container">
-        <section className="page-shell bg-hero-grid px-6 py-10 sm:px-10 sm:py-14">
-          <div className="grid gap-10 lg:grid-cols-[1.25fr_0.9fr] lg:items-center">
+    <main className="px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-7xl flex-col gap-6">
+        <section className="page-shell bg-hero-grid px-5 py-8 sm:px-8 sm:py-10 lg:px-10 lg:py-12">
+          <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
             <div className="space-y-6">
-              <div className="inline-flex items-center rounded-full border border-primary/15 bg-primary/10 px-4 py-1 text-sm font-medium text-primary">
-                Phase 2 authentication
-              </div>
+              <Badge className="w-fit">{siteName}</Badge>
               <div className="space-y-4">
-                <h1 className="max-w-2xl text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
-                  Secure NDIS workspace with a protected dashboard and Clerk-based access flow.
+                <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
+                  Capture support notes, track participants, and review claims without a login wall.
                 </h1>
-                <p className="max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-                  Phase 1 remains intact, and Phase 2 adds dedicated sign-in and sign-up
-                  pages plus dashboard protection for the operations workspace.
+                <p className="max-w-2xl text-lg leading-8 text-slate-600">
+                  {siteDescription} {siteTagline}
                 </p>
               </div>
+
               <div className="flex flex-col gap-3 sm:flex-row">
-                <Button asChild size="lg" className="rounded-full px-6">
-                  <Link href={signInUrl}>
-                    Sign in
-                    <LogIn className="ml-2 size-4" />
+                <Button asChild size="lg" className="w-full sm:w-auto">
+                  <Link href={dashboardUrl}>
+                    Open Demo Dashboard
+                    <ArrowRight className="size-4" />
                   </Link>
                 </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="rounded-full border-primary/20 bg-white/80 px-6"
-                >
-                  <Link href={signUpUrl}>
-                    Create account
-                    <UserPlus className="ml-2 size-4" />
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="secondary"
-                  size="lg"
-                  className="rounded-full px-6"
-                >
-                  <Link href={dashboardUrl} prefetch={false}>
-                    Protected dashboard
-                    <ArrowRight className="ml-2 size-4" />
-                  </Link>
-                </Button>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div className="soft-panel px-4 py-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                    Notes
+                  </p>
+                  <p className="pt-2 text-base font-semibold text-slate-900">Voice capture with text fallback</p>
+                </div>
+                <div className="soft-panel px-4 py-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                    Participants
+                  </p>
+                  <p className="pt-2 text-base font-semibold text-slate-900">Goals, NDIS numbers, and profile detail</p>
+                </div>
+                <div className="soft-panel px-4 py-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                    Claims
+                  </p>
+                  <p className="pt-2 text-base font-semibold text-slate-900">Claim checker with live or demo context</p>
+                </div>
               </div>
             </div>
 
             <div className="grid gap-4">
-              {previewCards.map(({ title, description, icon: Icon }) => (
-                <Card key={title} className="border-white/70 bg-white/80 backdrop-blur">
-                  <CardHeader className="pb-3">
-                    <div className="mb-4 inline-flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                      <Icon className="size-5" />
-                    </div>
-                    <CardTitle>{title}</CardTitle>
-                    <CardDescription>{description}</CardDescription>
-                  </CardHeader>
-                </Card>
-              ))}
+              <Card className="border-white/70 bg-white/85">
+                <CardHeader>
+                  <CardTitle>What the demo covers</CardTitle>
+                  <CardDescription>Designed for a visitor who needs to understand value in minutes.</CardDescription>
+                </CardHeader>
+                <CardContent className="grid gap-3">
+                  <FeatureRow
+                    icon={Mic}
+                    title="Voice-to-note drafting"
+                    description="Record support updates, generate an AI draft, edit it, and approve it into the notes history."
+                  />
+                  <FeatureRow
+                    icon={UsersRound}
+                    title="Participant and worker records"
+                    description="Review realistic NDIS participants, goals, and staffing context from the same dashboard."
+                  />
+                  <FeatureRow
+                    icon={ClipboardCheck}
+                    title="Claim review flow"
+                    description="Check claim quality with participant and worker context before anything moves forward."
+                  />
+                  <FeatureRow
+                    icon={ShieldCheck}
+                    title="Demo-ready mobile navigation"
+                    description="Sticky navigation stays visible while scrolling, with a hamburger menu for the full workspace."
+                  />
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>
-
-        <section className="grid gap-4 pt-6 md:grid-cols-3">
-          {[
-            {
-              title: "Phase 1 shell preserved",
-              description: "Homepage, dashboard layout, sidebar, and UI routes are still present.",
-              icon: ShieldCheck,
-            },
-            {
-              title: "Clerk auth pages",
-              description: "Dedicated sign-in and sign-up flows now sit on public routes.",
-              icon: LogIn,
-            },
-            {
-              title: "Protected dashboard",
-              description: "Dashboard routes redirect unauthenticated users before loading.",
-              icon: ArrowRight,
-            },
-          ].map(({ title, description, icon: Icon }) => (
-            <Card key={title} className="border-white/70 bg-white/75">
-              <CardContent className="flex min-h-28 gap-4 py-6">
-                <div className="inline-flex size-11 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-slate-700">
-                  <Icon className="size-5" />
-                </div>
-                <div className="space-y-2">
-                  <p className="text-sm font-semibold text-slate-900">{title}</p>
-                  <p className="text-sm leading-6 text-slate-600">{description}</p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </section>
       </div>
     </main>
+  );
+}
+
+type FeatureRowProps = {
+  icon: typeof Mic;
+  title: string;
+  description: string;
+};
+
+function FeatureRow({ icon: Icon, title, description }: FeatureRowProps) {
+  return (
+    <div className="flex items-start gap-3 rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4">
+      <div className="rounded-2xl bg-white p-2 text-primary shadow-sm">
+        <Icon className="size-4" />
+      </div>
+      <div className="space-y-1">
+        <p className="text-base font-semibold text-slate-900">{title}</p>
+        <p className="text-base leading-7 text-slate-600">{description}</p>
+      </div>
+    </div>
   );
 }

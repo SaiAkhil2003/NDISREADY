@@ -1,0 +1,106 @@
+import { NextResponse } from "next/server";
+
+import {
+  buildRuleBasedNoteDraft,
+  formatParticipantName,
+  isNoteType,
+} from "@/lib/notes";
+import { resolveParticipantForNotes } from "@/lib/workspace-data";
+
+type GenerateNoteRequestBody = {
+  raw_input?: unknown;
+  participant_id?: unknown;
+  shift_date?: unknown;
+  sourceText?: unknown;
+  participantId?: unknown;
+  workerId?: unknown;
+  noteType?: unknown;
+};
+
+export async function POST(request: Request) {
+  let body: GenerateNoteRequestBody;
+
+  try {
+    body = (await request.json()) as GenerateNoteRequestBody;
+  } catch {
+    return NextResponse.json({ error: "Request body must be valid JSON." }, { status: 400 });
+  }
+
+  const sourceText =
+    typeof body.sourceText === "string"
+      ? body.sourceText.trim()
+      : typeof body.raw_input === "string"
+        ? body.raw_input.trim()
+        : "";
+  const participantId =
+    typeof body.participantId === "string"
+      ? body.participantId.trim()
+      : typeof body.participant_id === "string"
+        ? body.participant_id.trim()
+        : "";
+  const workerId =
+    typeof body.workerId === "undefined"
+      ? undefined
+      : typeof body.workerId === "string"
+        ? body.workerId.trim()
+        : null;
+  const noteType =
+    typeof body.noteType === "undefined"
+      ? undefined
+      : typeof body.noteType === "string"
+        ? body.noteType.trim()
+        : null;
+
+  if (!sourceText) {
+    return NextResponse.json({ error: "Source text is required." }, { status: 400 });
+  }
+
+  if (!participantId) {
+    return NextResponse.json({ error: "Participant selection is required." }, { status: 400 });
+  }
+
+  if (workerId === null || noteType === null) {
+    return NextResponse.json(
+      { error: "Invalid request body. Optional fields must be strings when provided." },
+      { status: 400 },
+    );
+  }
+
+  if (noteType && !isNoteType(noteType)) {
+    return NextResponse.json({ error: "A valid note type is required." }, { status: 400 });
+  }
+
+  try {
+    const participant = await resolveParticipantForNotes(participantId);
+
+    if (!participant) {
+      return NextResponse.json(
+        {
+          error:
+            "The selected participant could not be found in the live or demo workspace.",
+        },
+        { status: 404 },
+      );
+    }
+
+    const participantName = formatParticipantName(participant);
+    const result = buildRuleBasedNoteDraft({
+      sourceText,
+      participantName,
+      participantGoals: participant.goals.map((goal) => goal.title),
+      noteType: noteType && isNoteType(noteType) ? noteType : undefined,
+    });
+
+    return NextResponse.json({
+      ai_draft: result.aiDraft,
+      goals_addressed: result.goalsAddressed,
+    });
+  } catch (error) {
+    console.error("Failed to generate AI note:", error);
+
+    return NextResponse.json(
+      { error: "AI note generation failed. Try again." },
+      { status: 500 },
+    );
+  }
+}

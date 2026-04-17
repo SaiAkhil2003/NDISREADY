@@ -74,29 +74,17 @@ function getSupabaseUrl() {
   }
 
   if (isHostedSupabaseUrl(url)) {
-    return `https://${url.hostname}`;
-  }
-
-  if (isLocalSupabaseUrl(url)) {
     return `${url.protocol}//${url.host}`;
   }
 
   console.error(
-    "NEXT_PUBLIC_SUPABASE_URL must use either https://<project_ref>.supabase.co or a local Supabase URL like http://127.0.0.1:54321.",
+    "NEXT_PUBLIC_SUPABASE_URL must use the cloud Supabase format https://<project_ref>.supabase.co.",
   );
   process.exit(1);
 }
 
 function isHostedSupabaseUrl(url) {
   return url.protocol === "https:" && url.hostname.endsWith(".supabase.co") && url.pathname === "/";
-}
-
-function isLocalSupabaseUrl(url) {
-  return (
-    (url.protocol === "http:" || url.protocol === "https:") &&
-    (url.hostname === "127.0.0.1" || url.hostname === "localhost") &&
-    url.pathname === "/"
-  );
 }
 
 async function verifyHostLookup(url) {
