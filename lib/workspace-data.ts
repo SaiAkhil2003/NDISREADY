@@ -223,114 +223,124 @@ export async function resolveWorkerForNotes(workerId: string | null | undefined)
 }
 
 function getDemoWorkers() {
-  return demoWorkers.map((worker) => {
-    const displayName = resolveDisplayName({
-      firstName: worker.first_name,
-      lastName: worker.last_name,
+  return sortByCreatedAtDesc(
+    demoWorkers.map((worker) => {
+      const displayName = resolveDisplayName({
+        firstName: worker.first_name,
+        lastName: worker.last_name,
     });
 
-    return {
-      id: worker.id,
-      firstName: displayName.firstName,
-      lastName: displayName.lastName,
-      email: worker.email,
+      return {
+        id: worker.id,
+        firstName: displayName.firstName,
+        lastName: displayName.lastName,
+        email: worker.email,
       phone: worker.phone,
       role: worker.role,
-      status: worker.status,
-      createdAt: worker.created_at,
-    } satisfies WorkerListItem;
-  });
+        status: worker.status,
+        createdAt: worker.created_at,
+      } satisfies WorkerListItem;
+    }),
+  );
 }
 
 function getDemoParticipants() {
-  return demoParticipants.map((participant) => {
-    const displayName = resolveDisplayName({
-      firstName: participant.first_name,
-      lastName: participant.last_name,
+  return sortByCreatedAtDesc(
+    demoParticipants.map((participant) => {
+      const displayName = resolveDisplayName({
+        firstName: participant.first_name,
+        lastName: participant.last_name,
       preferredName: participant.preferred_name,
     });
 
-    return {
-      id: participant.id,
-      firstName: displayName.firstName,
-      lastName: displayName.lastName,
-      preferredName: displayName.preferredName,
+      return {
+        id: participant.id,
+        firstName: displayName.firstName,
+        lastName: displayName.lastName,
+        preferredName: displayName.preferredName,
       dateOfBirth: participant.date_of_birth,
       ndisNumber: participant.ndis_number,
-      status: participant.status,
-      goals: participant.goals,
-      createdAt: participant.created_at,
-    } satisfies ParticipantListItem;
-  });
+        status: participant.status,
+        goals: participant.goals,
+        createdAt: participant.created_at,
+      } satisfies ParticipantListItem;
+    }),
+  );
 }
 
 function getDemoProgressNotes() {
   const participants = new Map(getDemoParticipants().map((participant) => [participant.id, participant]));
   const workers = new Map(getDemoWorkers().map((worker) => [worker.id, worker]));
 
-  return demoProgressNotes.map((note) => {
-    const participant = participants.get(note.participant_id);
-    const worker = note.worker_id ? workers.get(note.worker_id) : null;
+  return sortByCreatedAtDesc(
+    demoProgressNotes.map((note) => {
+      const participant = participants.get(note.participant_id);
+      const worker = note.worker_id ? workers.get(note.worker_id) : null;
 
-    return {
-      id: note.id,
-      participantId: note.participant_id,
-      participantName: participant
-        ? formatParticipantDisplayName(participant)
-        : "Unknown participant",
-      workerId: note.worker_id,
-      workerName: worker ? formatDisplayName(worker) : null,
-      workerRole: worker ? formatWorkerRole(worker.role) : null,
-      title: note.title,
-      noteType: getDemoNoteType(note.title),
-      body: note.body,
-      rawInput: note.raw_input,
-      aiDraft: note.ai_draft,
-      finalNote: note.final_note,
-      goalsAddressed: note.goals_addressed,
-      approvedAt: note.approved_at,
-      createdAt: note.created_at,
-      noteDate: note.note_date,
-    } satisfies ProgressNoteListItem;
-  });
+      return {
+        id: note.id,
+        participantId: note.participant_id,
+        participantName: participant
+          ? formatParticipantDisplayName(participant)
+          : "Unknown participant",
+        workerId: note.worker_id,
+        workerName: worker ? formatDisplayName(worker) : null,
+        workerRole: worker ? formatWorkerRole(worker.role) : null,
+        title: note.title,
+        noteType: getDemoNoteType(note.title),
+        body: note.body,
+        rawInput: note.raw_input,
+        aiDraft: note.ai_draft,
+        finalNote: note.final_note,
+        goalsAddressed: note.goals_addressed,
+        approvedAt: note.approved_at,
+        createdAt: note.created_at,
+        noteDate: note.note_date,
+      } satisfies ProgressNoteListItem;
+    }),
+  );
 }
 
 function getDemoProgressNoteSummaries() {
-  return demoProgressNotes.map((note) => ({
-    id: note.id,
-    participantId: note.participant_id,
-    approvedAt: note.approved_at,
-    createdAt: note.created_at,
-  })) satisfies ProgressNoteSummary[];
+  return sortByCreatedAtDesc(
+    demoProgressNotes.map((note) => ({
+      id: note.id,
+      participantId: note.participant_id,
+      approvedAt: note.approved_at,
+      createdAt: note.created_at,
+    })) satisfies ProgressNoteSummary[],
+  );
 }
 
 function getDemoClaims() {
   const participants = new Map(getDemoParticipants().map((participant) => [participant.id, participant]));
   const workers = new Map(getDemoWorkers().map((worker) => [worker.id, worker]));
 
-  return demoClaims.map((claim) => {
-    const participant = participants.get(claim.participant_id);
-    const worker = claim.worker_id ? workers.get(claim.worker_id) : null;
+  return sortByCreatedAtDesc(
+    demoClaims.map((claim) => {
+      const participant = participants.get(claim.participant_id);
+      const worker = claim.worker_id ? workers.get(claim.worker_id) : null;
 
-    return {
-      id: claim.id,
-      participantId: claim.participant_id,
-      participantName: participant
-        ? formatParticipantDisplayName(participant)
-        : "Unknown participant",
-      workerId: claim.worker_id,
-      workerName: worker ? formatDisplayName(worker) : null,
-      workerRole: worker ? formatWorkerRole(worker.role) : null,
-      reference: claim.reference,
-      claimDate: claim.claim_date,
-      amount: claim.amount,
-      status: claim.status,
-      supportHours: claim.support_hours,
-      serviceCode: claim.service_code,
-      notes: claim.notes,
-      createdAt: claim.created_at,
-    } satisfies ClaimListItem;
-  });
+      return {
+        id: claim.id,
+        participantId: claim.participant_id,
+        participantName: participant
+          ? formatParticipantDisplayName(participant)
+          : "Unknown participant",
+        workerId: claim.worker_id,
+        workerName: worker ? formatDisplayName(worker) : null,
+        workerRole: worker ? formatWorkerRole(worker.role) : null,
+        reference: claim.reference,
+        claimDate: claim.claim_date,
+        amount: claim.amount,
+        status: claim.status,
+        supportHours: claim.support_hours,
+        serviceCode: claim.service_code,
+        notes: claim.notes,
+        createdAt: claim.created_at,
+      } satisfies ClaimListItem;
+    }),
+  );
 }
 
 function filterDemoProgressNotes(filters: ListProgressNotesFilters) {
@@ -527,4 +537,17 @@ function formatWorkspaceError(error: unknown) {
 function readErrorField(error: object, key: "code" | "message" | "details" | "hint") {
   const value = key in error ? (error as Record<string, unknown>)[key] : undefined;
   return typeof value === "string" && value.trim() ? value.trim() : "";
+}
+
+function sortByCreatedAtDesc<T extends { createdAt: string }>(items: T[]) {
+  return [...items].sort((left, right) => {
+    const leftTime = Date.parse(left.createdAt);
+    const rightTime = Date.parse(right.createdAt);
+
+    if (Number.isNaN(leftTime) || Number.isNaN(rightTime)) {
+      return right.createdAt.localeCompare(left.createdAt);
+    }
+
+    return rightTime - leftTime;
+  });
 }

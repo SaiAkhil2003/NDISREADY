@@ -32,8 +32,8 @@ export function ClaimChecker({
   participantOptions,
   workerOptions,
 }: ClaimCheckerProps) {
-  const [participantId, setParticipantId] = useState(participantOptions[0]?.value ?? "");
-  const [workerId, setWorkerId] = useState(workerOptions[0]?.value ?? "");
+  const [participantId, setParticipantId] = useState("");
+  const [workerId, setWorkerId] = useState("");
   const [claimDate, setClaimDate] = useState(getTodayDateValue());
   const [amount, setAmount] = useState("185.00");
   const [supportHours, setSupportHours] = useState("3");
@@ -173,7 +173,7 @@ export function ClaimChecker({
                   Participant
                 </p>
                 <p className="pt-2 text-base font-semibold text-slate-900">
-                  {selectedParticipantLabel || "Select a participant"}
+                  {selectedParticipantLabel || "Select participant"}
                 </p>
               </div>
               <div className="soft-panel px-4 py-3">
@@ -181,7 +181,7 @@ export function ClaimChecker({
                   Worker
                 </p>
                 <p className="pt-2 text-base font-semibold text-slate-900">
-                  {selectedWorkerLabel || "Select a worker"}
+                  {selectedWorkerLabel || "Select worker"}
                 </p>
               </div>
               <div className="soft-panel px-4 py-3">
@@ -204,6 +204,7 @@ export function ClaimChecker({
                   }
                   className="field-control"
                 >
+                  <option value="">Select participant</option>
                   {participantOptions.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
@@ -226,6 +227,7 @@ export function ClaimChecker({
                   }
                   className="field-control"
                 >
+                  <option value="">Select worker</option>
                   {workerOptions.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}

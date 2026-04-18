@@ -14,9 +14,9 @@ type PersonNameOverride = {
 const personNameOverrides: readonly PersonNameOverride[] = [
   {
     matchParts: ["sai", "raju", "kantimahanthi"],
-    firstName: "John",
-    lastName: "Smith",
-    preferredName: "John",
+    firstName: "Aiden",
+    lastName: "Carter",
+    preferredName: "Aiden",
   },
 ] as const;
 

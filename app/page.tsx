@@ -22,17 +22,17 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <main className="overflow-x-hidden px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
-      <div className="mx-auto flex max-w-7xl min-w-0 flex-col gap-4 sm:gap-6">
-        <section className="page-shell bg-hero-grid px-4 py-6 sm:px-8 sm:py-10 lg:px-10 lg:py-12">
-          <div className="grid min-w-0 gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-8">
-            <div className="min-w-0 space-y-5 sm:space-y-6">
+    <main className="overflow-x-hidden px-2 py-3 sm:px-6 sm:py-6 lg:px-8">
+      <div className="mx-auto flex max-w-7xl min-w-0 flex-col gap-3 sm:gap-6">
+        <section className="page-shell bg-hero-grid px-4 py-5 sm:px-8 sm:py-10 lg:px-10 lg:py-12">
+          <div className="grid min-w-0 gap-5 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-8">
+            <div className="min-w-0 space-y-4 sm:space-y-6">
               <Badge className="w-fit">{siteName}</Badge>
               <div className="space-y-3 sm:space-y-4">
-                <h1 className="max-w-3xl text-3xl font-semibold tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
+                <h1 className="max-w-3xl text-[2rem] font-semibold leading-[1.05] tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
                   Capture support notes, track participants, and review claims in one workspace.
                 </h1>
-                <p className="max-w-2xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
+                <p className="max-w-2xl text-sm leading-6 text-slate-600 sm:text-lg sm:leading-8">
                   {siteDescription} {siteTagline}
                 </p>
               </div>
@@ -40,26 +40,26 @@ export default function HomePage() {
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Button asChild size="lg" className="w-full justify-between px-5 sm:w-auto sm:justify-center">
                   <Link href={dashboardUrl}>
-                    Open Workspace
+                    Demo Dashboard
                     <ArrowRight className="size-4" />
                   </Link>
                 </Button>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-3">
-                <div className="soft-panel w-full px-4 py-4">
+                <div className="soft-panel w-full px-3 py-3 sm:px-4 sm:py-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                     Notes
                   </p>
                   <p className="pt-2 text-base font-semibold text-slate-900">Voice capture with text fallback</p>
                 </div>
-                <div className="soft-panel w-full px-4 py-4">
+                <div className="soft-panel w-full px-3 py-3 sm:px-4 sm:py-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                     Participants
                   </p>
                   <p className="pt-2 text-base font-semibold text-slate-900">Goals, NDIS numbers, and profile detail</p>
                 </div>
-                <div className="soft-panel w-full px-4 py-4">
+                <div className="soft-panel w-full px-3 py-3 sm:px-4 sm:py-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                     Claims
                   </p>
@@ -70,7 +70,7 @@ export default function HomePage() {
 
             <div className="grid min-w-0 gap-4">
               <Card className="border-white/70 bg-white/85">
-                <CardHeader className="space-y-2 px-4 py-5 sm:px-6">
+                <CardHeader className="space-y-2 px-4 py-4 sm:px-6 sm:py-5">
                   <CardTitle>What the platform covers</CardTitle>
                   <CardDescription>Designed to keep day-to-day support work clear, fast, and organised.</CardDescription>
                 </CardHeader>
@@ -83,7 +83,7 @@ export default function HomePage() {
                   <FeatureRow
                     icon={UsersRound}
                     title="Participant and worker records"
-                    description="Review realistic NDIS participants, goals, and staffing context from the same dashboard."
+                    description="Review NDIS participants, goals, and staffing context from the same dashboard."
                   />
                   <FeatureRow
                     icon={ClipboardCheck}
@@ -93,7 +93,7 @@ export default function HomePage() {
                   <FeatureRow
                     icon={ShieldCheck}
                     title="Mobile-ready navigation"
-                    description="Sticky navigation stays visible while scrolling, with quick access to the full workspace."
+                    description="A fixed bottom navigation keeps every workspace tab within reach on mobile."
                   />
                 </CardContent>
               </Card>
@@ -113,7 +113,7 @@ type FeatureRowProps = {
 
 function FeatureRow({ icon: Icon, title, description }: FeatureRowProps) {
   return (
-    <div className="flex min-w-0 items-start gap-3 rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4">
+    <div className="flex min-w-0 items-start gap-3 rounded-3xl border border-slate-200 bg-slate-50 px-3 py-3 sm:px-4 sm:py-4">
       <div className="rounded-2xl bg-white p-2 text-primary shadow-sm">
         <Icon className="size-4" />
       </div>
