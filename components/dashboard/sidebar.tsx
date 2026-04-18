@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ClipboardCheck, Home, LayoutDashboard, Menu, StickyNote, Users, UsersRound, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { claimsUrl, dashboardUrl, notesUrl, participantsUrl, workersUrl } from "@/lib/routes";
 import { siteName } from "@/lib/site";
@@ -17,14 +17,22 @@ const navigation = [
   { href: claimsUrl, label: "Claims", icon: ClipboardCheck },
 ];
 
+function isActivePath(pathname: string, href: string) {
+  return href === dashboardUrl ? pathname === href : pathname.startsWith(href);
+}
+
 export function Sidebar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
   return (
     <>
-      <div className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur md:hidden">
-        <div className="flex min-h-16 items-center justify-between px-4">
+      <div className="sticky top-0 z-40 border-b border-slate-200 bg-white shadow-[0_10px_30px_-24px_rgba(15,23,42,0.45)] md:hidden">
+        <div className="flex min-h-16 items-center justify-between gap-3 px-3">
           <Link href="/" className="inline-flex min-h-11 items-center gap-3 text-base font-semibold text-slate-900">
             <span className="inline-flex size-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
               <Home className="size-5" />
@@ -44,31 +52,6 @@ export function Sidebar() {
           >
             {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
-        </div>
-      </div>
-
-      <div className="sticky top-16 z-30 border-b border-slate-200/70 bg-white/95 px-2 py-2 backdrop-blur md:hidden">
-        <div className="scrollbar-none flex gap-2 overflow-x-auto px-2">
-          {navigation.map(({ href, label, icon: Icon }) => {
-            const isActive = href === dashboardUrl ? pathname === href : pathname.startsWith(href);
-
-            return (
-              <Link
-                key={href}
-                href={href}
-                aria-current={isActive ? "page" : undefined}
-                className={cn(
-                  "inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors",
-                  isActive
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-950",
-                )}
-              >
-                <Icon className="size-4" />
-                {label}
-              </Link>
-            );
-          })}
         </div>
       </div>
 
@@ -94,7 +77,7 @@ export function Sidebar() {
 
             <nav className="mt-4 space-y-2">
               {navigation.map(({ href, label, icon: Icon }) => {
-                const isActive = href === dashboardUrl ? pathname === href : pathname.startsWith(href);
+                const isActive = isActivePath(pathname, href);
 
                 return (
                   <Link
@@ -138,7 +121,7 @@ export function Sidebar() {
 
         <nav className="flex-1 space-y-2 px-4 py-6">
           {navigation.map(({ href, label, icon: Icon }) => {
-            const isActive = href === dashboardUrl ? pathname === href : pathname.startsWith(href);
+            const isActive = isActivePath(pathname, href);
 
             return (
               <Link
@@ -171,5 +154,41 @@ export function Sidebar() {
         </div>
       </aside>
     </>
+  );
+}
+
+export function MobileBottomNav() {
+  const pathname = usePathname();
+
+  return (
+    <nav
+      aria-label="Mobile dashboard navigation"
+      className="fixed inset-x-0 bottom-0 z-[9999] border-t border-slate-200 bg-white md:hidden"
+    >
+      <div className="grid h-[70px] grid-cols-5 gap-1 px-2" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+        {navigation.map(({ href, label, icon: Icon }) => {
+          const isActive = isActivePath(pathname, href);
+
+          return (
+            <Link
+              key={href}
+              href={href}
+              aria-current={isActive ? "page" : undefined}
+              className={cn(
+                "flex min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-1 text-center transition-colors",
+                isActive
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-slate-500 hover:bg-slate-100 hover:text-slate-900",
+              )}
+            >
+              <Icon className="size-[1.1rem] shrink-0" />
+              <span className="w-full truncate px-0.5 text-[10px] font-medium leading-none tracking-tight">
+                {label}
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
   );
 }
