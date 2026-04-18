@@ -17,7 +17,7 @@ import { siteDescription, siteName, siteTagline } from "@/lib/site";
 export const metadata: Metadata = {
   title: siteName,
   description:
-    "Public NDISReady.ai demo for voice notes, participant tracking, worker management, and claim review.",
+    "NDISReady.ai for voice notes, participant tracking, worker management, and claim review.",
 };
 
 export default function HomePage() {
@@ -30,7 +30,7 @@ export default function HomePage() {
               <Badge className="w-fit">{siteName}</Badge>
               <div className="space-y-3 sm:space-y-4">
                 <h1 className="max-w-3xl text-3xl font-semibold tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
-                  Capture support notes, track participants, and review claims without a login wall.
+                  Capture support notes, track participants, and review claims in one workspace.
                 </h1>
                 <p className="max-w-2xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
                   {siteDescription} {siteTagline}
@@ -40,7 +40,7 @@ export default function HomePage() {
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Button asChild size="lg" className="w-full justify-between px-5 sm:w-auto sm:justify-center">
                   <Link href={dashboardUrl}>
-                    Demo Dashboard
+                    Open Workspace
                     <ArrowRight className="size-4" />
                   </Link>
                 </Button>
@@ -63,7 +63,7 @@ export default function HomePage() {
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                     Claims
                   </p>
-                  <p className="pt-2 text-base font-semibold text-slate-900">Claim checker with live or demo context</p>
+                  <p className="pt-2 text-base font-semibold text-slate-900">Claim review with participant and worker context</p>
                 </div>
               </div>
             </div>
@@ -71,14 +71,14 @@ export default function HomePage() {
             <div className="grid min-w-0 gap-4">
               <Card className="border-white/70 bg-white/85">
                 <CardHeader className="space-y-2 px-4 py-5 sm:px-6">
-                  <CardTitle>What the demo covers</CardTitle>
-                  <CardDescription>Designed for a visitor who needs to understand value in minutes.</CardDescription>
+                  <CardTitle>What the platform covers</CardTitle>
+                  <CardDescription>Designed to keep day-to-day support work clear, fast, and organised.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-3 px-4 pb-5 pt-0 sm:px-6">
                   <FeatureRow
                     icon={Mic}
                     title="Voice-to-note drafting"
-                    description="Record support updates, generate an AI draft, edit it, and approve it into the notes history."
+                    description="Record support updates, generate a structured draft, edit it, and save it to the notes history."
                   />
                   <FeatureRow
                     icon={UsersRound}
@@ -92,8 +92,8 @@ export default function HomePage() {
                   />
                   <FeatureRow
                     icon={ShieldCheck}
-                    title="Demo-ready mobile navigation"
-                    description="Sticky navigation stays visible while scrolling, with a hamburger menu for the full workspace."
+                    title="Mobile-ready navigation"
+                    description="Sticky navigation stays visible while scrolling, with quick access to the full workspace."
                   />
                 </CardContent>
               </Card>

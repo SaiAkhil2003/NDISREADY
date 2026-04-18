@@ -33,12 +33,12 @@ const routeCards = [
   },
   {
     title: "Notes",
-    description: "Move into the saved notes feed, filters, and AI-assisted note composer.",
+    description: "Move into the saved notes feed, filters, and note composer.",
     href: notesUrl,
   },
   {
     title: "Claims",
-    description: "Run the claim checker, send the draft to Claude, and review claim warnings.",
+    description: "Review claims and address any issues before submission.",
     href: claimsUrl,
   },
 ];
@@ -116,7 +116,7 @@ export default async function DashboardPage() {
             Operations overview
           </h1>
           <p className="max-w-2xl text-base leading-7 text-slate-600">
-            Review live worker, participant, note, and claims activity from one dashboard
+            Review worker, participant, note, and claim activity from one dashboard
             with totals that reflect the current saved workspace data.
           </p>
         </div>
@@ -191,23 +191,34 @@ export default async function DashboardPage() {
 
         <Card className="border-emerald-200 bg-emerald-50/80">
           <CardHeader>
-            <CardTitle>Live status</CardTitle>
+            <CardTitle>Workspace snapshot</CardTitle>
             <CardDescription>
-              Dashboard logic now reflects the current saved state of the workspace.
+              A quick summary of the current records available across the workspace.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2 text-base text-emerald-950">
-            <p>Workers count comes from the saved Supabase roster.</p>
-            <p>Participants count comes from the participant records and goal data.</p>
-            <p>Notes count comes from the approved notes pipeline.</p>
+            <p>
+              {workers.length === 0
+                ? "No workers are currently listed in the roster."
+                : `${workers.length} worker${workers.length === 1 ? "" : "s"} are currently listed in the roster.`}
+            </p>
+            <p>
+              {participants.length === 0
+                ? "No participant records are currently available."
+                : `${participants.length} participant record${participants.length === 1 ? "" : "s"} are currently available.`}
+            </p>
+            <p>
+              {notes.length === 0
+                ? "No approved notes are currently available."
+                : `${notes.length} saved note${notes.length === 1 ? "" : "s"} are available for review.`}
+            </p>
             <p>
               {claims.length > 0
                 ? `${claims.length} claim${claims.length === 1 ? "" : "s"} are available in the current workspace.`
-                : "The claim checker and claims list are ready for the next review cycle."}
+                : "Claim review is ready for the next review cycle."}
             </p>
             <p>
-              Compliance score blends active worker coverage, participant goal coverage,
-              and participant note coverage.
+              The compliance score reflects worker coverage, participant goals, and note coverage.
             </p>
           </CardContent>
         </Card>

@@ -23,6 +23,11 @@ import {
   type ProgressNoteListItem,
   type ProgressNoteSummary,
 } from "@/lib/progress-notes";
+import {
+  formatDisplayName,
+  formatDisplayParticipantName,
+  resolveDisplayName,
+} from "@/lib/display-names";
 import { getSupabaseAdminEnvStatus } from "@/lib/supabase/env";
 import {
   type WorkerDetail,
@@ -218,30 +223,45 @@ export async function resolveWorkerForNotes(workerId: string | null | undefined)
 }
 
 function getDemoWorkers() {
-  return demoWorkers.map((worker) => ({
-    id: worker.id,
-    firstName: worker.first_name,
-    lastName: worker.last_name,
-    email: worker.email,
-    phone: worker.phone,
-    role: worker.role,
-    status: worker.status,
-    createdAt: worker.created_at,
-  })) satisfies WorkerListItem[];
+  return demoWorkers.map((worker) => {
+    const displayName = resolveDisplayName({
+      firstName: worker.first_name,
+      lastName: worker.last_name,
+    });
+
+    return {
+      id: worker.id,
+      firstName: displayName.firstName,
+      lastName: displayName.lastName,
+      email: worker.email,
+      phone: worker.phone,
+      role: worker.role,
+      status: worker.status,
+      createdAt: worker.created_at,
+    } satisfies WorkerListItem;
+  });
 }
 
 function getDemoParticipants() {
-  return demoParticipants.map((participant) => ({
-    id: participant.id,
-    firstName: participant.first_name,
-    lastName: participant.last_name,
-    preferredName: participant.preferred_name,
-    dateOfBirth: participant.date_of_birth,
-    ndisNumber: participant.ndis_number,
-    status: participant.status,
-    goals: participant.goals,
-    createdAt: participant.created_at,
-  })) satisfies ParticipantListItem[];
+  return demoParticipants.map((participant) => {
+    const displayName = resolveDisplayName({
+      firstName: participant.first_name,
+      lastName: participant.last_name,
+      preferredName: participant.preferred_name,
+    });
+
+    return {
+      id: participant.id,
+      firstName: displayName.firstName,
+      lastName: displayName.lastName,
+      preferredName: displayName.preferredName,
+      dateOfBirth: participant.date_of_birth,
+      ndisNumber: participant.ndis_number,
+      status: participant.status,
+      goals: participant.goals,
+      createdAt: participant.created_at,
+    } satisfies ParticipantListItem;
+  });
 }
 
 function getDemoProgressNotes() {
@@ -259,7 +279,7 @@ function getDemoProgressNotes() {
         ? formatParticipantDisplayName(participant)
         : "Unknown participant",
       workerId: note.worker_id,
-      workerName: worker ? `${worker.firstName} ${worker.lastName}` : null,
+      workerName: worker ? formatDisplayName(worker) : null,
       workerRole: worker ? formatWorkerRole(worker.role) : null,
       title: note.title,
       noteType: getDemoNoteType(note.title),
@@ -299,7 +319,7 @@ function getDemoClaims() {
         ? formatParticipantDisplayName(participant)
         : "Unknown participant",
       workerId: claim.worker_id,
-      workerName: worker ? `${worker.firstName} ${worker.lastName}` : null,
+      workerName: worker ? formatDisplayName(worker) : null,
       workerRole: worker ? formatWorkerRole(worker.role) : null,
       reference: claim.reference,
       claimDate: claim.claim_date,
@@ -353,7 +373,7 @@ function mapNoteParticipantOptions(participants: ParticipantListItem[]) {
 function mapNoteWorkerOptions(workers: WorkerListItem[]) {
   return workers.map((worker) => ({
     value: worker.id,
-    label: `${worker.firstName} ${worker.lastName}`,
+    label: formatDisplayName(worker),
     detail: formatWorkerRole(worker.role),
   })) satisfies NoteSelectOption[];
 }
@@ -369,7 +389,7 @@ function mapClaimParticipantOptions(participants: ParticipantListItem[]) {
 function mapClaimWorkerOptions(workers: WorkerListItem[]) {
   return workers.map((worker) => ({
     value: worker.id,
-    label: `${worker.firstName} ${worker.lastName}`,
+    label: formatDisplayName(worker),
     detail: formatWorkerRole(worker.role),
   })) satisfies ClaimSelectOption[];
 }
@@ -379,9 +399,7 @@ function formatParticipantDisplayName(input: {
   lastName: string;
   preferredName?: string | null;
 }) {
-  return input.preferredName?.trim()
-    ? `${input.preferredName} (${input.firstName} ${input.lastName})`
-    : `${input.firstName} ${input.lastName}`;
+  return formatDisplayParticipantName(input);
 }
 
 function mapDemoParticipantDetail(participantId: string) {
@@ -391,11 +409,17 @@ function mapDemoParticipantDetail(participantId: string) {
     return null;
   }
 
-  return {
-    id: participant.id,
+  const displayName = resolveDisplayName({
     firstName: participant.first_name,
     lastName: participant.last_name,
     preferredName: participant.preferred_name,
+  });
+
+  return {
+    id: participant.id,
+    firstName: displayName.firstName,
+    lastName: displayName.lastName,
+    preferredName: displayName.preferredName,
     dateOfBirth: participant.date_of_birth,
     ndisNumber: participant.ndis_number,
     status: participant.status,
@@ -411,10 +435,15 @@ function mapDemoWorkerDetail(workerId: string) {
     return null;
   }
 
-  return {
-    id: worker.id,
+  const displayName = resolveDisplayName({
     firstName: worker.first_name,
     lastName: worker.last_name,
+  });
+
+  return {
+    id: worker.id,
+    firstName: displayName.firstName,
+    lastName: displayName.lastName,
     email: worker.email,
     phone: worker.phone,
     role: worker.role,
@@ -440,9 +469,9 @@ async function withWorkspaceData<T>(
       data: loadDemo(),
       mode: "demo",
       notice: {
-        title: "Demo mode active",
+        title: "Connection issue",
         message:
-          "Live Supabase environment variables are missing for this deployment. Showing realistic sample data until the cloud connection is configured in Netlify.",
+          "Workspace records are temporarily limited while the connection is restored.",
       },
       canPersist: false,
     };
@@ -464,9 +493,9 @@ async function withWorkspaceData<T>(
       data: loadDemo(),
       mode: "demo",
       notice: {
-        title: "Using sample workspace data",
+        title: "Connection issue",
         message:
-          "The live Supabase connection is currently unavailable, so the demo stays usable with sample NDISReady.ai records.",
+          "Workspace records are temporarily limited while the connection is restored.",
       },
       canPersist: false,
     };

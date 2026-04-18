@@ -55,7 +55,7 @@ export function NoteComposer({
   const [isGenerating, setIsGenerating] = useState(false);
   const [apiError, setApiError] = useState("");
   const [statusMessage, setStatusMessage] = useState(
-    "Record a shift update or type it manually, then generate the AI draft for approval.",
+    "Record a shift update or type it manually, then generate a draft note for review.",
   );
 
   const selectedParticipantLabel = findLabel(participantOptions, participantId);
@@ -68,19 +68,19 @@ export function NoteComposer({
     setSourceNotes(value);
     resetDraftState(
       value.trim()
-        ? "Transcript updated. Generate a fresh AI draft before approval."
-        : "Record a shift update or type it manually, then generate the AI draft for approval.",
+        ? "Transcript updated. Generate a fresh draft note before approval."
+        : "Record a shift update or type it manually, then generate a draft note for review.",
     );
   }
 
   function handleParticipantChange(value: string) {
     setParticipantId(value);
-    resetDraftState("Participant changed. Generate a fresh AI draft before approval.");
+    resetDraftState("Participant changed. Generate a fresh draft note before approval.");
   }
 
   function handleWorkerChange(value: string) {
     setWorkerId(value);
-    resetDraftState("Worker changed. Generate a fresh AI draft before approval.");
+    resetDraftState("Worker changed. Generate a fresh draft note before approval.");
   }
 
   function handleNoteTypeChange(value: string) {
@@ -89,12 +89,12 @@ export function NoteComposer({
     }
 
     setNoteType(value);
-    resetDraftState("Note type changed. Generate a fresh AI draft before approval.");
+    resetDraftState("Note type changed. Generate a fresh draft note before approval.");
   }
 
   function handleShiftDateChange(value: string) {
     setShiftDate(value);
-    resetDraftState("Shift date changed. Generate a fresh AI draft before approval.");
+    resetDraftState("Shift date changed. Generate a fresh draft note before approval.");
   }
 
   function handleTranscriptReady(text: string) {
@@ -116,14 +116,14 @@ export function NoteComposer({
       setAiDraft("");
       setGoalsAddressed([]);
       setApiError("");
-      setStatusMessage("Add source notes before generating an AI note.");
+      setStatusMessage("Add support details before generating a draft note.");
       return;
     }
 
     setIsGenerating(true);
     setDraftState("generating");
     setApiError("");
-    setStatusMessage("Generating AI note...");
+    setStatusMessage("Generating draft note...");
 
     try {
       const response = await fetch("/api/generate-note", {
@@ -144,7 +144,7 @@ export function NoteComposer({
       const payload = (await response.json().catch(() => null)) as GenerateNoteResponse | null;
 
       if (!response.ok || !payload?.ai_draft?.trim()) {
-        throw new Error(payload?.error || "AI note generation failed.");
+        throw new Error(payload?.error || "Draft generation failed.");
       }
 
       const generatedDraft = payload.ai_draft.trim();
@@ -158,13 +158,13 @@ export function NoteComposer({
         }),
       );
       setDraftState("ready");
-      setStatusMessage("AI draft ready. Review the text, then approve and save it.");
+      setStatusMessage("Draft note ready. Review the text, then approve and save it.");
     } catch (error) {
       setAiDraft("");
       setGoalsAddressed([]);
       setDraftState("idle");
       setApiError(getErrorMessage(error));
-      setStatusMessage("AI note generation failed. Resolve the issue and try again.");
+      setStatusMessage("Draft generation failed. Resolve the issue and try again.");
     } finally {
       setIsGenerating(false);
     }
@@ -229,7 +229,7 @@ export function NoteComposer({
             <CardTitle>Capture and structure</CardTitle>
             <CardDescription>
               Map the note to a participant and worker, capture the transcript, and structure it
-              into an AI draft.
+              into a clear draft note.
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-5">
@@ -335,7 +335,7 @@ export function NoteComposer({
                   <CalendarDays className="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
                 </div>
                 <p className="text-base text-slate-500">
-                  This date is sent with the transcript when the AI draft is generated.
+                  This date is included when the draft note is generated.
                 </p>
               </label>
             </div>
@@ -355,7 +355,7 @@ export function NoteComposer({
                 className="w-full md:w-auto"
               >
                 <Sparkles className="size-4" />
-                {isGenerating ? "Generating..." : "Generate AI Draft"}
+                {isGenerating ? "Generating..." : "Generate Draft"}
               </Button>
               <p className="text-base text-slate-500">
                 Voice recordings auto-generate on stop, and manual edits can be regenerated here.
@@ -416,7 +416,7 @@ function findLabel(
 }
 
 function getErrorMessage(error: unknown) {
-  return error instanceof Error ? error.message : "AI note generation failed.";
+  return error instanceof Error ? error.message : "Draft generation failed.";
 }
 
 function getTodayDateInputValue() {

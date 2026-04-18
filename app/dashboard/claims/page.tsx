@@ -3,7 +3,6 @@ import { CircleAlert, DatabaseZap, ShieldAlert } from "lucide-react";
 
 import {
   ClaimChecker,
-  type ClaimSelectOption,
 } from "@/components/dashboard/claim-checker";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -19,12 +18,14 @@ import { loadClaimsWorkspace } from "@/lib/workspace-data";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Claims",
-  description: "Review recent claims and run the claim checker with participant and worker context in NDISReady.ai.",
+  description: "Review recent claims and check details with participant and worker context in NDISReady.ai.",
 };
 
 export default async function ClaimsPage() {
   const claimsData = await loadClaimsWorkspace();
   const claims = claimsData.data.claims;
+  const participantCount = claimsData.data.participantOptions.length;
+  const workerCount = claimsData.data.workerOptions.length;
 
   return (
     <div className="space-y-8">
@@ -32,11 +33,10 @@ export default async function ClaimsPage() {
         <div className="space-y-2">
           <Badge className="w-fit">Claims</Badge>
           <h1 className="text-3xl font-semibold tracking-tight text-slate-950">
-            Claim checker
+            Claim review
           </h1>
           <p className="max-w-2xl text-base leading-7 text-slate-600">
-            Review draft claims with participant and worker context, run Claude
-            validation, and surface warnings before the claim moves any further.
+            Review claims with participant and worker context and surface issues before submission.
           </p>
         </div>
 
@@ -61,41 +61,36 @@ export default async function ClaimsPage() {
           )}
           <p>
             {claimsData.mode === "demo"
-              ? "The claim workspace is using realistic sample records so the checker and claims list remain usable."
-              : "The claim workspace is using live participant, worker, and claims data from Supabase."}
+              ? "Workspace records are temporarily limited while the connection is restored."
+              : "Current participant, worker, and claim records are available for review."}
           </p>
         </div>
       </div>
 
       <Card className="border-white/70 bg-white/80">
         <CardHeader>
-          <CardTitle>Validation sources</CardTitle>
+          <CardTitle>Review context</CardTitle>
           <CardDescription>
-            The checker builds on the same saved participant and worker data as the rest of the workspace.
+            Claim review uses the same participant and worker records available across the workspace.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           <div className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4">
             <p className="font-semibold text-slate-900">Participant context</p>
             <p className="pt-2 text-base leading-7 text-slate-600">
-              {claimsData.mode === "demo"
-                ? "Demo participant records are available for the checker."
-                : `Loaded ${claimsData.data.participantOptions.length} participant option${claimsData.data.participantOptions.length === 1 ? "" : "s"} from Supabase.`}
+              {participantCount} participant record{participantCount === 1 ? "" : "s"} available for claim review.
             </p>
           </div>
 
           <div className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4">
             <p className="font-semibold text-slate-900">Worker context</p>
             <p className="pt-2 text-base leading-7 text-slate-600">
-              {claimsData.mode === "demo"
-                ? "Demo worker records are available for the checker."
-                : `Loaded ${claimsData.data.workerOptions.length} worker option${claimsData.data.workerOptions.length === 1 ? "" : "s"} from Supabase.`}
+              {workerCount} worker record{workerCount === 1 ? "" : "s"} available for claim review.
             </p>
           </div>
 
           <div className="rounded-3xl border border-primary/10 bg-primary/5 px-4 py-4 text-base leading-7 text-slate-700">
-            The checker calls `/api/check-claim`, sends the draft to Claude for validation,
-            and shows returned issues as warnings or errors.
+            Each review checks the claim details against the selected participant and worker information and highlights issues that need attention.
           </div>
         </CardContent>
       </Card>
@@ -109,7 +104,7 @@ export default async function ClaimsPage() {
         <CardHeader>
           <CardTitle>Recent claims</CardTitle>
           <CardDescription>
-            Recent claim context helps the demo feel complete even before a new review is run.
+            Recent claim activity currently available in the workspace.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">

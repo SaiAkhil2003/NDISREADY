@@ -42,7 +42,7 @@ export async function POST(request: Request) {
   try {
     body = (await request.json()) as CheckClaimRequestBody;
   } catch {
-    return NextResponse.json({ error: "Request body must be valid JSON." }, { status: 400 });
+    return NextResponse.json({ error: "The claim request could not be processed." }, { status: 400 });
   }
 
   const participantId = readOptionalString(body.participantId);
@@ -83,8 +83,7 @@ export async function POST(request: Request) {
     if (!resolvedParticipantName || !resolvedWorkerName) {
       return NextResponse.json(
         {
-          error:
-            "Participant and worker context are required. Select a saved record or provide a visible name from the form.",
+          error: "Select a participant and worker before checking the claim.",
         },
         { status: 400 },
       );
@@ -144,7 +143,7 @@ export async function POST(request: Request) {
       if (!anthropicResponse.ok) {
         throw new Error(
           anthropicPayload.error?.message ||
-            "Claude claim validation failed. Check the Anthropic configuration and try again.",
+            "Automated claim review is temporarily unavailable.",
         );
       }
 
@@ -164,8 +163,8 @@ export async function POST(request: Request) {
       console.warn("Claude validation unavailable for claim checker, falling back to local checks.", error);
       summaryOverride =
         localIssues.length > 0
-          ? `Claude validation is unavailable right now. ${localIssues.length} local issue${localIssues.length === 1 ? "" : "s"} were detected and should be reviewed.`
-          : "Claude validation is unavailable right now. No local claim issues were detected.";
+          ? `Automated review is temporarily unavailable. ${localIssues.length} issue${localIssues.length === 1 ? "" : "s"} still need attention.`
+          : "Automated review is temporarily unavailable. No issues were found by the built-in checks.";
     }
 
     const issues = mergeClaimIssues(localIssues, claudeIssues);
@@ -178,7 +177,7 @@ export async function POST(request: Request) {
     console.error("Failed to validate claim:", error);
 
     return NextResponse.json(
-      { error: "Claim validation failed. Check the claim checker configuration and try again." },
+      { error: "The claim review could not be completed right now. Please try again." },
       { status: 500 },
     );
   }

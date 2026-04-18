@@ -65,7 +65,7 @@ export default async function ParticipantDetailPage({ params }: ParticipantDetai
         <Card className="border-white/70 bg-white/80">
           <CardHeader>
             <CardTitle>Profile</CardTitle>
-            <CardDescription>Saved participant information from Supabase.</CardDescription>
+            <CardDescription>Participant information currently available in the workspace.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
             <InfoRow
@@ -81,7 +81,7 @@ export default async function ParticipantDetailPage({ params }: ParticipantDetai
             <InfoRow
               icon={CalendarDays}
               label="Date of birth"
-              value={participant.dateOfBirth ?? "Not provided"}
+              value={formatParticipantDate(participant.dateOfBirth)}
             />
           </CardContent>
         </Card>
@@ -89,7 +89,7 @@ export default async function ParticipantDetailPage({ params }: ParticipantDetai
         <Card className="border-white/70 bg-white/80">
           <CardHeader>
             <CardTitle>Goals</CardTitle>
-            <CardDescription>Goals are stored as structured data and rendered here.</CardDescription>
+            <CardDescription>Current support goals for this participant.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {participant.goals.length === 0 ? (
@@ -141,4 +141,22 @@ function InfoRow({ icon: Icon, label, value }: InfoRowProps) {
       </div>
     </div>
   );
+}
+
+function formatParticipantDate(value: string | null) {
+  if (!value) {
+    return "Not provided";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en-AU", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date);
 }

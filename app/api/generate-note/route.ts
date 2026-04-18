@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   try {
     body = (await request.json()) as GenerateNoteRequestBody;
   } catch {
-    return NextResponse.json({ error: "Request body must be valid JSON." }, { status: 400 });
+    return NextResponse.json({ error: "The note request could not be processed." }, { status: 400 });
   }
 
   const sourceText =
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
         : null;
 
   if (!sourceText) {
-    return NextResponse.json({ error: "Source text is required." }, { status: 400 });
+    return NextResponse.json({ error: "Source notes are required." }, { status: 400 });
   }
 
   if (!participantId) {
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
 
   if (workerId === null || noteType === null) {
     return NextResponse.json(
-      { error: "Invalid request body. Optional fields must be strings when provided." },
+      { error: "Some note details were not in the expected format." },
       { status: 400 },
     );
   }
@@ -76,8 +76,7 @@ export async function POST(request: Request) {
     if (!participant) {
       return NextResponse.json(
         {
-          error:
-            "The selected participant could not be found in the live or demo workspace.",
+          error: "The selected participant could not be found.",
         },
         { status: 404 },
       );
@@ -99,7 +98,7 @@ export async function POST(request: Request) {
     console.error("Failed to generate AI note:", error);
 
     return NextResponse.json(
-      { error: "AI note generation failed. Try again." },
+      { error: "A draft note could not be created. Please try again." },
       { status: 500 },
     );
   }

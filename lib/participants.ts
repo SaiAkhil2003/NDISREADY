@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceOrganisationId } from "@/lib/workspace";
+import { resolveDisplayName } from "@/lib/display-names";
 
 export const participantStatusOptions = [
   { value: "active", label: "Active" },
@@ -146,11 +147,17 @@ export async function createParticipant(input: CreateParticipantInput) {
 }
 
 function mapParticipantRow(participant: ParticipantsTableRow) {
-  return {
-    id: participant.id,
+  const displayName = resolveDisplayName({
     firstName: participant.first_name,
     lastName: participant.last_name,
     preferredName: participant.preferred_name,
+  });
+
+  return {
+    id: participant.id,
+    firstName: displayName.firstName,
+    lastName: displayName.lastName,
+    preferredName: displayName.preferredName,
     dateOfBirth: participant.date_of_birth,
     ndisNumber: participant.ndis_number,
     status: participant.status,

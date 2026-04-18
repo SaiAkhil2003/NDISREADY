@@ -1,3 +1,5 @@
+import { formatDisplayParticipantName } from "@/lib/display-names";
+
 export const noteTypeOptions = [
   { value: "case_note", label: "Case note", detail: "General participant update" },
   { value: "progress_update", label: "Progress update", detail: "Goal or support progress" },
@@ -42,9 +44,7 @@ export function formatParticipantName(input: {
   lastName: string;
   preferredName?: string | null;
 }) {
-  return input.preferredName?.trim()
-    ? `${input.preferredName} (${input.firstName} ${input.lastName})`
-    : `${input.firstName} ${input.lastName}`;
+  return formatDisplayParticipantName(input);
 }
 
 export function buildRuleBasedNoteDraft({

@@ -138,7 +138,7 @@ export function NoteEditor({
     <Card className="w-full self-start border-slate-200 bg-slate-950 text-white xl:sticky xl:top-6">
       <CardHeader>
         <div className="flex flex-wrap items-center gap-3">
-          <CardTitle className="text-white">AI progress note</CardTitle>
+          <CardTitle className="text-white">Draft</CardTitle>
           <Badge
             variant={saveSuccess ? "default" : "secondary"}
             className={
@@ -157,7 +157,7 @@ export function NoteEditor({
           </Badge>
         </div>
         <CardDescription className="text-slate-300">
-          Review the generated draft, make any final edits, and use approval to save it.
+          Review the draft, make any final edits, and save the final note.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -185,7 +185,7 @@ export function NoteEditor({
           onChange={(event) => handleDraftChange(event.target.value)}
           disabled={!aiDraft.trim() || isGenerating || isSaving}
           className="min-h-[160px] border-white/10 bg-white/5 text-white placeholder:text-slate-500"
-          placeholder="The AI-generated progress note will appear here."
+          placeholder="The drafted progress note will appear here."
         />
 
         <div className="rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-base text-slate-300">
@@ -242,8 +242,8 @@ export function NoteEditor({
           </Button>
           <p className="text-base text-slate-400">
             {canSave
-              ? "Saving only happens from the approval action."
-              : "Draft editing is available, but live saving is currently disabled."}
+              ? "Save happens from the approval action once the draft is ready."
+              : "Draft editing is available, but saving is temporarily unavailable."}
           </p>
         </div>
       </CardContent>

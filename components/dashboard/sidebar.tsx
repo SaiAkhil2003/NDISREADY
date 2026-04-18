@@ -39,7 +39,7 @@ export function Sidebar() {
             </span>
             <span>
               <span className="block leading-5">{siteName}</span>
-              <span className="block text-sm font-medium text-slate-500">Public demo workspace</span>
+              <span className="block text-sm font-medium text-slate-500">Workspace navigation</span>
             </span>
           </Link>
 
@@ -100,7 +100,7 @@ export function Sidebar() {
             </nav>
 
             <div className="mt-auto rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 text-base text-slate-600">
-              Browse the demo without signing in, add sample records, and move between modules from the same sticky navigation.
+              Move between key modules from one navigation and keep day-to-day work in one place.
             </div>
           </aside>
         </div>
@@ -114,7 +114,7 @@ export function Sidebar() {
             </span>
             <span>
               <span className="block text-base font-semibold">{siteName}</span>
-              <span className="block text-sm text-slate-400">Public demo workspace</span>
+              <span className="block text-sm text-slate-400">Workspace navigation</span>
             </span>
           </Link>
         </div>
@@ -145,9 +145,9 @@ export function Sidebar() {
         <div className="border-t border-white/10 px-4 py-5">
           <div className="space-y-4 rounded-3xl bg-white/5 px-4 py-4">
             <div>
-              <p className="text-base font-semibold">Demo-ready workspace</p>
+              <p className="text-base font-semibold">Workspace</p>
               <p className="pt-2 text-base leading-7 text-slate-400">
-                Voice notes, participant tracking, workers, and claims all stay accessible without an auth wall.
+                Voice notes, participant tracking, workers, and claims stay connected across the same workspace.
               </p>
             </div>
           </div>

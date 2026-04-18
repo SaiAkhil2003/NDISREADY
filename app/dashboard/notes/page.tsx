@@ -18,7 +18,7 @@ import { loadNotesFeed } from "@/lib/workspace-data";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Notes",
-  description: "Browse, filter, and review AI-assisted support notes in the NDISReady.ai demo workspace.",
+  description: "Browse, filter, and review support notes in the NDISReady.ai workspace.",
 };
 
 type NotesPageProps = {
@@ -264,17 +264,18 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
                   <div className="min-w-0 space-y-3 rounded-3xl border border-white/70 bg-white px-4 py-4 text-base text-slate-600 lg:w-full lg:max-w-[18rem]">
                     <div>
                       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                        Source summary
+                        Support summary
                       </p>
                       <p className="pt-2 leading-6 text-slate-700">{getExcerpt(note.rawInput, 160)}</p>
                     </div>
                     <div>
                       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                        Saved fields
+                        Record status
                       </p>
                       <p className="pt-2 leading-6 text-slate-700">
-                        Raw input, AI draft, final note, goals addressed, and approval time are
-                        all stored for this note.
+                        {note.approvedAt
+                          ? "This note has been approved and added to the participant record."
+                          : "This note is saved and awaiting approval."}
                       </p>
                     </div>
                   </div>

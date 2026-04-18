@@ -177,7 +177,7 @@ export function VoiceRecorder({
             placeholder="Type the shift details, participant progress, incidents, or follow-up actions."
           />
           <p className="text-base leading-7 text-slate-500">
-            When you are ready, generate the AI draft from the typed transcript below.
+            When you are ready, generate a draft note from the typed transcript below.
           </p>
         </CardContent>
       </Card>

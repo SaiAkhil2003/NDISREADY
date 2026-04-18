@@ -17,12 +17,12 @@ export default function NotFound() {
                 {siteName}
               </p>
               <CardTitle className="text-4xl tracking-tight text-slate-950">
-                This page is not in the current demo.
+                Page not found
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <p className="max-w-2xl text-base leading-7 text-slate-600">
-                The route you opened does not exist or is not part of the active NDISReady.ai demo flow.
+                The page you opened does not exist or is no longer available.
               </p>
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Button asChild size="lg">

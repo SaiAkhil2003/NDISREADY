@@ -44,7 +44,7 @@ export function ClaimChecker({
   const [hasChecked, setHasChecked] = useState(false);
   const [apiError, setApiError] = useState("");
   const [resultSummary, setResultSummary] = useState(
-    "Enter claim details and run the checker to review warnings before submission.",
+    "Enter claim details and review them before submission.",
   );
   const [issues, setIssues] = useState<ClaimCheckIssue[]>([]);
   const canCheck = Boolean(
@@ -63,13 +63,13 @@ export function ClaimChecker({
     setHasChecked(false);
     setIssues([]);
     setApiError("");
-    setResultSummary("Claim details changed. Run the checker again to refresh warnings.");
+    setResultSummary("Claim details changed. Review them again to refresh the result.");
   }
 
   async function handleCheckClaim() {
     setIsChecking(true);
     setApiError("");
-    setResultSummary("Checking claim with Claude...");
+    setResultSummary("Checking claim...");
 
     try {
       const response = await fetch("/api/check-claim", {
@@ -95,7 +95,7 @@ export function ClaimChecker({
         | null;
 
       if (!response.ok || !payload) {
-        throw new Error(payload?.error || "Claim validation failed.");
+        throw new Error(payload?.error || "Claim review failed.");
       }
 
       setIssues(Array.isArray(payload.issues) ? payload.issues : []);
@@ -108,7 +108,7 @@ export function ClaimChecker({
     } catch (error) {
       setIssues([]);
       setApiError(getErrorMessage(error));
-      setResultSummary("Claim check failed. Resolve the issue and try again.");
+      setResultSummary("Claim review failed. Resolve the issue and try again.");
     } finally {
       setIsChecking(false);
     }
@@ -160,10 +160,10 @@ export function ClaimChecker({
       <section className="grid items-start gap-4 xl:grid-cols-[minmax(0,0.95fr)_minmax(20rem,1.05fr)]">
         <Card className="border-white/70 bg-white/80">
           <CardHeader>
-            <CardTitle>Draft claim</CardTitle>
+            <CardTitle>Claim details</CardTitle>
             <CardDescription>
-              Choose the participant and worker, add the claim details, and run the
-              checker before the claim is submitted anywhere else.
+              Choose the participant and worker, add the claim details, and review them
+              before the claim is submitted.
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-5">
@@ -320,10 +320,10 @@ export function ClaimChecker({
                 className="w-full md:w-auto"
               >
                 <Sparkles className="size-4" />
-                {isChecking ? "Checking claim..." : "Check claim"}
+                {isChecking ? "Checking details..." : "Check details"}
               </Button>
               <p className="text-base text-slate-500">
-                The draft is reviewed through `/api/check-claim` with Claude plus local checks.
+                The claim is reviewed against the selected participant, worker, and claim details.
               </p>
             </div>
           </CardContent>
@@ -351,7 +351,7 @@ export function ClaimChecker({
               </Badge>
             </div>
             <CardDescription className="text-slate-300">
-              Claude and the local checker return concrete issues for review before claim submission.
+              Review results appear here so issues can be addressed before claim submission.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -368,14 +368,14 @@ export function ClaimChecker({
 
             {!hasChecked && !apiError ? (
               <div className="rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-base text-slate-300">
-                Run the checker to surface warnings before the claim moves any further.
+                Check the details to surface issues before the claim moves any further.
               </div>
             ) : null}
 
             {hasChecked && issues.length === 0 && !apiError ? (
               <div className="flex items-start gap-3 rounded-3xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-4 text-base text-emerald-100">
                 <CheckCircle2 className="mt-0.5 size-4 shrink-0" />
-                <p>No claim issues are currently shown. Run the checker after editing the claim to refresh the result.</p>
+                <p>No claim issues are currently shown. Check the details again after editing the claim to refresh the result.</p>
               </div>
             ) : null}
 
@@ -420,7 +420,7 @@ export function ClaimChecker({
             ) : null}
 
             <div className="rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-base text-slate-300">
-              Invalid claims should surface warnings here before they move into any downstream claiming workflow.
+              Any issues found during review will appear here before the claim is submitted.
             </div>
           </CardContent>
         </Card>
@@ -438,7 +438,7 @@ function findOptionLabel(options: readonly ClaimSelectOption[], value: string) {
 }
 
 function getErrorMessage(error: unknown) {
-  return error instanceof Error ? error.message : "Claim validation failed.";
+  return error instanceof Error ? error.message : "Claim review failed.";
 }
 
 function getTodayDateValue() {

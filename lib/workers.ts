@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getWorkspaceOrganisationId } from "@/lib/workspace";
+import { resolveDisplayName } from "@/lib/display-names";
 
 export const workerRoleOptions = [
   { value: "support_worker", label: "Support Worker" },
@@ -138,10 +139,15 @@ export async function createWorker(input: CreateWorkerInput) {
 }
 
 function mapWorkerRow(worker: WorkersTableRow) {
-  return {
-    id: worker.id,
+  const displayName = resolveDisplayName({
     firstName: worker.first_name,
     lastName: worker.last_name,
+  });
+
+  return {
+    id: worker.id,
+    firstName: displayName.firstName,
+    lastName: displayName.lastName,
     email: worker.email,
     phone: worker.phone,
     role: worker.role,

@@ -22,7 +22,7 @@ export async function POST(request: Request) {
   try {
     body = (await request.json()) as SaveNoteRequestBody;
   } catch {
-    return NextResponse.json({ error: "Request body must be valid JSON." }, { status: 400 });
+    return NextResponse.json({ error: "The note request could not be processed." }, { status: 400 });
   }
 
   const sourceText = typeof body.sourceText === "string" ? body.sourceText.trim() : "";
@@ -45,14 +45,14 @@ export async function POST(request: Request) {
 
   if (!sourceText || !participantId || !aiDraft || !finalNote) {
     return NextResponse.json(
-      { error: "Source text, participant, AI draft, and final note are required." },
+      { error: "Source notes, participant, draft note, and approved note are required." },
       { status: 400 },
     );
   }
 
   if (workerId === null || noteType === null) {
     return NextResponse.json(
-      { error: "Invalid request body. Optional fields must be strings when provided." },
+      { error: "Some note details were not in the expected format." },
       { status: 400 },
     );
   }
@@ -66,8 +66,7 @@ export async function POST(request: Request) {
   if (!envStatus.ready) {
     return NextResponse.json(
       {
-        error:
-          "Live note saving is unavailable because the Supabase cloud environment variables are not configured for this deployment.",
+        error: "Note saving is temporarily unavailable in this workspace.",
       },
       { status: 503 },
     );
@@ -79,8 +78,7 @@ export async function POST(request: Request) {
     if (!participant) {
       return NextResponse.json(
         {
-          error:
-            "The selected participant could not be found in the live workspace.",
+          error: "The selected participant could not be found.",
         },
         { status: 404 },
       );
@@ -111,7 +109,7 @@ export async function POST(request: Request) {
     console.error("Failed to save note:", error);
 
     return NextResponse.json(
-      { error: "Note could not be saved. Check the Supabase configuration and try again." },
+      { error: "The note could not be saved right now. Please try again." },
       { status: 500 },
     );
   }

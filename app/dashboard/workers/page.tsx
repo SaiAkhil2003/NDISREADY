@@ -30,7 +30,7 @@ import { loadWorkersDirectory } from "@/lib/workspace-data";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Workers",
-  description: "View and add NDIS support workers in the NDISReady.ai public demo workspace.",
+  description: "View and add NDIS support workers in the NDISReady.ai workspace.",
 };
 
 type WorkersPageProps = {
@@ -63,8 +63,7 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
             Worker management
           </h1>
           <p className="max-w-2xl text-base leading-7 text-slate-600">
-            Add workers to the shared roster, store them in Supabase, and review the
-            saved list from the dashboard.
+            Add workers to the shared roster and review the current team from the dashboard.
           </p>
         </div>
 
@@ -124,7 +123,7 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
           <CardHeader>
             <CardTitle>Add worker</CardTitle>
             <CardDescription>
-              Save a new worker directly to Supabase and refresh the roster on submit.
+              Add a worker to the roster and keep the team list up to date.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -222,7 +221,7 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
           <CardHeader>
             <CardTitle>Saved workers</CardTitle>
             <CardDescription>
-              Workers are listed from Supabase in reverse creation order.
+              Workers are listed with the most recently added records first.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -311,7 +310,7 @@ function getStatusMessage(params: Record<string, string | string[] | undefined>)
   if (params.created === "1") {
     return {
       tone: "success" as const,
-      message: "Worker added and saved to Supabase. The roster has been refreshed.",
+      message: "Worker added successfully. The roster has been refreshed.",
     };
   }
 
@@ -332,7 +331,7 @@ function getStatusMessage(params: Record<string, string | string[] | undefined>)
   if (params.error === "save") {
     return {
       tone: "error" as const,
-      message: "The worker could not be saved to Supabase. Check the server configuration and try again.",
+      message: "The worker could not be saved right now. Please try again.",
     };
   }
 

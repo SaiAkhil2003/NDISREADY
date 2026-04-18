@@ -19,11 +19,13 @@ import { loadNoteComposerContext } from "@/lib/workspace-data";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "New Note",
-  description: "Capture a voice or typed support update, generate an AI draft, and approve it into NDISReady.ai.",
+  description: "Capture a voice or typed support update, generate a structured draft, and approve it into NDISReady.ai.",
 };
 
 export default async function NewNotePage() {
   const composerData = await loadNoteComposerContext();
+  const participantCount = composerData.data.participantOptions.length;
+  const workerCount = composerData.data.workerOptions.length;
 
   return (
     <div className="space-y-8">
@@ -31,11 +33,11 @@ export default async function NewNotePage() {
         <div className="space-y-2">
           <Badge className="w-fit">Notes</Badge>
           <h1 className="text-3xl font-semibold tracking-tight text-slate-950">
-            New note draft
+            New note
           </h1>
           <p className="max-w-2xl text-base leading-7 text-slate-600">
-            Capture source notes, assign them to a participant and worker, generate
-            a structured note draft, and approve the final text.
+            Capture support details, assign them to a participant and worker, generate
+            a structured draft, and approve the completed note.
           </p>
         </div>
 
@@ -62,40 +64,36 @@ export default async function NewNotePage() {
           )}
           <p>
             {composerData.mode === "demo"
-              ? "Sample participant and worker records are active so the notes flow stays usable for demos."
-              : "Live participant and worker records are being used to populate the note dropdowns."}
+              ? "Workspace records are temporarily limited while the connection is restored."
+              : "Current participant and worker records are available for note drafting."}
           </p>
         </div>
       </div>
 
       <Card className="border-white/70 bg-white/80">
         <CardHeader>
-          <CardTitle>Data sources</CardTitle>
+          <CardTitle>Workspace context</CardTitle>
           <CardDescription>
-            The note composer uses the same saved records and note routes as the rest of the workspace.
+            The note composer uses the same participant and worker records as the rest of the workspace.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           <div className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4">
             <p className="font-semibold text-slate-900">Participant dropdown</p>
             <p className="pt-2 text-base leading-7 text-slate-600">
-              {composerData.mode === "demo"
-                ? "Demo participant options are available for voice and typed note capture."
-                : `Loaded ${composerData.data.participantOptions.length} live participant option${composerData.data.participantOptions.length === 1 ? "" : "s"} from Supabase.`}
+              {participantCount} participant record{participantCount === 1 ? "" : "s"} available for note drafting.
             </p>
           </div>
 
           <div className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4">
             <p className="font-semibold text-slate-900">Worker dropdown</p>
             <p className="pt-2 text-base leading-7 text-slate-600">
-              {composerData.mode === "demo"
-                ? "Demo worker options are available so the note draft flow still feels complete."
-                : `Loaded ${composerData.data.workerOptions.length} live worker option${composerData.data.workerOptions.length === 1 ? "" : "s"} from Supabase.`}
+              {workerCount} worker record{workerCount === 1 ? "" : "s"} available for note drafting.
             </p>
           </div>
 
           <div className="rounded-3xl border border-primary/10 bg-primary/5 px-4 py-4 text-base leading-7 text-slate-700">
-            Generate calls `/api/generate-note`, and approval saves the note through the existing persistence flow.
+            Each draft uses the selected participant, worker, note type, and support details.
           </div>
         </CardContent>
       </Card>
@@ -107,7 +105,7 @@ export default async function NewNotePage() {
         saveUnavailableMessage={
           composerData.canPersist
             ? undefined
-            : "Approve & Save will be enabled again once the live Supabase connection is available for this deployment."
+            : "Approve and save will be available again once the workspace connection is restored."
         }
       />
     </div>

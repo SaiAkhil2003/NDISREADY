@@ -55,8 +55,7 @@ export default async function ParticipantsPage({ searchParams }: ParticipantsPag
             Participant management
           </h1>
           <p className="max-w-2xl text-base leading-7 text-slate-600">
-            Create participants, store goals as JSON in Supabase, and review the saved list
-            with direct links into each participant profile.
+            Create participant records, capture their goals, and review each profile in one place.
           </p>
         </div>
 
@@ -116,7 +115,7 @@ export default async function ParticipantsPage({ searchParams }: ParticipantsPag
           <CardHeader>
             <CardTitle>Add participant</CardTitle>
             <CardDescription>
-              Save a participant to Supabase and capture support goals as JSON.
+              Add a participant record and capture the goals that guide support.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -200,7 +199,7 @@ export default async function ParticipantsPage({ searchParams }: ParticipantsPag
                   placeholder={"Enter one goal per line\nIncrease independent travel confidence\nBuild a weekly community routine"}
                 />
                 <p className="text-xs leading-5 text-slate-500">
-                  Each non-empty line is stored as a JSON goal entry.
+                  Enter one goal per line.
                 </p>
               </label>
 
@@ -219,7 +218,7 @@ export default async function ParticipantsPage({ searchParams }: ParticipantsPag
           <CardHeader>
             <CardTitle>Saved participants</CardTitle>
             <CardDescription>
-              Participants are listed from Supabase in reverse creation order.
+              Participants are listed with the most recently added records first.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -251,21 +250,34 @@ export default async function ParticipantsPage({ searchParams }: ParticipantsPag
                         {participant.ndisNumber ? (
                           <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600">
                             <Hash className="size-3.5" />
-                            {participant.ndisNumber}
+                            NDIS {participant.ndisNumber}
                           </span>
                         ) : null}
                         <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600">
                           <Goal className="size-3.5" />
-                          {participant.goals.length} goals
+                          {participant.goals.length} goal{participant.goals.length === 1 ? "" : "s"} recorded
                         </span>
                       </div>
 
                       {participant.goals.length > 0 ? (
                         <div className="rounded-2xl border border-white/80 bg-white px-4 py-3 text-base text-slate-600">
-                          <p className="font-medium text-slate-700">Goals JSON preview</p>
-                          <pre className="mt-2 whitespace-pre-wrap break-all font-mono text-xs leading-6 text-slate-500">
-                            {JSON.stringify(participant.goals, null, 2)}
-                          </pre>
+                          <p className="font-medium text-slate-700">Goals</p>
+                          <ul className="mt-2 space-y-2">
+                            {participant.goals.slice(0, 3).map((goal, index) => (
+                              <li
+                                key={`${participant.id}-${goal.title}-${index}`}
+                                className="flex items-start gap-2 leading-6 text-slate-600"
+                              >
+                                <span className="mt-2 size-1.5 rounded-full bg-primary/60" />
+                                <span>{goal.title}</span>
+                              </li>
+                            ))}
+                          </ul>
+                          {participant.goals.length > 3 ? (
+                            <p className="mt-3 text-sm text-slate-500">
+                              +{participant.goals.length - 3} more goal{participant.goals.length - 3 === 1 ? "" : "s"}
+                            </p>
+                          ) : null}
                         </div>
                       ) : null}
                     </div>
@@ -275,7 +287,7 @@ export default async function ParticipantsPage({ searchParams }: ParticipantsPag
                       className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base font-medium text-slate-700 transition hover:border-slate-300 hover:text-slate-950 lg:w-auto"
                     >
                       <Eye className="size-4" />
-                      View detail
+                      View profile
                     </Link>
                   </div>
                 </div>
@@ -321,7 +333,7 @@ function getStatusMessage(
   if (params.error === "save") {
     return {
       tone: "error" as const,
-      message: "The participant could not be saved to Supabase. Check the server configuration and try again.",
+      message: "The participant could not be saved right now. Please try again.",
     };
   }
 
