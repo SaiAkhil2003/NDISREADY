@@ -25,9 +25,6 @@ type ClaimCheckerProps = {
   workerOptions: ClaimSelectOption[];
 };
 
-const initialClaimNotes =
-  "Worker completed community access support and recorded a brief travel check-in.";
-
 export function ClaimChecker({
   participantOptions,
   workerOptions,
@@ -35,11 +32,11 @@ export function ClaimChecker({
   const [participantId, setParticipantId] = useState("");
   const [workerId, setWorkerId] = useState("");
   const [claimDate, setClaimDate] = useState(getTodayDateValue());
-  const [amount, setAmount] = useState("185.00");
-  const [supportHours, setSupportHours] = useState("3");
+  const [amount, setAmount] = useState("");
+  const [supportHours, setSupportHours] = useState("");
   const [serviceCode, setServiceCode] = useState("");
   const [reference, setReference] = useState("");
-  const [claimNotes, setClaimNotes] = useState(initialClaimNotes);
+  const [claimNotes, setClaimNotes] = useState("");
   const [isChecking, setIsChecking] = useState(false);
   const [hasChecked, setHasChecked] = useState(false);
   const [apiError, setApiError] = useState("");
@@ -118,47 +115,47 @@ export function ClaimChecker({
   const totalWarnings = issues.filter((issue) => issue.severity === "warning").length;
 
   return (
-    <div className="space-y-6">
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <Card className="border-white/70 bg-white/80">
-          <CardHeader className="flex flex-col gap-4 space-y-0 md:flex-row md:items-start md:justify-between">
+    <div className="space-y-5 md:space-y-6">
+      <section className="dashboard-summary-grid">
+        <Card className="dashboard-stat-surface">
+          <CardHeader className="flex flex-col gap-3 space-y-0 p-3.5 md:flex-row md:items-start md:justify-between md:p-4">
             <div>
-              <CardDescription>Participants</CardDescription>
-              <CardTitle className="pt-2 text-3xl">{participantOptions.length}</CardTitle>
+              <CardDescription className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">Participants</CardDescription>
+              <CardTitle className="pt-1.5 text-[1.6rem] leading-none">{participantOptions.length}</CardTitle>
             </div>
-            <div className="rounded-2xl bg-slate-100 p-3 text-slate-700">
-              <UserRound className="size-5" />
+            <div className="rounded-[10px] bg-slate-100 p-2.5 text-slate-700">
+              <UserRound className="size-4.5" />
             </div>
           </CardHeader>
         </Card>
 
-        <Card className="border-white/70 bg-white/80">
-          <CardHeader className="flex flex-col gap-4 space-y-0 md:flex-row md:items-start md:justify-between">
+        <Card className="dashboard-stat-surface">
+          <CardHeader className="flex flex-col gap-3 space-y-0 p-3.5 md:flex-row md:items-start md:justify-between md:p-4">
             <div>
-              <CardDescription>Workers</CardDescription>
-              <CardTitle className="pt-2 text-3xl">{workerOptions.length}</CardTitle>
+              <CardDescription className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">Workers</CardDescription>
+              <CardTitle className="pt-1.5 text-[1.6rem] leading-none">{workerOptions.length}</CardTitle>
             </div>
-            <div className="rounded-2xl bg-slate-100 p-3 text-slate-700">
-              <Users className="size-5" />
+            <div className="rounded-[10px] bg-slate-100 p-2.5 text-slate-700">
+              <Users className="size-4.5" />
             </div>
           </CardHeader>
         </Card>
 
-        <Card className="border-white/70 bg-white/80">
-          <CardHeader className="flex flex-col gap-4 space-y-0 md:flex-row md:items-start md:justify-between">
+        <Card className="dashboard-stat-surface">
+          <CardHeader className="flex flex-col gap-3 space-y-0 p-3.5 md:flex-row md:items-start md:justify-between md:p-4">
             <div>
-              <CardDescription>Issues found</CardDescription>
-              <CardTitle className="pt-2 text-3xl">{issues.length}</CardTitle>
+              <CardDescription className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">Issues found</CardDescription>
+              <CardTitle className="pt-1.5 text-[1.6rem] leading-none">{issues.length}</CardTitle>
             </div>
-            <div className="rounded-2xl bg-slate-100 p-3 text-slate-700">
-              <ShieldAlert className="size-5" />
+            <div className="rounded-[10px] bg-slate-100 p-2.5 text-slate-700">
+              <ShieldAlert className="size-4.5" />
             </div>
           </CardHeader>
         </Card>
       </section>
 
-      <section className="grid items-start gap-4 xl:grid-cols-[minmax(0,0.95fr)_minmax(20rem,1.05fr)]">
-        <Card className="border-white/70 bg-white/80">
+      <section className="grid items-start gap-4 lg:grid-cols-[minmax(0,0.95fr)_minmax(19rem,1.05fr)]">
+        <Card className="dashboard-surface">
           <CardHeader>
             <CardTitle>Claim details</CardTitle>
             <CardDescription>
@@ -166,8 +163,8 @@ export function ClaimChecker({
               before the claim is submitted.
             </CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-5">
-            <div className="grid gap-3 md:grid-cols-3">
+          <CardContent className="grid gap-4 md:gap-5">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
               <div className="soft-panel px-4 py-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                   Participant
@@ -324,14 +321,14 @@ export function ClaimChecker({
                 <Sparkles className="size-4" />
                 {isChecking ? "Checking details..." : "Check details"}
               </Button>
-              <p className="text-base text-slate-500">
+              <p className="text-sm leading-5 text-slate-500 sm:text-base sm:leading-6">
                 The claim is reviewed against the selected participant, worker, and claim details.
               </p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="w-full self-start border-slate-200 bg-slate-950 text-white xl:sticky xl:top-6">
+        <Card className="w-full self-start border-slate-200 bg-slate-950 text-white md:!rounded-[18px] xl:sticky xl:top-4">
           <CardHeader>
             <div className="flex flex-wrap items-center gap-3">
               <CardTitle className="text-white">Claim review</CardTitle>
@@ -357,25 +354,25 @@ export function ClaimChecker({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-base text-slate-300">
+            <div className="rounded-3xl md:rounded-[18px] border border-white/10 bg-white/5 px-4 py-4 text-base text-slate-300">
               {resultSummary}
             </div>
 
             {apiError ? (
-              <div className="flex items-start gap-3 rounded-3xl border border-rose-500/30 bg-rose-500/10 px-4 py-4 text-base text-rose-100">
+              <div className="flex items-start gap-3 rounded-3xl md:rounded-[18px] border border-rose-500/30 bg-rose-500/10 px-4 py-4 text-base text-rose-100">
                 <CircleAlert className="mt-0.5 size-4 shrink-0" />
                 <p>{apiError}</p>
               </div>
             ) : null}
 
             {!hasChecked && !apiError ? (
-              <div className="rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-base text-slate-300">
+              <div className="rounded-3xl md:rounded-[18px] border border-white/10 bg-white/5 px-4 py-4 text-base text-slate-300">
                 Check the details to surface issues before the claim moves any further.
               </div>
             ) : null}
 
             {hasChecked && issues.length === 0 && !apiError ? (
-              <div className="flex items-start gap-3 rounded-3xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-4 text-base text-emerald-100">
+              <div className="flex items-start gap-3 rounded-3xl md:rounded-[18px] border border-emerald-500/30 bg-emerald-500/10 px-4 py-4 text-base text-emerald-100">
                 <CheckCircle2 className="mt-0.5 size-4 shrink-0" />
                 <p>No claim issues are currently shown. Check the details again after editing the claim to refresh the result.</p>
               </div>
@@ -386,7 +383,7 @@ export function ClaimChecker({
                 {issues.map((issue, index) => (
                   <div
                     key={`${issue.field ?? "general"}-${issue.title}-${index}`}
-                    className={`rounded-3xl border px-4 py-4 text-base ${
+                    className={`rounded-3xl md:rounded-[18px] border px-4 py-4 text-base ${
                       issue.severity === "error"
                         ? "border-rose-500/30 bg-rose-500/10 text-rose-100"
                         : "border-amber-500/30 bg-amber-500/10 text-amber-100"
@@ -421,7 +418,7 @@ export function ClaimChecker({
               </div>
             ) : null}
 
-            <div className="rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-base text-slate-300">
+            <div className="rounded-3xl md:rounded-[18px] border border-white/10 bg-white/5 px-4 py-4 text-base text-slate-300">
               Any issues found during review will appear here before the claim is submitted.
             </div>
           </CardContent>

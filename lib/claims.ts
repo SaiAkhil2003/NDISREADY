@@ -271,7 +271,7 @@ export function createLocalClaimIssues(input: LocalClaimIssueInput) {
     issues.push({
       severity: "warning",
       title: "Missing reference",
-      detail: "Add a reference or internal identifier so the claim can be traced later.",
+      detail: "Add a reference number so the claim can be traced later.",
       field: "reference",
     });
   }

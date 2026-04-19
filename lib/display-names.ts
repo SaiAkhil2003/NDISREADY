@@ -4,35 +4,13 @@ type PersonNameInput = {
   preferredName?: string | null;
 };
 
-type PersonNameOverride = {
-  matchParts: readonly string[];
-  firstName: string;
-  lastName: string;
-  preferredName?: string | null;
-};
-
-const personNameOverrides: readonly PersonNameOverride[] = [
-  {
-    matchParts: ["sai", "raju", "kantimahanthi"],
-    firstName: "Aiden",
-    lastName: "Carter",
-    preferredName: "Aiden",
-  },
-] as const;
-
 export function resolveDisplayName(input: PersonNameInput) {
-  const fullNameParts = normaliseName(`${input.firstName} ${input.lastName}`).split(" ");
-  const override = personNameOverrides.find((entry) =>
-    entry.matchParts.length === fullNameParts.length &&
-    entry.matchParts.every((part, index) => part === fullNameParts[index]),
-  );
-
-  const firstName = override?.firstName ?? input.firstName;
-  const lastName = override?.lastName ?? input.lastName;
+  const firstName = input.firstName.trim();
+  const lastName = input.lastName.trim();
   const preferredName =
     typeof input.preferredName === "string" && input.preferredName.trim()
-      ? (override?.preferredName ?? input.preferredName)
-      : (override?.preferredName ?? input.preferredName ?? null);
+      ? input.preferredName.trim()
+      : null;
 
   return {
     firstName,
@@ -52,8 +30,4 @@ export function formatDisplayParticipantName(input: PersonNameInput) {
   return resolved.preferredName?.trim()
     ? `${resolved.preferredName} (${resolved.fullName})`
     : resolved.fullName;
-}
-
-function normaliseName(value: string) {
-  return value.replace(/\s+/g, " ").trim().toLowerCase();
 }

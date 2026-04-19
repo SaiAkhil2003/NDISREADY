@@ -55,22 +55,219 @@
 
 @layer components {
   .page-shell {
-    @apply max-w-full overflow-hidden rounded-[26px] border border-white/70 bg-white/80 shadow-panel backdrop-blur-xl;
+    @apply min-h-screen max-w-full overflow-hidden border backdrop-blur-xl;
+    border-radius: 22px;
+    border-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 26px 72px -52px rgba(15, 23, 42, 0.4);
   }
 
   .dashboard-main {
-    @apply min-w-0 flex-1 overflow-x-clip bg-gradient-to-b from-white/80 via-white/60 to-white/50 p-4 pb-10 md:p-6 md:pb-6 lg:p-8 lg:pb-8;
+    @apply min-w-0 flex-1 overflow-x-clip bg-gradient-to-b from-white/80 via-white/60 to-white/50 md:overflow-y-auto md:overscroll-contain;
+  }
+
+  .dashboard-overview-grid {
+    @apply grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-4;
+  }
+
+  .dashboard-summary-grid {
+    @apply grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3;
+  }
+
+  .dashboard-context-grid {
+    @apply grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3;
+  }
+
+  .dashboard-detail-grid {
+    @apply grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6;
+  }
+
+  .dashboard-form-grid {
+    @apply grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6;
+  }
+
+  .dashboard-page {
+    @apply space-y-4 md:space-y-6;
+  }
+
+  .dashboard-page-header {
+    @apply flex flex-col gap-3 md:gap-2.5 lg:flex-row lg:items-start lg:justify-between;
+  }
+
+  .dashboard-page-heading {
+    @apply space-y-1 md:space-y-1.5;
+  }
+
+  .dashboard-page-title {
+    @apply text-[1.7rem] font-semibold tracking-tight text-slate-950 sm:text-3xl xl:text-[2rem];
+  }
+
+  .dashboard-page-copy {
+    @apply max-w-3xl text-[13px] leading-5 text-slate-600 sm:text-base sm:leading-6 md:max-w-2xl xl:max-w-[44rem];
+  }
+
+  .dashboard-surface {
+    @apply border bg-white;
+    border-radius: 14px !important;
+    border-color: rgba(226, 232, 240, 0.98);
+    box-shadow: 0 10px 20px -20px rgba(15, 23, 42, 0.22);
+  }
+
+  .dashboard-stat-surface {
+    @apply border bg-white;
+    border-radius: 12px !important;
+    border-color: rgba(226, 232, 240, 0.98);
+    box-shadow: 0 8px 16px -18px rgba(15, 23, 42, 0.2);
+  }
+
+  .dashboard-chip {
+    @apply inline-flex max-w-full items-center gap-2 self-start border px-2.5 py-1.5 text-[11px] font-semibold uppercase leading-4 tracking-[0.14em] sm:text-xs sm:tracking-[0.16em];
+    border-radius: 10px;
+    border-color: rgba(15, 118, 110, 0.12);
+    background: rgba(240, 253, 250, 0.96);
+    color: rgb(15, 118, 110);
+  }
+
+  .dashboard-notice {
+    @apply flex min-w-0 items-start gap-3 border px-3.5 py-3 text-sm leading-5 shadow-sm sm:px-4 sm:py-3.5 sm:text-base sm:leading-6;
+    border-radius: 14px;
+  }
+
+  .dashboard-subpanel {
+    @apply border px-3 py-3 text-sm leading-5 sm:px-4 sm:py-4 sm:text-base sm:leading-6;
+    border-radius: 12px;
+  }
+
+  .dashboard-empty-state {
+    @apply border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500 sm:px-6 sm:py-12 sm:text-base;
+    border-radius: 16px;
+  }
+
+  .dashboard-analytics-stack {
+    @apply space-y-3;
+  }
+
+  .dashboard-analytics-card {
+    @apply overflow-hidden border bg-white opacity-0;
+    border-radius: 14px !important;
+    border-color: rgba(226, 232, 240, 0.98);
+    box-shadow: 0 14px 30px -24px rgba(15, 23, 42, 0.22);
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease,
+      border-color 180ms ease;
+    animation: dashboard-fade-up 620ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .dashboard-analytics-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(148, 163, 184, 0.5);
+    box-shadow: 0 18px 36px -26px rgba(15, 23, 42, 0.28);
+  }
+
+  .dashboard-chart-bar {
+    transform-origin: center bottom;
+    transform: scaleY(0);
+    opacity: 0.78;
+    animation: dashboard-bar-rise 720ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .dashboard-chart-progress {
+    transform-origin: left center;
+    transform: scaleX(0);
+    animation: dashboard-progress-grow 720ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .dashboard-chart-segment {
+    opacity: 0;
+    animation: dashboard-segment-fade 700ms ease-out forwards;
   }
 
   .field-control {
-    @apply min-h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-base leading-6 text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10;
+    @apply min-h-12 w-full border border-slate-200 bg-white px-3.5 text-base leading-6 text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10 sm:px-4;
+    border-radius: 16px;
   }
 
   .field-textarea {
-    @apply min-h-[120px] w-full rounded-[22px] border border-slate-200 bg-white px-4 py-3 text-base leading-6 text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10;
+    @apply min-h-[120px] w-full border border-slate-200 bg-white px-3.5 py-3 text-base leading-6 text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10 sm:px-4;
+    border-radius: 16px;
   }
 
   .soft-panel {
-    @apply max-w-full rounded-[22px] border border-slate-200 bg-slate-50;
+    @apply max-w-full border border-slate-200 bg-slate-50;
+    border-radius: 14px;
+  }
+}
+
+@keyframes dashboard-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dashboard-bar-rise {
+  from {
+    opacity: 0.4;
+    transform: scaleY(0);
+  }
+
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes dashboard-progress-grow {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes dashboard-segment-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (min-width: 768px) {
+  body {
+    background-color: #f3f6fa;
+    background-image: none;
+  }
+
+  .page-shell {
+    border-radius: 0;
+    border-color: transparent;
+    background-color: transparent;
+    box-shadow: none;
+  }
+
+  .dashboard-main {
+    background: linear-gradient(180deg, rgba(246, 248, 251, 0.98) 0%, rgba(241, 245, 249, 1) 100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-analytics-card,
+  .dashboard-chart-bar,
+  .dashboard-chart-progress,
+  .dashboard-chart-segment {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

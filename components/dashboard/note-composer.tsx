@@ -184,47 +184,47 @@ export function NoteComposer({
   }
 
   return (
-    <div className="space-y-6">
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <Card className="border-white/70 bg-white/80">
-          <CardHeader className="flex flex-col gap-4 space-y-0 md:flex-row md:items-start md:justify-between">
+    <div className="space-y-5 md:space-y-6">
+      <section className="dashboard-summary-grid">
+        <Card className="dashboard-stat-surface">
+          <CardHeader className="flex flex-col gap-3 space-y-0 p-3.5 md:flex-row md:items-start md:justify-between md:p-4">
             <div>
-              <CardDescription>Participants</CardDescription>
-              <CardTitle className="pt-2 text-3xl">{participantOptions.length}</CardTitle>
+              <CardDescription className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">Participants</CardDescription>
+              <CardTitle className="pt-1.5 text-[1.6rem] leading-none">{participantOptions.length}</CardTitle>
             </div>
-            <div className="rounded-2xl bg-slate-100 p-3 text-slate-700">
-              <UserRound className="size-5" />
+            <div className="rounded-[10px] bg-slate-100 p-2.5 text-slate-700">
+              <UserRound className="size-4.5" />
             </div>
           </CardHeader>
         </Card>
 
-        <Card className="border-white/70 bg-white/80">
-          <CardHeader className="flex flex-col gap-4 space-y-0 md:flex-row md:items-start md:justify-between">
+        <Card className="dashboard-stat-surface">
+          <CardHeader className="flex flex-col gap-3 space-y-0 p-3.5 md:flex-row md:items-start md:justify-between md:p-4">
             <div>
-              <CardDescription>Workers</CardDescription>
-              <CardTitle className="pt-2 text-3xl">{workerOptions.length}</CardTitle>
+              <CardDescription className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">Workers</CardDescription>
+              <CardTitle className="pt-1.5 text-[1.6rem] leading-none">{workerOptions.length}</CardTitle>
             </div>
-            <div className="rounded-2xl bg-slate-100 p-3 text-slate-700">
-              <Users className="size-5" />
+            <div className="rounded-[10px] bg-slate-100 p-2.5 text-slate-700">
+              <Users className="size-4.5" />
             </div>
           </CardHeader>
         </Card>
 
-        <Card className="border-white/70 bg-white/80">
-          <CardHeader className="flex flex-col gap-4 space-y-0 md:flex-row md:items-start md:justify-between">
+        <Card className="dashboard-stat-surface">
+          <CardHeader className="flex flex-col gap-3 space-y-0 p-3.5 md:flex-row md:items-start md:justify-between md:p-4">
             <div>
-              <CardDescription>Draft status</CardDescription>
-              <CardTitle className="pt-2 text-3xl">{formatDraftState(draftState)}</CardTitle>
+              <CardDescription className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">Draft status</CardDescription>
+              <CardTitle className="pt-1.5 text-[1.6rem] leading-none">{formatDraftState(draftState)}</CardTitle>
             </div>
-            <div className="rounded-2xl bg-slate-100 p-3 text-slate-700">
-              <ClipboardCheck className="size-5" />
+            <div className="rounded-[10px] bg-slate-100 p-2.5 text-slate-700">
+              <ClipboardCheck className="size-4.5" />
             </div>
           </CardHeader>
         </Card>
       </section>
 
-      <section className="grid items-start gap-4 xl:grid-cols-[minmax(0,0.95fr)_minmax(20rem,1.05fr)]">
-        <Card className="border-white/70 bg-white/80">
+      <section className="grid items-start gap-4 lg:grid-cols-[minmax(0,0.95fr)_minmax(19rem,1.05fr)]">
+        <Card className="dashboard-surface">
           <CardHeader>
             <CardTitle>Capture and structure</CardTitle>
             <CardDescription>
@@ -232,8 +232,8 @@ export function NoteComposer({
               into a clear draft note.
             </CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-5">
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <CardContent className="grid gap-4 md:gap-5">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
               <div className="soft-panel px-4 py-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                   Participant
@@ -268,7 +268,7 @@ export function NoteComposer({
               </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <div className="dashboard-form-grid xl:grid-cols-4">
               <label className="space-y-2 text-sm">
                 <span className="font-medium text-slate-700">Participant</span>
                 <select
@@ -357,7 +357,7 @@ export function NoteComposer({
                 <Sparkles className="size-4" />
                 {isGenerating ? "Generating..." : "Generate Draft"}
               </Button>
-              <p className="text-base text-slate-500">
+              <p className="text-sm leading-5 text-slate-500 sm:text-base sm:leading-6">
                 Voice recordings auto-generate on stop, and manual edits can be regenerated here.
               </p>
             </div>
