@@ -59,6 +59,22 @@ export function formatParticipantStatus(value: string) {
   return participantStatusOptions.find((option) => option.value === value)?.label ?? formatLabel(value);
 }
 
+export function formatParticipantNdisNumber(value: string | null | undefined) {
+  const trimmedValue = value?.trim();
+
+  if (!trimmedValue) {
+    return null;
+  }
+
+  const digitsOnly = trimmedValue.replace(/\s+/g, "");
+
+  if (/^\d{9}$/.test(digitsOnly)) {
+    return digitsOnly.replace(/(\d{3})(?=\d)/g, "$1 ").trim();
+  }
+
+  return trimmedValue;
+}
+
 export function parseParticipantGoals(value: string) {
   return value
     .split("\n")
@@ -167,23 +183,43 @@ function mapParticipantRow(participant: ParticipantsTableRow) {
 }
 
 function normaliseGoals(value: unknown): ParticipantGoal[] {
-  if (!Array.isArray(value)) {
-    return [];
+  if (typeof value === "string") {
+    const trimmedValue = value.trim();
+
+    if (!trimmedValue) {
+      return [];
+    }
+
+    try {
+      return normaliseGoals(JSON.parse(trimmedValue));
+    } catch {
+      return trimmedValue
+        .split("\n")
+        .map((goal) => goal.trim())
+        .filter(Boolean)
+        .map((goal) => ({ title: goal }));
+    }
   }
 
-  return value.flatMap((goal) => {
-    if (typeof goal === "string") {
-      const title = goal.trim();
-      return title ? [{ title }] : [];
-    }
+  if (Array.isArray(value)) {
+    return value.flatMap((goal) => normaliseGoalEntry(goal));
+  }
 
-    if (typeof goal === "object" && goal !== null && "title" in goal) {
-      const title = typeof goal.title === "string" ? goal.title.trim() : "";
-      return title ? [{ title }] : [];
-    }
+  return normaliseGoalEntry(value);
+}
 
-    return [];
-  });
+function normaliseGoalEntry(goal: unknown): ParticipantGoal[] {
+  if (typeof goal === "string") {
+    const title = goal.trim();
+    return title ? [{ title }] : [];
+  }
+
+  if (typeof goal === "object" && goal !== null && "title" in goal) {
+    const title = typeof goal.title === "string" ? goal.title.trim() : "";
+    return title ? [{ title }] : [];
+  }
+
+  return [];
 }
 
 function formatLabel(value: string) {

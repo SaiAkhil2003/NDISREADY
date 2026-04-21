@@ -13,8 +13,6 @@ import {
   CartesianGrid,
   Cell,
   Legend,
-  Line,
-  LineChart,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -55,7 +53,6 @@ type OverviewAnalyticsGridProps = {
   notesActivity: TimelineDatum[];
   notesTrend: TrendSummary;
   claimsDistribution: DistributionDatum[];
-  activityTimeline: TimelineDatum[];
 };
 
 const chartMargin = { top: 4, right: 4, left: -18, bottom: 0 };
@@ -66,7 +63,6 @@ export function OverviewAnalyticsGrid({
   notesActivity,
   notesTrend,
   claimsDistribution,
-  activityTimeline,
 }: OverviewAnalyticsGridProps) {
   return (
     <section className="space-y-4 md:space-y-6">
@@ -154,7 +150,7 @@ export function OverviewAnalyticsGrid({
 
         <AnalyticsChartCard
           title="Notes activity"
-          description="Saved note volume across the last seven days."
+          description="Approved note volume across the last seven days."
           icon={ListTodo}
           delay={160}
           badge={notesTrend.label}
@@ -223,47 +219,6 @@ export function OverviewAnalyticsGrid({
             </ChartWrap>
             <LegendPanel data={claimsDistribution} totalLabel="Claims" />
           </div>
-        </AnalyticsChartCard>
-
-        <AnalyticsChartCard
-          title="Activity over time"
-          description="Combined record creation across the workspace."
-          icon={Activity}
-          delay={320}
-          className="xl:col-span-2"
-        >
-          <ChartWrap heightClassName="h-[188px] min-[390px]:h-[206px] sm:h-[240px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={activityTimeline} margin={{ top: 8, right: 12, left: -18, bottom: 0 }}>
-                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis
-                  dataKey="label"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: "#64748b", fontSize: 12 }}
-                />
-                <YAxis
-                  allowDecimals={false}
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: "#64748b", fontSize: 12 }}
-                  width={30}
-                />
-                <Tooltip content={<ChartTooltip suffix="records" />} />
-                <Line
-                  type="monotone"
-                  dataKey="value"
-                  name="Workspace activity"
-                  stroke="#0284c7"
-                  strokeWidth={3}
-                  dot={{ r: 4, fill: "#0284c7", stroke: "#ffffff", strokeWidth: 2 }}
-                  activeDot={{ r: 5, fill: "#0284c7", stroke: "#ffffff", strokeWidth: 2 }}
-                  isAnimationActive
-                  animationDuration={950}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </ChartWrap>
         </AnalyticsChartCard>
       </div>
     </section>

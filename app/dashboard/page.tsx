@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Activity, CalendarDays, CircleAlert, CircleCheckBig, ListTodo, Users } from "lucide-react";
+import { Activity, CircleAlert, CircleCheckBig, ListTodo, Users } from "lucide-react";
 
 import { OverviewAnalyticsGrid } from "@/components/dashboard/overview-analytics-grid";
 import { Button } from "@/components/ui/button";
@@ -50,6 +50,7 @@ export default async function DashboardPage() {
   const participants = snapshot.data.participants;
   const notes = snapshot.data.noteSummaries;
   const claims = snapshot.data.claims;
+  const approvedNoteDates = notes.flatMap((note) => (note.approvedAt ? [note.approvedAt] : []));
 
   const activeWorkers = workers.filter((worker) => worker.status === "active").length;
   const participantsWithGoals = participants.filter((participant) => participant.goals.length > 0).length;
@@ -136,16 +137,14 @@ export default async function DashboardPage() {
     { label: "Active", value: activeParticipants, color: "#0f766e" },
     { label: "Inactive", value: Math.max(participants.length - activeParticipants, 0), color: "#cbd5e1" },
   ];
-  const notesActivity = buildRecentDailySeries(notes.map((note) => note.createdAt), 7);
-  const notesTrend = buildTrendSummary(notes.map((note) => note.createdAt), 7, "notes created in the last 7 days");
+  const notesActivity = buildRecentDailySeries(approvedNoteDates, 7);
+  const notesTrend = buildTrendSummary(approvedNoteDates, 7, "notes approved in the last 7 days");
   const claimsDistribution = buildClaimsStatusDistribution(claims.map((claim) => claim.status));
-  const activityTimeline = buildRecentDailySeries(
-    [
-      ...workers.map((worker) => worker.createdAt),
-      ...participants.map((participant) => participant.createdAt),
-      ...notes.map((note) => note.createdAt),
-      ...claims.map((claim) => claim.createdAt),
-    ],
+  const latestApprovedNote = approvedNoteDates[0] ?? null;
+  const claimsAwaitingReview = claims.filter((claim) => ["draft", "pending"].includes(claim.status)).length;
+  const recentParticipants = countValuesWithinDays(
+    participants.map((participant) => participant.createdAt),
+    0,
     7,
   );
 
@@ -290,94 +289,56 @@ export default async function DashboardPage() {
             notesActivity={notesActivity}
             notesTrend={notesTrend}
             claimsDistribution={claimsDistribution}
-            activityTimeline={activityTimeline}
           />
         </div>
 
         <div className="min-w-0 space-y-4 md:space-y-6 lg:col-span-4">
           <Card className="dashboard-surface">
             <CardHeader className="space-y-1.5 p-3.5 pb-3 sm:p-4 sm:pb-3">
-              <CardTitle className="text-[1.15rem] font-semibold">Workspace health</CardTitle>
+              <CardTitle className="text-[1.15rem] font-semibold">Operational summary</CardTitle>
               <CardDescription className="text-[13px] leading-5 text-slate-600">
-                Compliance and coverage signals for the current workspace.
+                Current activity and review priorities across the workspace.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3 p-3.5 pt-0 sm:p-4 sm:pt-0">
-              <div className="rounded-[12px] border border-emerald-200 bg-emerald-50 px-3.5 py-3">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-800/80">
-                  Ready score
-                </p>
-                <p className="pt-1.5 text-[1.9rem] font-semibold leading-none tracking-tight text-emerald-950">
-                  {complianceScore}%
-                </p>
-                <p className="pt-1.5 text-[12px] leading-5 text-emerald-900/80">
-                  Updated from worker activity, participant goals, and approved notes.
-                </p>
-              </div>
-
-              {coverageCards.map((item) => (
-                <div
-                  key={`signal-${item.label}`}
-                  className="flex flex-col items-start gap-2.5 rounded-[12px] border border-slate-200 bg-slate-50 px-3.5 py-3 min-[390px]:flex-row min-[390px]:items-center min-[390px]:justify-between"
-                >
-                  <div className="min-w-0">
-                    <p className="text-[13px] font-semibold leading-5 text-slate-900">{item.label}</p>
-                    <p className="text-[11px] leading-4 text-slate-500">{item.detail}</p>
-                  </div>
-                  <p className="shrink-0 text-lg font-semibold text-slate-950">{item.value}</p>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          <Card className="dashboard-surface">
-            <CardHeader className="space-y-1.5 p-3.5 pb-3 sm:p-4 sm:pb-3">
-              <CardTitle className="text-[1.15rem] font-semibold">Operational rhythm</CardTitle>
-              <CardDescription className="text-[13px] leading-5 text-slate-600">
-                Weekly review cadence and current workspace summary.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3 p-3.5 pt-0 sm:p-4 sm:pt-0">
-              <div className="flex items-start gap-3 rounded-[12px] border border-slate-200 bg-slate-50 px-3.5 py-3">
-                <div className="rounded-[10px] bg-primary/10 p-2 text-primary">
-                  <CalendarDays className="size-4" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[13px] font-semibold text-slate-900">Roster review every Monday</p>
-                  <p className="pt-1 text-[12px] leading-5 text-slate-600">
-                    Review staffing coverage and participant planning before the week starts.
-                  </p>
-                </div>
-              </div>
-
               <div className="rounded-[12px] border border-slate-200 bg-slate-50 px-3.5 py-3">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
-                  Workspace snapshot
+                  Last approved note
                 </p>
-                <div className="pt-2.5 space-y-2 text-[13px] leading-5 text-slate-600">
-                  <p>
-                    {workers.length === 0
-                      ? "No workers are currently listed in the roster."
-                      : `${workers.length} worker${workers.length === 1 ? "" : "s"} are currently listed in the roster.`}
-                  </p>
-                  <p>
-                    {participants.length === 0
-                      ? "No participant records are currently available."
-                      : `${participants.length} participant record${participants.length === 1 ? "" : "s"} are currently available.`}
-                  </p>
-                  <p>
-                    {claims.length > 0
-                      ? `${claims.length} claim${claims.length === 1 ? "" : "s"} are available in the current workspace.`
-                      : "Claim review is ready for the next review cycle."}
-                  </p>
-                </div>
+                <p className="pt-2 text-[1.15rem] font-semibold leading-6 text-slate-950">
+                  {latestApprovedNote ? formatDashboardDate(latestApprovedNote) : "No approved notes yet"}
+                </p>
+                <p className="pt-1 text-[12px] leading-5 text-slate-600">
+                  Recent documentation activity across the workspace.
+                </p>
               </div>
 
-              <div className="rounded-[12px] border border-slate-200 bg-slate-50 px-3.5 py-3">
-                <p className="text-[13px] font-semibold text-slate-900">Case sync every Thursday</p>
-                <p className="pt-1 text-[12px] leading-5 text-slate-600">
-                  Use notes and claim activity to confirm readiness before the next review cycle.
-                </p>
+              <div className="grid gap-3">
+                <div className="flex items-center justify-between rounded-[12px] border border-slate-200 bg-slate-50 px-3.5 py-3">
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-semibold leading-5 text-slate-900">Claims awaiting review</p>
+                    <p className="text-[11px] leading-4 text-slate-500">Draft or pending claims ready for follow-up.</p>
+                  </div>
+                  <p className="shrink-0 text-lg font-semibold text-slate-950">{claimsAwaitingReview}</p>
+                </div>
+
+                <div className="flex items-center justify-between rounded-[12px] border border-slate-200 bg-slate-50 px-3.5 py-3">
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-semibold leading-5 text-slate-900">New participants this week</p>
+                    <p className="text-[11px] leading-4 text-slate-500">Participant records created in the last seven days.</p>
+                  </div>
+                  <p className="shrink-0 text-lg font-semibold text-slate-950">{recentParticipants}</p>
+                </div>
+
+                <div className="flex items-center justify-between rounded-[12px] border border-slate-200 bg-slate-50 px-3.5 py-3">
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-semibold leading-5 text-slate-900">Active workers</p>
+                    <p className="text-[11px] leading-4 text-slate-500">Current staffing coverage in the roster.</p>
+                  </div>
+                  <p className="shrink-0 text-lg font-semibold text-slate-950">
+                    {activeWorkers}/{workers.length}
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -457,44 +418,17 @@ function buildRecentDailySeries(values: string[], days: number) {
 
 function buildTrendSummary(values: string[], days: number, detailSuffix: string) {
   const current = countValuesWithinDays(values, 0, days);
-  const previous = countValuesWithinDays(values, days, days);
 
-  if (current === 0 && previous === 0) {
+  if (current === 0) {
     return {
-      label: "Stable",
+      label: "Last 7 days",
       detail: `No ${detailSuffix}.`,
       tone: "flat" as const,
     };
   }
 
-  if (previous === 0) {
-    return {
-      label: "Up",
-      detail: `${current} ${detailSuffix}.`,
-      tone: "up" as const,
-    };
-  }
-
-  const delta = Math.round(((current - previous) / previous) * 100);
-
-  if (delta > 0) {
-    return {
-      label: `Up ${delta}%`,
-      detail: `${current} ${detailSuffix}.`,
-      tone: "up" as const,
-    };
-  }
-
-  if (delta < 0) {
-    return {
-      label: `Down ${Math.abs(delta)}%`,
-      detail: `${current} ${detailSuffix}.`,
-      tone: "down" as const,
-    };
-  }
-
   return {
-    label: "Stable",
+    label: "Last 7 days",
     detail: `${current} ${detailSuffix}.`,
     tone: "flat" as const,
   };
@@ -558,4 +492,16 @@ function toDayKey(value: string) {
 
 function formatDayKey(date: Date) {
   return `${date.getUTCFullYear()}-${date.getUTCMonth()}-${date.getUTCDate()}`;
+}
+
+function formatDashboardDate(value: string) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en-AU", {
+    dateStyle: "medium",
+  }).format(date);
 }

@@ -145,7 +145,9 @@ export function ClaimChecker({
           <CardHeader className="flex flex-col gap-3 space-y-0 p-3.5 md:flex-row md:items-start md:justify-between md:p-4">
             <div>
               <CardDescription className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">Issues found</CardDescription>
-              <CardTitle className="pt-1.5 text-[1.6rem] leading-none">{issues.length}</CardTitle>
+              <CardTitle className="pt-1.5 text-[1.6rem] leading-none">
+                {hasChecked ? String(issues.length) : "—"}
+              </CardTitle>
             </div>
             <div className="rounded-[10px] bg-slate-100 p-2.5 text-slate-700">
               <ShieldAlert className="size-4.5" />
@@ -247,6 +249,7 @@ export function ClaimChecker({
                     handleDraftChange(() => setClaimDate(event.target.value))
                   }
                   className="field-control"
+                  placeholder="2026-04-20"
                 />
               </label>
 
@@ -256,7 +259,7 @@ export function ClaimChecker({
                   value={amount}
                   onChange={(event) => handleDraftChange(() => setAmount(event.target.value))}
                   className="field-control"
-                  placeholder="185.00"
+                  placeholder="135.12"
                 />
               </label>
             </div>
@@ -270,7 +273,7 @@ export function ClaimChecker({
                     handleDraftChange(() => setSupportHours(event.target.value))
                   }
                   className="field-control"
-                  placeholder="3"
+                  placeholder="2.5"
                 />
               </label>
 
@@ -282,7 +285,7 @@ export function ClaimChecker({
                     handleDraftChange(() => setServiceCode(event.target.value))
                   }
                   className="field-control"
-                  placeholder="04_104_0125_6_1"
+                  placeholder="01_011_0107_1_1_T"
                 />
               </label>
             </div>
@@ -293,7 +296,7 @@ export function ClaimChecker({
                 value={reference}
                 onChange={(event) => handleDraftChange(() => setReference(event.target.value))}
                 className="field-control"
-                placeholder="CLM-APR-2026-001"
+                placeholder="CLM-260420-001"
               />
             </label>
 

@@ -55,6 +55,7 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
     { title: "Approved notes", value: String(approvedNotes), icon: FilePenLine },
     { title: "Participants covered", value: String(participantsInView), icon: UsersRound },
   ];
+  const notePreviewLength = 180;
 
   return (
     <div className="dashboard-page">
@@ -250,9 +251,24 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
                           </p>
                         </div>
 
-                        <p className="text-sm leading-6 text-slate-700 sm:text-base sm:leading-7">
-                          {getExcerpt(note.finalNote, 320)}
-                        </p>
+                        {hasLongText(note.finalNote, notePreviewLength) ? (
+                          <details className="group">
+                            <p className="text-sm leading-6 text-slate-700 group-open:hidden sm:text-base sm:leading-7">
+                              {getExcerpt(note.finalNote, notePreviewLength)}
+                            </p>
+                            <p className="hidden text-sm leading-6 text-slate-700 group-open:block sm:text-base sm:leading-7">
+                              {normaliseCopy(note.finalNote)}
+                            </p>
+                            <summary className="mt-2 inline-flex cursor-pointer list-none text-sm font-medium text-primary transition hover:text-primary/80">
+                              <span className="group-open:hidden">Read more</span>
+                              <span className="hidden group-open:inline">Show less</span>
+                            </summary>
+                          </details>
+                        ) : (
+                          <p className="text-sm leading-6 text-slate-700 sm:text-base sm:leading-7">
+                            {normaliseCopy(note.finalNote)}
+                          </p>
+                        )}
 
                         {note.goalsAddressed.length > 0 ? (
                           <div className="flex flex-wrap gap-2">
@@ -271,19 +287,9 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
                       <div className="min-w-0 space-y-3 rounded-3xl border border-white/70 bg-white px-4 py-4 text-sm text-slate-600 sm:text-base lg:w-full lg:max-w-[18rem] md:rounded-[18px]">
                         <div>
                           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                            Support summary
+                            Worker's original words
                           </p>
-                          <p className="pt-2 leading-6 text-slate-700">{getExcerpt(note.rawInput, 160)}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                            Record status
-                          </p>
-                          <p className="pt-2 leading-6 text-slate-700">
-                            {note.approvedAt
-                              ? "This note has been approved and added to the participant record."
-                              : "This note is saved and awaiting approval."}
-                          </p>
+                          <p className="pt-2 leading-6 text-slate-700">{normaliseCopy(note.rawInput)}</p>
                         </div>
                       </div>
                     </div>
@@ -316,11 +322,19 @@ function formatDateTime(value: string) {
 }
 
 function getExcerpt(value: string, maxLength: number) {
-  const normalisedValue = value.replace(/\s+/g, " ").trim();
+  const normalisedValue = normaliseCopy(value);
 
   if (normalisedValue.length <= maxLength) {
     return normalisedValue;
   }
 
   return `${normalisedValue.slice(0, maxLength - 1).trimEnd()}…`;
+}
+
+function hasLongText(value: string, maxLength: number) {
+  return normaliseCopy(value).length > maxLength;
+}
+
+function normaliseCopy(value: string) {
+  return value.replace(/\s+/g, " ").trim();
 }

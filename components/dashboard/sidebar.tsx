@@ -62,9 +62,6 @@ export function Sidebar() {
             <p className="text-xs font-semibold uppercase tracking-[0.26em] text-slate-500">
               Dashboard
             </p>
-            <p className="pt-1.5 text-[11px] leading-4 text-slate-400">
-              Shared workspace navigation for operations teams.
-            </p>
           </div>
 
           <nav className="flex-1 space-y-1">
@@ -94,12 +91,9 @@ export function Sidebar() {
             <div className="space-y-2.5">
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                  Admin
+                  Manager
                 </p>
                 <p className="pt-1.5 text-sm font-semibold text-white">Operations Workspace</p>
-                <p className="pt-1 text-[11px] leading-4 text-slate-400">
-                  Monitor workers, participants, notes, and claims from one dashboard.
-                </p>
               </div>
               <div className="rounded-[10px] border border-white/10 bg-black/10 px-3 py-2.5">
                 <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">

@@ -109,9 +109,6 @@ export default async function ClaimsPage() {
           <Card className="dashboard-surface">
             <CardHeader>
               <CardTitle>Recent claims</CardTitle>
-              <CardDescription>
-                Recent claim activity currently available in the workspace.
-              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {claims.length === 0 ? (

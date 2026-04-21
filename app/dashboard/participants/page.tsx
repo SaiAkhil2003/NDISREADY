@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  formatParticipantNdisNumber,
   formatParticipantStatus,
   participantStatusOptions,
   type ParticipantListItem,
@@ -252,32 +253,38 @@ export default async function ParticipantsPage({ searchParams }: ParticipantsPag
 
                         <div className="flex flex-wrap gap-2">
                           <Badge variant="secondary">{formatParticipantStatus(participant.status)}</Badge>
-                          {participant.ndisNumber ? (
-                            <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600">
-                              <Hash className="size-3.5" />
-                              NDIS {participant.ndisNumber}
-                            </span>
-                          ) : null}
-                          <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600">
-                            <Goal className="size-3.5" />
-                            {participant.goals.length} goal{participant.goals.length === 1 ? "" : "s"} recorded
-                          </span>
+                        </div>
+
+                        <div className="grid gap-2 text-sm text-slate-600 sm:text-base">
+                          <div className="flex items-center gap-2">
+                            <Hash className="size-4 shrink-0 text-slate-400" />
+                            <p>
+                              <span className="font-medium text-slate-700">NDIS:</span>{" "}
+                              {formatParticipantNdisNumber(participant.ndisNumber) ?? "Not provided"}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Goal className="size-4 shrink-0 text-slate-400" />
+                            <p>
+                              {participant.goals.length} goal{participant.goals.length === 1 ? "" : "s"} recorded
+                            </p>
+                          </div>
                         </div>
 
                         {participant.goals.length > 0 ? (
                           <div className="rounded-[14px] border border-white/80 bg-white px-4 py-3 text-base text-slate-600">
                             <p className="font-medium text-slate-700">Goals</p>
-                            <ul className="mt-2 space-y-2">
+                            <div className="mt-2 space-y-2">
                               {participant.goals.slice(0, 3).map((goal, index) => (
-                                <li
+                                <p
                                   key={`${participant.id}-${goal.title}-${index}`}
-                                  className="flex items-start gap-2 leading-6 text-slate-600"
+                                  className="leading-6 text-slate-600"
                                 >
-                                  <span className="mt-2 size-1.5 rounded-full bg-primary/60" />
-                                  <span>{goal.title}</span>
-                                </li>
+                                  <span className="font-medium text-slate-700">Goal {index + 1}:</span>{" "}
+                                  {goal.title}
+                                </p>
                               ))}
-                            </ul>
+                            </div>
                             {participant.goals.length > 3 ? (
                               <p className="mt-3 text-sm text-slate-500">
                                 +{participant.goals.length - 3} more goal{participant.goals.length - 3 === 1 ? "" : "s"}

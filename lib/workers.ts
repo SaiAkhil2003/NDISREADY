@@ -7,7 +7,7 @@ export const workerRoleOptions = [
   { value: "nurse", label: "Nurse" },
   { value: "coordinator", label: "Coordinator" },
   { value: "team_lead", label: "Team Lead" },
-  { value: "admin", label: "Admin" },
+  { value: "admin", label: "Manager" },
 ] as const;
 
 export const workerStatusOptions = [

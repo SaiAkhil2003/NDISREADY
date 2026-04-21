@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  formatParticipantNdisNumber,
   formatParticipantStatus,
 } from "@/lib/participants";
 import { participantsUrl } from "@/lib/routes";
@@ -76,7 +77,7 @@ export default async function ParticipantDetailPage({ params }: ParticipantDetai
             <InfoRow
               icon={Hash}
               label="NDIS number"
-              value={participant.ndisNumber ?? "Not provided"}
+              value={formatParticipantNdisNumber(participant.ndisNumber) ?? "Not provided"}
             />
             <InfoRow
               icon={CalendarDays}
