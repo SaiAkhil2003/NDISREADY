@@ -98,7 +98,7 @@ export async function POST(request: Request) {
       rawInput: sourceText,
       aiDraft,
       finalNote,
-      participantGoals: participant.goals.map((goal) => goal.title),
+      participantGoals: getParticipantGoalTitles(participant.goals),
       goalsAddressed,
       approvedAt: new Date().toISOString(),
       noteDate: shiftDate || undefined,
@@ -113,4 +113,24 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
+}
+
+function getParticipantGoalTitles(goals: unknown) {
+  if (!Array.isArray(goals)) {
+    return [];
+  }
+
+  return goals.flatMap((goal) => {
+    if (typeof goal === "string") {
+      const title = goal.trim();
+      return title ? [title] : [];
+    }
+
+    if (typeof goal === "object" && goal !== null && "title" in goal) {
+      const title = typeof goal.title === "string" ? goal.title.trim() : "";
+      return title ? [title] : [];
+    }
+
+    return [];
+  });
 }

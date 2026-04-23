@@ -4,6 +4,7 @@ import { ArrowLeft, CircleAlert, DatabaseZap } from "lucide-react";
 
 import {
   NoteComposer,
+  type NoteSelectOption,
 } from "@/components/dashboard/note-composer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,9 +24,11 @@ export const metadata: Metadata = {
 };
 
 export default async function NewNotePage() {
-  const composerData = await loadNoteComposerContext();
-  const participantCount = composerData.data.participantOptions.length;
-  const workerCount = composerData.data.workerOptions.length;
+  const composerData = await loadSafeNoteComposerContext();
+  const participantOptions = normaliseNoteOptions(composerData.data.participantOptions);
+  const workerOptions = normaliseNoteOptions(composerData.data.workerOptions);
+  const participantCount = participantOptions.length;
+  const workerCount = workerOptions.length;
 
   return (
     <div className="dashboard-page">
@@ -97,8 +100,8 @@ export default async function NewNotePage() {
       </Card>
 
       <NoteComposer
-        participantOptions={composerData.data.participantOptions}
-        workerOptions={composerData.data.workerOptions}
+        participantOptions={participantOptions}
+        workerOptions={workerOptions}
         canSaveToSupabase={composerData.canPersist}
         saveUnavailableMessage={
           composerData.canPersist
@@ -108,4 +111,77 @@ export default async function NewNotePage() {
       />
     </div>
   );
+}
+
+async function loadSafeNoteComposerContext() {
+  try {
+    const composerData = await loadNoteComposerContext();
+
+    return {
+      ...composerData,
+      data: {
+        participantOptions: normaliseNoteOptions(composerData.data?.participantOptions),
+        workerOptions: normaliseNoteOptions(composerData.data?.workerOptions),
+      },
+    };
+  } catch (error) {
+    console.error("[notes/new] Failed to load note composer context:", error);
+
+    return {
+      data: {
+        participantOptions: [],
+        workerOptions: [],
+      },
+      mode: "demo" as const,
+      notice: {
+        title: "Connection issue",
+        message:
+          "Workspace records are temporarily limited while the connection is restored.",
+      },
+      canPersist: false,
+    };
+  }
+}
+
+function normaliseNoteOptions(value: unknown): NoteSelectOption[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.flatMap((option) => {
+    if (!isRecord(option)) {
+      return [];
+    }
+
+    const optionValue = readString(option.value);
+
+    if (!optionValue) {
+      return [];
+    }
+
+    const detail = readString(option.detail);
+    const goals = Array.isArray(option.goals)
+      ? option.goals.flatMap((goal) => {
+          const title = readString(goal);
+          return title ? [title] : [];
+        })
+      : [];
+
+    return [
+      {
+        value: optionValue,
+        label: readString(option.label) || "Unnamed record",
+        ...(detail ? { detail } : {}),
+        ...(goals.length > 0 ? { goals } : {}),
+      },
+    ];
+  });
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function readString(value: unknown) {
+  return typeof value === "string" ? value.trim() : "";
 }

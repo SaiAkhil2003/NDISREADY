@@ -120,6 +120,24 @@ export function NoteComposer({
       return;
     }
 
+    if (!participantId.trim()) {
+      setDraftState("idle");
+      setAiDraft("");
+      setGoalsAddressed([]);
+      setApiError("");
+      setStatusMessage("Select a participant before generating a draft note.");
+      return;
+    }
+
+    if (!shiftDate.trim()) {
+      setDraftState("idle");
+      setAiDraft("");
+      setGoalsAddressed([]);
+      setApiError("");
+      setStatusMessage("Select a shift date before generating a draft note.");
+      return;
+    }
+
     setIsGenerating(true);
     setDraftState("generating");
     setApiError("");
@@ -276,6 +294,9 @@ export function NoteComposer({
                   onChange={(event) => handleParticipantChange(event.target.value)}
                   className="field-control"
                 >
+                  {participantOptions.length === 0 ? (
+                    <option value="">No participants available</option>
+                  ) : null}
                   {participantOptions.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
@@ -296,6 +317,9 @@ export function NoteComposer({
                   onChange={(event) => handleWorkerChange(event.target.value)}
                   className="field-control"
                 >
+                  {workerOptions.length === 0 ? (
+                    <option value="">No workers available</option>
+                  ) : null}
                   {workerOptions.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}

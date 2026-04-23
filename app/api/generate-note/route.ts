@@ -86,7 +86,7 @@ export async function POST(request: Request) {
     const result = buildRuleBasedNoteDraft({
       sourceText,
       participantName,
-      participantGoals: participant.goals.map((goal) => goal.title),
+      participantGoals: getParticipantGoalTitles(participant.goals),
       noteType: noteType && isNoteType(noteType) ? noteType : undefined,
       shiftDate: typeof body.shift_date === "string" ? body.shift_date.trim() : undefined,
     });
@@ -103,4 +103,24 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
+}
+
+function getParticipantGoalTitles(goals: unknown) {
+  if (!Array.isArray(goals)) {
+    return [];
+  }
+
+  return goals.flatMap((goal) => {
+    if (typeof goal === "string") {
+      const title = goal.trim();
+      return title ? [title] : [];
+    }
+
+    if (typeof goal === "object" && goal !== null && "title" in goal) {
+      const title = typeof goal.title === "string" ? goal.title.trim() : "";
+      return title ? [title] : [];
+    }
+
+    return [];
+  });
 }
