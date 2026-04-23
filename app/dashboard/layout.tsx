@@ -11,7 +11,7 @@ export default function DashboardLayout({
     <div className="min-h-screen md:flex">
       <Sidebar />
       <main className="dashboard-main min-w-0 flex-1 md:h-screen md:overflow-y-auto">
-        <div className="w-full px-4 py-4 pb-[calc(env(safe-area-inset-bottom)+92px)] md:px-6 md:py-4 md:pb-8 lg:px-8">
+        <div className="w-full px-4 pt-[calc(env(safe-area-inset-top)+1rem)] pb-[calc(env(safe-area-inset-bottom)+112px)] md:px-6 md:pt-4 md:pb-8 lg:px-8">
           {children}
         </div>
       </main>

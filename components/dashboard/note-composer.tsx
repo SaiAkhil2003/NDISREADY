@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, ClipboardCheck, Sparkles, UserRound, Users } from "lucide-react";
+import { CalendarDays, ClipboardCheck, Sparkles } from "lucide-react";
 import { useState } from "react";
 
 import { NoteEditor } from "@/components/NoteEditor";
@@ -204,30 +204,6 @@ export function NoteComposer({
   return (
     <div className="space-y-5 md:space-y-6">
       <section className="dashboard-summary-grid">
-        <Card className="dashboard-stat-surface">
-          <CardHeader className="flex flex-col gap-3 space-y-0 p-3.5 md:flex-row md:items-start md:justify-between md:p-4">
-            <div>
-              <CardDescription className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">Participants</CardDescription>
-              <CardTitle className="pt-1.5 text-[1.6rem] leading-none">{participantOptions.length}</CardTitle>
-            </div>
-            <div className="rounded-[10px] bg-slate-100 p-2.5 text-slate-700">
-              <UserRound className="size-4.5" />
-            </div>
-          </CardHeader>
-        </Card>
-
-        <Card className="dashboard-stat-surface">
-          <CardHeader className="flex flex-col gap-3 space-y-0 p-3.5 md:flex-row md:items-start md:justify-between md:p-4">
-            <div>
-              <CardDescription className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">Workers</CardDescription>
-              <CardTitle className="pt-1.5 text-[1.6rem] leading-none">{workerOptions.length}</CardTitle>
-            </div>
-            <div className="rounded-[10px] bg-slate-100 p-2.5 text-slate-700">
-              <Users className="size-4.5" />
-            </div>
-          </CardHeader>
-        </Card>
-
         <Card className="dashboard-stat-surface">
           <CardHeader className="flex flex-col gap-3 space-y-0 p-3.5 md:flex-row md:items-start md:justify-between md:p-4">
             <div>

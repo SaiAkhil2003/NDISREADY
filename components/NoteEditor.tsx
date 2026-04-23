@@ -102,7 +102,7 @@ export function NoteEditor({
         throw new Error(payload?.error || "Note could not be saved.");
       }
 
-      setSaveSuccess("Approved note saved.");
+      setSaveSuccess("Note approved and saved.");
       onApproved?.(payload.saved_note_id, finalNote);
     } catch (error) {
       setSaveError(getErrorMessage(error));
@@ -215,15 +215,6 @@ export function NoteEditor({
             <div className="flex flex-col gap-3 md:flex-row md:items-start">
               <CircleAlert className="mt-0.5 size-5 shrink-0" />
               <p>{saveError}</p>
-            </div>
-          </div>
-        ) : null}
-
-        {saveSuccess ? (
-          <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-4 text-base text-emerald-100">
-            <div className="flex flex-col gap-3 md:flex-row md:items-start">
-              <CheckCircle2 className="mt-0.5 size-5 shrink-0" />
-              <p>{saveSuccess}</p>
             </div>
           </div>
         ) : null}
