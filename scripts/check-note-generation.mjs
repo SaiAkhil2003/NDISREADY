@@ -43,28 +43,56 @@ const { buildRuleBasedNoteDraft } = require("../lib/notes.ts");
 
 const representativeExamples = [
   {
-    name: "Short casual worker note",
+    name: "Good support note input",
     sourceText:
-      "Took Maya to the shops. She bought lunch and was happy. No incidents.",
+      "Supported Henry with shopping. He chose lunch items independently and was happy. No incidents.",
     participantGoals: ["Build community access confidence", "Improve daily living skills"],
+    mustInclude: [
+      "Worker supported Henry with shopping.",
+      "chose lunch items independently",
+      "No incidents were stated.",
+    ],
+    mustNotInclude: ["did not include enough support-specific detail"],
   },
   {
-    name: "Voice-style imperfect note",
+    name: "Rough voice-style input",
     sourceText:
-      "um we went to the bus stop and practiced which bus to catch, he was nervous because it was busy, then settled and said it was easier than last time",
+      "um we went to the bus stop and practiced which bus to catch he was nervous but then settled",
     participantGoals: ["Build travel training confidence", "Improve daily living skills"],
+    mustInclude: [
+      "Worker supported the participant to practise identifying which bus to catch at the bus stop.",
+      "Participant was nervous.",
+      "Participant then settled.",
+    ],
+    mustNotInclude: ["um"],
   },
   {
-    name: "Activity and outcome",
+    name: "Weak irrelevant input",
     sourceText:
-      "I helped Jordan cook pasta and clean the kitchen. Jordan completed most steps after two prompts and asked to cook again next week.",
+      "Compare what is the difference between the department and worker within the given shift rate",
     participantGoals: ["Develop meal preparation skills", "Maintain medication routine"],
+    mustInclude: [
+      "did not include enough support-specific detail",
+      "The participant's response was not clearly stated.",
+      "Please capture the support delivered",
+    ],
+    mustNotInclude: [
+      "Compare what is the difference",
+      "department and worker",
+      "given shift rate",
+      "shift rate",
+    ],
   },
   {
-    name: "Goals and support detail",
+    name: "Minimal valid input",
     sourceText:
-      "Supported Priya with medication reminder after dinner and reviewed the evening checklist. Priya ticked off the checklist independently. Continue the checklist next shift.",
+      "Shift completed, no issues.",
     participantGoals: ["Maintain medication routine", "Increase community participation"],
+    mustInclude: [
+      "Worker recorded that the shift was completed",
+      "No issues were stated.",
+    ],
+    mustNotInclude: ["did not include enough support-specific detail"],
   },
 ];
 
@@ -82,6 +110,8 @@ const bannedUnsupportedPhrases = [
   "when compared with previous support",
   "Ongoing support should continue in line with participant needs",
   "Continue current support strategies",
+  "difference between the department and worker",
+  "given shift rate",
 ];
 
 for (const example of representativeExamples) {
@@ -102,6 +132,22 @@ for (const example of representativeExamples) {
       result.aiDraft.includes(phrase),
       false,
       `${example.name} reintroduced unsupported phrase: ${phrase}`,
+    );
+  }
+
+  for (const phrase of example.mustInclude) {
+    assert.match(
+      result.aiDraft,
+      new RegExp(escapeRegex(phrase), "i"),
+      `${example.name} missing expected phrase: ${phrase}`,
+    );
+  }
+
+  for (const phrase of example.mustNotInclude) {
+    assert.equal(
+      result.aiDraft.toLowerCase().includes(phrase.toLowerCase()),
+      false,
+      `${example.name} leaked unwanted phrase: ${phrase}`,
     );
   }
 

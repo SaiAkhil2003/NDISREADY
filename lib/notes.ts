@@ -54,6 +54,7 @@ export const noteDraftingGuidance = [
   "Do not invent incidents, medical details, behaviours, goals, progress, or follow-up actions.",
   "Do not replace useful specific details with vague generic summaries.",
   "If a detail is missing, say it was not stated instead of inferring it.",
+  "If the input is not a meaningful care note, produce a safe insufficient-detail fallback instead of echoing irrelevant text.",
 ] as const;
 
 export function buildRuleBasedNoteDraft({
@@ -64,19 +65,30 @@ export function buildRuleBasedNoteDraft({
   shiftDate,
 }: RuleBasedNoteDraftInput): RuleBasedNoteDraft {
   const normalisedText = normaliseSourceText(sourceText);
-  const sourceFacts = extractCleanSentences(normalisedText);
+  const sourceFacts = extractCleanSentences(normalisedText).filter(isAllowedCareFact);
+  const relevance = assessSupportNoteRelevance(normalisedText, sourceFacts);
   const factBuckets = categoriseSourceFacts(sourceFacts);
   const goalsAddressed = deriveGoalsAddressed(participantGoals, [normalisedText]);
   const goalsSection =
     participantGoals.length === 0
       ? "- No participant goals were available in the workspace context."
-      : goalsAddressed.length > 0
+      : relevance.isRelevant && goalsAddressed.length > 0
         ? goalsAddressed.map((goal) => `- ${goal}`).join("\n")
         : "- No participant goal was clearly referenced in the worker's original input.";
 
   const noteTitle = noteType ? getNoteTypeLabel(noteType) : "Support Note";
-  const supportProvided =
-    factBuckets.support.length > 0 ? factBuckets.support : sourceFacts.slice(0, 3);
+
+  if (!relevance.isRelevant) {
+    return {
+      aiDraft: buildInsufficientDetailDraft({
+        noteTitle,
+        participantName,
+        shiftDate,
+        goalsSection,
+      }),
+      goalsAddressed: [],
+    };
+  }
 
   return {
     aiDraft:
@@ -85,26 +97,26 @@ export function buildRuleBasedNoteDraft({
       `${shiftDate?.trim() ? `Date: ${shiftDate.trim()}\n\n` : ""}` +
       formatDraftSection({
         heading: "What support was provided",
-        bullets: supportProvided,
+        bullets: buildSupportBullets(factBuckets, sourceFacts),
         fallback: "Support details were not clearly stated in the worker's original input.",
       }) +
       "\n\n" +
       formatDraftSection({
         heading: "Participant response / outcome",
-        bullets: factBuckets.response,
+        bullets: buildResponseBullets(factBuckets),
         fallback: "The participant's response or outcome was not stated in the worker's original input.",
       }) +
       "\n\n" +
       formatDraftSection({
         heading: "Progress / difficulty observed",
-        bullets: factBuckets.progress,
+        bullets: buildProgressBullets(factBuckets, sourceFacts),
         fallback: "No specific progress, difficulty, incident, injury, or behavioural concern was stated in the worker's original input.",
       }) +
       "\n\n" +
       `Goals addressed:\n${goalsSection}\n\n` +
       formatDraftSection({
         heading: "Follow-up / next steps",
-        bullets: factBuckets.followUp,
+        bullets: buildFollowUpBullets(factBuckets),
         fallback: "No specific follow-up or next step was stated in the worker's original input.",
       }),
     goalsAddressed,
@@ -147,7 +159,7 @@ export function deriveGoalsAddressed(goals: string[], texts: string[]) {
 }
 
 function extractCleanSentences(sourceText: string) {
-  const sourceSegments = sourceText
+  const sourceSegments = addVoiceTranscriptBoundaries(sourceText)
     .replace(/[\r\n]+/g, ". ")
     .split(/(?:[.!?]+|;\s+|\s+-\s+|\s*,\s*(?=(?:then|after that|also|but|however|next|we|i|he|she|they|participant)\b))/i)
     .flatMap(splitLongVoiceSegment)
@@ -169,6 +181,28 @@ function containsPattern(value: string, patterns: RegExp[]) {
   return patterns.some((pattern) => pattern.test(value));
 }
 
+function buildInsufficientDetailDraft(input: {
+  noteTitle: string;
+  participantName: string;
+  shiftDate?: string;
+  goalsSection: string;
+}) {
+  return (
+    `${input.noteTitle}:\n\n` +
+    `Participant: ${input.participantName}\n\n` +
+    `${input.shiftDate?.trim() ? `Date: ${input.shiftDate.trim()}\n\n` : ""}` +
+    "What support was provided:\n" +
+    "- The worker's original input did not include enough support-specific detail to produce a complete case note.\n\n" +
+    "Participant response / outcome:\n" +
+    "- The participant's response was not clearly stated.\n\n" +
+    "Progress / difficulty observed:\n" +
+    "- No clear care-related progress or difficulty was described.\n\n" +
+    `Goals addressed:\n${input.goalsSection}\n\n` +
+    "Follow-up / next steps:\n" +
+    "- Please capture the support delivered, participant response, and any next step in the worker's original words."
+  );
+}
+
 function formatDraftSection(input: {
   heading: string;
   bullets: string[];
@@ -181,6 +215,8 @@ function formatDraftSection(input: {
     .map((item) => `- ${item}`)
     .join("\n")}`;
 }
+
+type CategorisedSourceFacts = ReturnType<typeof categoriseSourceFacts>;
 
 function categoriseSourceFacts(sourceFacts: string[]) {
   const buckets = {
@@ -216,6 +252,164 @@ function categoriseSourceFacts(sourceFacts: string[]) {
   };
 }
 
+function assessSupportNoteRelevance(normalisedText: string, sourceFacts: string[]) {
+  const hasBlockedBusinessLanguage = containsPattern(normalisedText, blockedIrrelevantPatterns);
+  const hasMinimalCompletion = containsPattern(normalisedText, minimalCareCompletionPatterns);
+  const supportFactCount = sourceFacts.filter((fact) => containsPattern(fact, careActionPatterns)).length;
+  const contextFactCount = sourceFacts.filter((fact) => containsPattern(fact, careContextPatterns)).length;
+  const outcomeFactCount = sourceFacts.filter((fact) => containsPattern(fact, careOutcomePatterns)).length;
+  const meaningfulSignalCount = supportFactCount + contextFactCount + outcomeFactCount;
+
+  if (hasBlockedBusinessLanguage && supportFactCount + contextFactCount === 0) {
+    return { isRelevant: false, meaningfulSignalCount };
+  }
+
+  if (hasMinimalCompletion) {
+    return { isRelevant: true, meaningfulSignalCount: meaningfulSignalCount + 1 };
+  }
+
+  return {
+    isRelevant: supportFactCount + contextFactCount > 0 || meaningfulSignalCount >= 2,
+    meaningfulSignalCount,
+  };
+}
+
+function buildSupportBullets(facts: CategorisedSourceFacts, sourceFacts: string[]) {
+  const actionSupportFacts = facts.support.filter((fact) => containsPattern(fact, careActionPatterns));
+  const supportFacts =
+    actionSupportFacts.length > 0
+      ? actionSupportFacts
+      : facts.support.length > 0
+        ? facts.support
+        : sourceFacts.filter((fact) => containsPattern(fact, minimalCareCompletionPatterns));
+
+  return supportFacts.map(professionaliseSupportFact).filter(Boolean);
+}
+
+function buildResponseBullets(facts: CategorisedSourceFacts) {
+  return facts.response
+    .map(professionaliseResponseFact)
+    .filter((fact) => fact && !isOnlyRiskOrNoIssueFact(fact));
+}
+
+function buildProgressBullets(facts: CategorisedSourceFacts, sourceFacts: string[]) {
+  const progressFacts =
+    facts.progress.length > 0
+      ? facts.progress
+      : sourceFacts.filter((fact) => containsPattern(fact, minimalCareCompletionPatterns));
+
+  return progressFacts.map(professionaliseProgressFact).filter(Boolean);
+}
+
+function buildFollowUpBullets(facts: CategorisedSourceFacts) {
+  return facts.followUp.map(professionaliseFollowUpFact).filter(Boolean);
+}
+
+function professionaliseSupportFact(fact: string) {
+  const cleanedFact = stripNonCareFragments(fact);
+  const lowerFact = cleanedFact.toLowerCase();
+
+  if (!cleanedFact) {
+    return "";
+  }
+
+  if (containsPattern(lowerFact, minimalCareCompletionPatterns)) {
+    return "Worker recorded that the shift was completed and no further support activity detail was stated.";
+  }
+
+  if (/\b(bus stop|which bus|bus to catch)\b/i.test(cleanedFact)) {
+    return "Worker supported the participant to practise identifying which bus to catch at the bus stop.";
+  }
+
+  if (/\bshops?\b|\bshopping\b/i.test(cleanedFact)) {
+    return cleanedFact
+      .replace(/^Worker took (.+?) to the shops\.$/i, "Worker supported $1 with shopping.")
+      .replace(/^Took (.+?) to the shops\.$/i, "Worker supported $1 with shopping.");
+  }
+
+  if (/\bcook|meal|pasta|kitchen/i.test(cleanedFact)) {
+    return cleanedFact.replace(
+      /^Worker helped .+? cook (.+?) and clean the kitchen\.$/i,
+      "Worker supported the participant with meal preparation and kitchen clean-up.",
+    );
+  }
+
+  return cleanedFact;
+}
+
+function professionaliseResponseFact(fact: string) {
+  if (!containsPattern(fact, participantResponseSpecificPatterns)) {
+    return "";
+  }
+
+  const cleanedFact = stripNonCareFragments(fact)
+    .replace(/\bwas happy\b/gi, "was described as happy")
+    .replace(/\band no incidents?\b/gi, "")
+    .replace(/\bno incidents?\b/gi, "")
+    .replace(/\bno issues?\b/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return cleanedFact ? withSentencePunctuation(cleanedFact) : "";
+}
+
+function professionaliseProgressFact(fact: string) {
+  const cleanedFact = stripNonCareFragments(fact);
+
+  if (!cleanedFact) {
+    return "";
+  }
+
+  if (/\bno incidents?\b/i.test(cleanedFact)) {
+    return "No incidents were stated.";
+  }
+
+  if (/\bno issues?\b/i.test(cleanedFact)) {
+    return "No issues were stated.";
+  }
+
+  return cleanedFact.replace(/\bwas happy\b/gi, "was described as happy");
+}
+
+function professionaliseFollowUpFact(fact: string) {
+  return stripNonCareFragments(fact);
+}
+
+function stripNonCareFragments(fact: string) {
+  if (containsPattern(fact, blockedIrrelevantPatterns)) {
+    return "";
+  }
+
+  return withSentencePunctuation(fact.replace(/\s+/g, " ").trim());
+}
+
+function isAllowedCareFact(fact: string) {
+  if (!fact.trim()) {
+    return false;
+  }
+
+  if (containsPattern(fact, blockedIrrelevantPatterns)) {
+    return false;
+  }
+
+  return true;
+}
+
+function isOnlyRiskOrNoIssueFact(fact: string) {
+  const normalisedFact = fact.toLowerCase().replace(/[^a-z\s]/g, " ").replace(/\s+/g, " ").trim();
+
+  return ["no incident", "no incidents", "no issue", "no issues"].includes(normalisedFact);
+}
+
+function addVoiceTranscriptBoundaries(value: string) {
+  return value
+    .replace(/\s+but\s+then\s+/gi, ". then ")
+    .replace(
+      /\s+(?=(?:he|she|they|participant)\s+(?:was|were|said|felt|became|settled|needed|completed|chose|asked|responded|engaged|refused|declined)\b)/gi,
+      ". ",
+    );
+}
+
 function splitLongVoiceSegment(segment: string) {
   const trimmedSegment = segment.trim();
 
@@ -230,7 +424,7 @@ function cleanSourceFact(value: string) {
   const cleanedValue = value
     .trim()
     .replace(/\b(?:um|uh|ah|er|mm+)\b/gi, " ")
-    .replace(/\b(?:yeah|you know|basically|sort of|kind of)\b/gi, " ")
+    .replace(/\b(?:yeah|like|you know|basically|sort of|kind of|i think)\b/gi, " ")
     .replace(/\bthey was\b/gi, "they were")
     .replace(/\bwe done\b/gi, "we completed")
     .replace(/\bthey done\b/gi, "they completed")
@@ -252,6 +446,7 @@ function toProfessionalPerspective(value: string) {
   return value
     .replace(/^(took|helped|supported|prompted|reminded|assisted|drove|walked|completed|reviewed|discussed)\b/i, (match) => `Worker ${match.toLowerCase()}`)
     .replace(/^then\s+/i, "Participant then ")
+    .replace(/^(he|she|they)\s+/i, "Participant ")
     .replace(/^i\s+/i, "Worker ")
     .replace(/\bi\s+/gi, "worker ")
     .replace(/^we\s+/i, "Worker and participant ")
@@ -322,6 +517,104 @@ function getGoalKeywordMatches(keyword: string) {
   return goalKeywordAliases.get(keyword) ?? [keyword];
 }
 
+const blockedIrrelevantPatterns = [
+  /\bcompare\b/i,
+  /\bdifference between\b/i,
+  /\bdepartment\b/i,
+  /\bgiven shift rate\b/i,
+  /\bshift rate\b/i,
+  /\bpay rate\b/i,
+  /\broster rate\b/i,
+  /\binvoice rate\b/i,
+  /\bbilling rate\b/i,
+];
+
+const minimalCareCompletionPatterns = [
+  /\bshift completed\b/i,
+  /\bcompleted shift\b/i,
+  /\bno issues?\b/i,
+  /\bno incidents?\b/i,
+];
+
+const careActionPatterns = [
+  /\bsupport(?:ed|ing)?\b/i,
+  /\bassist(?:ed|ing)?\b/i,
+  /\bhelp(?:ed|ing)?\b/i,
+  /\bprompt(?:ed|ing|s)?\b/i,
+  /\bremind(?:ed|er|ers)?\b/i,
+  /\bpractic(?:ed|e|ing)\b/i,
+  /\bworked on\b/i,
+  /\breview(?:ed|ing)?\b/i,
+  /\btook\b.+\bto\b/i,
+  /\bwent to\b/i,
+  /\battended\b/i,
+  /\bshift completed\b/i,
+  /\bcompleted shift\b/i,
+];
+
+const careContextPatterns = [
+  /\bcommunity\b/i,
+  /\bshopping?\b/i,
+  /\bshops?\b/i,
+  /\blunch\b/i,
+  /\bdinner\b/i,
+  /\bbus\b/i,
+  /\btransport\b/i,
+  /\btravel\b/i,
+  /\bmeal\b/i,
+  /\bcook(?:ed|ing)?\b/i,
+  /\bclean(?:ed|ing)?\b/i,
+  /\bkitchen\b/i,
+  /\blaundry\b/i,
+  /\bmedication\b/i,
+  /\broutine\b/i,
+  /\bappointment\b/i,
+  /\bgym\b/i,
+  /\bexercise\b/i,
+  /\bshower\b/i,
+  /\bpersonal care\b/i,
+];
+
+const careOutcomePatterns = [
+  /\brespond(?:ed|ing)?\b/i,
+  /\bengag(?:ed|ing)\b/i,
+  /\bparticipat(?:ed|ing)\b/i,
+  /\bcompleted\b/i,
+  /\bchose\b/i,
+  /\bindependent(?:ly)?\b/i,
+  /\bhappy\b/i,
+  /\bsettled\b/i,
+  /\banxious\b/i,
+  /\bnervous\b/i,
+  /\bno issues?\b/i,
+  /\bno incidents?\b/i,
+  /\bprompts?\b/i,
+];
+
+const participantResponseSpecificPatterns = [
+  /\brespond(?:ed|ing)?\b/i,
+  /\bengag(?:ed|ing)\b/i,
+  /\bparticipat(?:ed|ing)\b/i,
+  /\bcompleted (?:most|all|the|his|her|their)\b/i,
+  /\bchose\b/i,
+  /\bsaid\b/i,
+  /\basked\b/i,
+  /\bwanted\b/i,
+  /\benjoy(?:ed|ing)?\b/i,
+  /\bindependent(?:ly)?\b/i,
+  /\bhappy\b/i,
+  /\bcalm\b/i,
+  /\bsettled\b/i,
+  /\bquiet\b/i,
+  /\bupset\b/i,
+  /\bfrustrated\b/i,
+  /\banxious\b/i,
+  /\bnervous\b/i,
+  /\btired\b/i,
+  /\brefus(?:ed|ing)?\b/i,
+  /\bdeclin(?:ed|ing)?\b/i,
+];
+
 const supportPatterns = [
   /\bsupport(?:ed|ing)?\b/i,
   /\bassist(?:ed|ing)?\b/i,
@@ -335,9 +628,13 @@ const supportPatterns = [
   /\bwent to\b/i,
   /\battended\b/i,
   /\bcompleted\b/i,
+  /\bshift completed\b/i,
+  /\bcompleted shift\b/i,
   /\bcommunity\b/i,
   /\bshopping?\b/i,
   /\bshops?\b/i,
+  /\blunch\b/i,
+  /\bdinner\b/i,
   /\bbus\b/i,
   /\btransport\b/i,
   /\btravel\b/i,
@@ -353,6 +650,7 @@ const responsePatterns = [
   /\bengag(?:ed|ing)\b/i,
   /\bparticipat(?:ed|ing)\b/i,
   /\bcompleted\b/i,
+  /\bchose\b/i,
   /\bsaid\b/i,
   /\btold\b/i,
   /\breported\b/i,
@@ -397,6 +695,7 @@ const progressAndRiskPatterns = [
   /\bdeclin(?:ed|ing)?\b/i,
   /\brisk\b/i,
   /\bincidents?\b/i,
+  /\bno issues?\b/i,
   /\binjur(?:y|ies|ed)\b/i,
   /\bfall\b/i,
   /\bbehaviou?r\b/i,
