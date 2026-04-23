@@ -20,23 +20,23 @@ type AnalyticsPanelProps = {
   className?: string;
 };
 
-const palette = ["#0f766e", "#14b8a6", "#0f172a", "#0284c7", "#f59e0b", "#475569"];
+const palette = ["#2563eb", "#0ea5e9", "#0f172a", "#16a34a", "#f59e0b", "#475569"];
 
 const workerStatusColorMap: Record<string, string> = {
-  active: "#0f766e",
+  active: "#2563eb",
   onboarding: "#f59e0b",
   inactive: "#64748b",
 };
 
 const participantStatusColorMap: Record<string, string> = {
-  active: "#0f766e",
+  active: "#2563eb",
   intake: "#0284c7",
   inactive: "#64748b",
   "on-hold": "#f59e0b",
 };
 
 const claimStatusColorMap: Record<string, string> = {
-  approved: "#0f766e",
+  approved: "#2563eb",
   draft: "#0284c7",
   rejected: "#dc2626",
   flagged: "#f59e0b",
@@ -160,12 +160,12 @@ export function ParticipantAnalyticsPanel({
     {
       label: "2-3 goals",
       value: participants.filter((participant) => participant.goals.length >= 2 && participant.goals.length <= 3).length,
-      color: "#14b8a6",
+      color: "#0ea5e9",
     },
     {
       label: "4+ goals",
       value: participants.filter((participant) => participant.goals.length >= 4).length,
-      color: "#0f766e",
+      color: "#2563eb",
     },
   ];
   const recentAdditions = buildRecentCountSeries(participants.map((participant) => participant.createdAt));
@@ -246,7 +246,7 @@ export function NoteAnalyticsPanel({
   const approvedCount = notes.filter((note) => Boolean(note.approvedAt)).length;
   const awaitingCount = notes.length - approvedCount;
   const approvalSeries = [
-    { label: "Approved", value: approvedCount, color: "#0f766e" },
+    { label: "Approved", value: approvedCount, color: "#2563eb" },
     { label: "Awaiting", value: awaitingCount, color: "#64748b" },
   ];
   const recentTrend = buildRecentCountSeries(notes.map((note) => note.createdAt));
@@ -425,9 +425,9 @@ export function OverviewActivityPanel({
   claims: ClaimListItem[];
 }) {
   const series = [
-    { label: "Workers", value: workers.length, color: "#0f766e" },
+    { label: "Workers", value: workers.length, color: "#2563eb" },
     { label: "Participants", value: participants.length, color: "#0284c7" },
-    { label: "Notes", value: notes.length, color: "#14b8a6" },
+    { label: "Notes", value: notes.length, color: "#0ea5e9" },
     { label: "Claims", value: claims.length, color: "#f59e0b" },
   ];
 
@@ -580,7 +580,7 @@ function LegendList({
           <div className="flex min-w-0 items-center gap-2.5">
             <span
               className="size-2.5 shrink-0 rounded-full"
-              style={{ backgroundColor: item.color ?? "#0f766e" }}
+              style={{ backgroundColor: item.color ?? "#2563eb" }}
             />
             <p className="truncate text-sm font-medium text-slate-700">{item.label}</p>
           </div>
@@ -639,7 +639,7 @@ function BarTrend({
       ? "from-sky-500 to-cyan-400"
       : tone === "emerald"
         ? "from-emerald-500 to-teal-400"
-        : "from-teal-500 to-cyan-400";
+        : "from-blue-600 to-sky-400";
 
   return (
     <div className="space-y-2.5 pt-3">
@@ -699,7 +699,7 @@ function ProgressRows({
                 className="dashboard-chart-progress h-full rounded-full"
                 style={{
                   width,
-                  backgroundColor: item.color ?? "#0f766e",
+                  backgroundColor: item.color ?? "#2563eb",
                   animationDelay: `${index * 70}ms`,
                 }}
               />

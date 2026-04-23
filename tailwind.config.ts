@@ -58,10 +58,6 @@ const config: Config = {
       boxShadow: {
         panel: "0 24px 64px -36px rgba(15, 23, 42, 0.45)",
       },
-      backgroundImage: {
-        "hero-grid":
-          "radial-gradient(circle at top left, rgba(16, 185, 129, 0.14), transparent 32%), radial-gradient(circle at bottom right, rgba(12, 74, 110, 0.2), transparent 28%)",
-      },
     },
   },
   plugins: [require("tailwindcss-animate")],

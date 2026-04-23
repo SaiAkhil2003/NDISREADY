@@ -88,7 +88,7 @@ export default async function ClaimsPage() {
             </p>
           </div>
 
-          <div className="dashboard-subpanel border-primary/10 bg-primary/5 text-slate-700">
+          <div className="dashboard-subpanel border-blue-100 bg-blue-50 text-slate-700">
             Each review checks the claim details against the selected participant and worker information and highlights issues that need attention.
           </div>
         </CardContent>
@@ -119,7 +119,7 @@ export default async function ClaimsPage() {
                 claims.map((claim) => (
                   <div
                     key={claim.id}
-                    className="min-w-0 rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 md:rounded-[18px]"
+                    className="min-w-0 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4"
                   >
                     <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                       <div className="min-w-0 space-y-2">

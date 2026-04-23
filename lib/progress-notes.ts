@@ -465,7 +465,8 @@ function isMissingProgressNotesPhaseColumnsError(error: unknown) {
 }
 
 function logProgressNotesWarning(context: string, error: unknown) {
-  console.warn(`[progress_notes] ${context} ${formatProgressNotesError(error)}`);
+  void context;
+  void error;
 }
 
 function formatProgressNotesErrorDetails(

@@ -329,7 +329,7 @@ export function ClaimChecker({
           </CardContent>
         </Card>
 
-        <Card className="w-full min-w-0 self-start border-slate-200 bg-slate-950 text-white md:!rounded-[18px] 2xl:sticky 2xl:top-4">
+        <Card className="w-full min-w-0 self-start border-slate-800 bg-slate-950 text-white 2xl:sticky 2xl:top-4">
           <CardHeader>
             <div className="flex flex-wrap items-center gap-3">
               <CardTitle className="text-white">Claim review</CardTitle>
@@ -355,25 +355,25 @@ export function ClaimChecker({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="rounded-3xl md:rounded-[18px] border border-white/10 bg-white/5 px-4 py-4 text-base text-slate-300">
+            <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-base text-slate-300">
               {resultSummary}
             </div>
 
             {apiError ? (
-              <div className="flex items-start gap-3 rounded-3xl md:rounded-[18px] border border-rose-500/30 bg-rose-500/10 px-4 py-4 text-base text-rose-100">
+              <div className="flex items-start gap-3 rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-4 text-base text-rose-100">
                 <CircleAlert className="mt-0.5 size-4 shrink-0" />
                 <p>{apiError}</p>
               </div>
             ) : null}
 
             {!hasChecked && !apiError ? (
-              <div className="rounded-3xl md:rounded-[18px] border border-white/10 bg-white/5 px-4 py-4 text-base text-slate-300">
+              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-base text-slate-300">
                 Check the details to surface issues before the claim moves any further.
               </div>
             ) : null}
 
             {hasChecked && issues.length === 0 && !apiError ? (
-              <div className="flex items-start gap-3 rounded-3xl md:rounded-[18px] border border-emerald-500/30 bg-emerald-500/10 px-4 py-4 text-base text-emerald-100">
+              <div className="flex items-start gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-4 text-base text-emerald-100">
                 <CheckCircle2 className="mt-0.5 size-4 shrink-0" />
                 <p>No claim issues are currently shown. Check the details again after editing the claim to refresh the result.</p>
               </div>
@@ -384,7 +384,7 @@ export function ClaimChecker({
                 {issues.map((issue, index) => (
                   <div
                     key={`${issue.field ?? "general"}-${issue.title}-${index}`}
-                    className={`rounded-3xl md:rounded-[18px] border px-4 py-4 text-base ${
+                    className={`rounded-2xl border px-4 py-4 text-base ${
                       issue.severity === "error"
                         ? "border-rose-500/30 bg-rose-500/10 text-rose-100"
                         : "border-amber-500/30 bg-amber-500/10 text-amber-100"
@@ -419,7 +419,7 @@ export function ClaimChecker({
               </div>
             ) : null}
 
-            <div className="rounded-3xl md:rounded-[18px] border border-white/10 bg-white/5 px-4 py-4 text-base text-slate-300">
+            <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-base text-slate-300">
               Any issues found during review will appear here before the claim is submitted.
             </div>
           </CardContent>

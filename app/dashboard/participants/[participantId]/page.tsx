@@ -36,9 +36,9 @@ export default async function ParticipantDetailPage({ params }: ParticipantDetai
     : `${participant.firstName} ${participant.lastName}`;
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="space-y-3">
+    <div className="dashboard-page">
+      <div className="dashboard-page-header">
+        <div className="dashboard-page-heading">
           <Link
             href={participantsUrl}
             className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-slate-950"
@@ -47,11 +47,11 @@ export default async function ParticipantDetailPage({ params }: ParticipantDetai
             Back to participants
           </Link>
           <Badge className="w-fit">Participant detail</Badge>
-          <div className="space-y-2">
-            <h1 className="text-3xl font-semibold tracking-tight text-slate-950">
+          <div className="space-y-1.5">
+            <h1 className="dashboard-page-title">
               {displayName}
             </h1>
-            <p className="max-w-2xl text-base leading-7 text-slate-600">
+            <p className="dashboard-page-copy">
               Review participant profile details and the saved support goals.
             </p>
           </div>
@@ -63,7 +63,7 @@ export default async function ParticipantDetailPage({ params }: ParticipantDetai
       </div>
 
       <section className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-        <Card className="border-white/70 bg-white/80">
+        <Card className="dashboard-surface">
           <CardHeader>
             <CardTitle>Profile</CardTitle>
             <CardDescription>Participant information currently available in the workspace.</CardDescription>
@@ -87,24 +87,24 @@ export default async function ParticipantDetailPage({ params }: ParticipantDetai
           </CardContent>
         </Card>
 
-        <Card className="border-white/70 bg-white/80">
+        <Card className="dashboard-surface">
           <CardHeader>
             <CardTitle>Goals</CardTitle>
             <CardDescription>Current support goals for this participant.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {participant.goals.length === 0 ? (
-              <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center text-base text-slate-500">
+              <div className="dashboard-empty-state">
                 No goals saved for this participant yet.
               </div>
             ) : (
               participant.goals.map((goal, index) => (
                 <div
                   key={`${goal.title}-${index}`}
-                  className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4"
+                  className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="rounded-2xl bg-white p-2 text-primary shadow-sm">
+                    <div className="rounded-xl bg-white p-2 text-blue-600 shadow-sm">
                       <Goal className="size-4" />
                     </div>
                     <div className="space-y-1">
@@ -130,8 +130,8 @@ type InfoRowProps = {
 
 function InfoRow({ icon: Icon, label, value }: InfoRowProps) {
   return (
-    <div className="flex flex-col gap-3 rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 md:flex-row md:items-start">
-      <div className="rounded-2xl bg-white p-2 text-slate-700 shadow-sm">
+    <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 md:flex-row md:items-start">
+      <div className="rounded-xl bg-white p-2 text-slate-700 shadow-sm">
         <Icon className="size-4" />
       </div>
       <div className="space-y-1">

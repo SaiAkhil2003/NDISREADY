@@ -9,7 +9,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "w-full min-w-0 max-w-full overflow-hidden rounded-[24px] border bg-card text-card-foreground shadow-[0_24px_64px_-44px_rgba(15,23,42,0.42)]",
+      "w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-gray-100 bg-white text-card-foreground shadow-sm",
       className,
     )}
     {...props}
@@ -23,7 +23,7 @@ const CardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex min-w-0 max-w-full flex-col space-y-1.5 p-4 md:p-6", className)}
+    className={cn("flex min-w-0 max-w-full flex-col space-y-1.5 p-4 sm:p-5 lg:p-6", className)}
     {...props}
   />
 ));
@@ -35,7 +35,7 @@ const CardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h3
     ref={ref}
-    className={cn("min-w-0 max-w-full break-words leading-tight tracking-tight text-slate-950", className)}
+    className={cn("min-w-0 max-w-full break-words text-xl font-semibold leading-tight text-slate-950", className)}
     {...props}
   />
 ));
@@ -47,7 +47,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("min-w-0 max-w-full break-words text-base text-muted-foreground", className)}
+    className={cn("min-w-0 max-w-full break-words text-sm leading-5 text-slate-500", className)}
     {...props}
   />
 ));
@@ -59,7 +59,7 @@ const CardContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("min-w-0 max-w-full p-4 pt-0 md:p-6 md:pt-0", className)}
+    className={cn("min-w-0 max-w-full p-4 pt-0 sm:p-5 sm:pt-0 lg:p-6 lg:pt-0", className)}
     {...props}
   />
 ));

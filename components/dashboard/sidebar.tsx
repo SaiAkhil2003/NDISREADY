@@ -31,7 +31,7 @@ export function Sidebar() {
             href="/"
             className="inline-flex min-h-11 min-w-0 items-center gap-3 text-base font-semibold text-slate-900"
           >
-            <span className="inline-flex size-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
+            <span className="inline-flex size-11 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm">
               <Home className="size-5" />
             </span>
             <span className="min-w-0">
@@ -44,27 +44,27 @@ export function Sidebar() {
         </div>
       </div>
 
-      <aside className="hidden w-full shrink-0 border-r border-slate-900/10 bg-[linear-gradient(180deg,#0d1729_0%,#0a1220_100%)] text-white md:sticky md:top-0 md:flex md:h-screen md:w-[260px] md:max-w-[260px] md:flex-none md:flex-col md:overflow-y-auto">
-        <div className="border-b border-white/10 px-5 py-4">
+      <aside className="hidden border-r border-slate-800 bg-slate-950 text-white md:fixed md:inset-y-0 md:left-0 md:z-40 md:flex md:w-72 md:flex-col md:overflow-y-auto">
+        <div className="border-b border-slate-800 px-6 py-5">
           <Link href="/" className="inline-flex min-w-0 items-center gap-3">
-            <span className="inline-flex size-8 items-center justify-center rounded-[12px] bg-primary text-primary-foreground shadow-sm">
+            <span className="inline-flex size-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm">
               <Home className="size-4" />
             </span>
             <span className="min-w-0">
-              <span className="block text-[14px] font-semibold leading-4">{siteName}</span>
-              <span className="block pt-1 text-[10px] uppercase tracking-[0.18em] text-slate-500">Operations</span>
+              <span className="block text-sm font-semibold leading-5">{siteName}</span>
+              <span className="block pt-0.5 text-[10px] uppercase tracking-[0.18em] text-slate-400">Operations</span>
             </span>
           </Link>
         </div>
 
-        <div className="flex flex-1 flex-col px-4 py-4">
-          <div className="px-1 pb-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.26em] text-slate-500">
+        <div className="flex flex-1 flex-col px-4 py-5">
+          <div className="px-2 pb-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
               Dashboard
             </p>
           </div>
 
-          <nav className="flex-1 space-y-1">
+          <nav className="flex-1 space-y-1.5">
             {navigation.map(({ href, label, icon: Icon }) => {
               const isActive = isActivePath(pathname, href);
 
@@ -74,10 +74,10 @@ export function Sidebar() {
                   href={href}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "flex min-h-[44px] items-center gap-3 rounded-[12px] px-3.5 py-2.5 text-[13px] font-medium transition-all",
+                    "flex min-h-11 items-center gap-3 rounded-lg px-3.5 py-2.5 text-sm font-medium transition-colors",
                     isActive
-                      ? "bg-primary text-primary-foreground shadow-[0_10px_18px_-14px_rgba(13,148,136,0.95)]"
-                      : "text-slate-300 hover:bg-white/5 hover:text-white",
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "text-slate-300 hover:bg-white/10 hover:text-white",
                   )}
                 >
                   <Icon className="size-4 shrink-0" />
@@ -87,16 +87,16 @@ export function Sidebar() {
             })}
           </nav>
 
-          <div className="mt-5 rounded-[14px] border border-white/10 bg-white/5 p-3.5 shadow-[0_16px_28px_-26px_rgba(2,6,23,0.9)]">
+          <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.04] p-4 shadow-sm">
             <div className="space-y-2.5">
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
                   Manager
                 </p>
                 <p className="pt-1.5 text-sm font-semibold text-white">Operations Workspace</p>
               </div>
-              <div className="rounded-[10px] border border-white/10 bg-black/10 px-3 py-2.5">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+              <div className="rounded-xl border border-white/10 bg-black/10 px-3 py-2.5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
                   Status
                 </p>
                 <p className="pt-1.5 text-sm text-slate-200">Workspace active</p>
@@ -130,9 +130,9 @@ export function MobileBottomNav() {
               href={href}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "flex min-w-0 flex-1 basis-0 flex-col items-center justify-center gap-1 rounded-[20px] px-0.5 text-center transition-colors",
+                "flex min-w-0 flex-1 basis-0 flex-col items-center justify-center gap-1 rounded-xl px-0.5 text-center transition-colors",
                 isActive
-                  ? "bg-primary text-primary-foreground shadow-sm"
+                  ? "bg-blue-600 text-white shadow-sm"
                   : "text-slate-500 hover:bg-slate-100 hover:text-slate-900",
               )}
             >

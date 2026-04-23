@@ -56,6 +56,8 @@ type OverviewAnalyticsGridProps = {
 };
 
 const chartMargin = { top: 4, right: 4, left: -18, bottom: 0 };
+const chartInitialDimension = { width: 320, height: 232 };
+const wideChartInitialDimension = { width: 520, height: 248 };
 
 export function OverviewAnalyticsGrid({
   workerDistribution,
@@ -88,7 +90,7 @@ export function OverviewAnalyticsGrid({
         >
           <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_172px]">
             <ChartWrap>
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" initialDimension={chartInitialDimension}>
                 <PieChart>
                   <Pie
                     data={getSafeDistribution(workerDistribution)}
@@ -122,7 +124,7 @@ export function OverviewAnalyticsGrid({
         >
           <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_172px]">
             <ChartWrap>
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" initialDimension={chartInitialDimension}>
                 <PieChart>
                   <Pie
                     data={getSafeDistribution(participantDistribution)}
@@ -158,7 +160,7 @@ export function OverviewAnalyticsGrid({
           footer={notesTrend.detail}
         >
           <ChartWrap heightClassName="h-[196px] min-[390px]:h-[212px] sm:h-[248px]">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" initialDimension={wideChartInitialDimension}>
               <BarChart data={notesActivity} margin={chartMargin}>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis
@@ -178,7 +180,7 @@ export function OverviewAnalyticsGrid({
                 <Bar
                   dataKey="value"
                   radius={[10, 10, 4, 4]}
-                  fill="#0f766e"
+                  fill="#2563eb"
                   isAnimationActive
                   animationDuration={900}
                 />
@@ -195,7 +197,7 @@ export function OverviewAnalyticsGrid({
         >
           <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_172px]">
             <ChartWrap>
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" initialDimension={chartInitialDimension}>
                 <PieChart>
                   <Pie
                     data={getSafeDistribution(claimsDistribution)}
@@ -298,7 +300,7 @@ function ChartWrap({
   heightClassName?: string;
 }) {
   return (
-    <div className={cn("rounded-[12px] border border-slate-200 bg-slate-50 p-2.5 min-[390px]:p-3", heightClassName)}>
+    <div className={cn("min-w-0 w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 min-[390px]:p-3", heightClassName)}>
       {children}
     </div>
   );

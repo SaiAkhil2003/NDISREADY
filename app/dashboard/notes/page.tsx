@@ -130,7 +130,7 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
               <form className="grid gap-4 lg:grid-cols-[1.2fr_0.9fr_0.9fr_0.8fr_auto_auto]">
                 <label className="space-y-2 text-sm">
                   <span className="font-medium text-slate-700">Search</span>
-                  <div className="flex h-11 items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 text-sm text-slate-900 transition focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/15">
+                  <div className="flex h-11 items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 text-sm text-slate-900 shadow-sm transition focus-within:border-blue-600 focus-within:ring-4 focus-within:ring-blue-600/10">
                     <Search className="size-4 text-slate-400" />
                     <input
                       name="query"
@@ -192,7 +192,7 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
                 <div className="flex items-end">
                   <button
                     type="submit"
-                    className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-base font-medium text-primary-foreground transition hover:bg-primary/90"
+                    className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700"
                   >
                     <Filter className="size-4" />
                     Apply
@@ -205,7 +205,7 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
                       <Link href="/dashboard/notes">Reset</Link>
                     </Button>
                   ) : (
-                    <div className="flex h-11 w-full items-center justify-center rounded-2xl border border-dashed border-slate-200 px-4 text-base text-slate-400">
+                    <div className="flex h-11 w-full items-center justify-center rounded-lg border border-dashed border-slate-200 px-4 text-sm text-slate-400">
                       No filters
                     </div>
                   )}
@@ -234,7 +234,7 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
                 notes.map((note) => (
                   <div
                     key={note.id}
-                    className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 md:rounded-[18px]"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4"
                   >
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                       <div className="space-y-3">
@@ -259,7 +259,7 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
                             <p className="hidden text-sm leading-6 text-slate-700 group-open:block sm:text-base sm:leading-7">
                               {normaliseCopy(note.finalNote)}
                             </p>
-                            <summary className="mt-2 inline-flex cursor-pointer list-none text-sm font-medium text-primary transition hover:text-primary/80">
+                            <summary className="mt-2 inline-flex cursor-pointer list-none text-sm font-medium text-blue-600 transition hover:text-blue-700">
                               <span className="group-open:hidden">Read more</span>
                               <span className="hidden group-open:inline">Show less</span>
                             </summary>
@@ -284,7 +284,7 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
                         ) : null}
                       </div>
 
-                      <div className="min-w-0 space-y-3 rounded-3xl border border-white/70 bg-white px-4 py-4 text-sm text-slate-600 sm:text-base lg:w-full lg:max-w-[18rem] md:rounded-[18px]">
+                      <div className="min-w-0 space-y-3 rounded-2xl border border-gray-100 bg-white px-4 py-4 text-sm text-slate-600 sm:text-base lg:w-full lg:max-w-[18rem]">
                         <div>
                           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                             Worker's original words

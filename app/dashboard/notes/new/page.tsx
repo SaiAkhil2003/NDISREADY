@@ -93,7 +93,7 @@ export default async function NewNotePage() {
             </p>
           </div>
 
-          <div className="dashboard-subpanel border-primary/10 bg-primary/5 text-slate-700">
+          <div className="dashboard-subpanel border-blue-100 bg-blue-50 text-slate-700">
             Each draft uses the selected participant, worker, note type, and support details.
           </div>
         </CardContent>
@@ -124,9 +124,7 @@ async function loadSafeNoteComposerContext() {
         workerOptions: normaliseNoteOptions(composerData.data?.workerOptions),
       },
     };
-  } catch (error) {
-    console.error("[notes/new] Failed to load note composer context:", error);
-
+  } catch {
     return {
       data: {
         participantOptions: [],

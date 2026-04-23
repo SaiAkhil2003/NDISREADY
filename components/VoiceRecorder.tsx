@@ -161,7 +161,7 @@ export function VoiceRecorder({
 
   if (hasSpeechRecognition === false) {
     return (
-      <Card className="border-white/70 bg-white/80">
+      <Card className="dashboard-surface">
         <CardHeader>
           <CardTitle>Support details</CardTitle>
           <CardDescription>
@@ -185,7 +185,7 @@ export function VoiceRecorder({
   }
 
   return (
-    <Card className="border-white/70 bg-white/80">
+    <Card className="dashboard-surface">
       <CardHeader>
         <CardTitle>Voice capture</CardTitle>
         <CardDescription>
@@ -201,7 +201,7 @@ export function VoiceRecorder({
             disabled={disabled}
             className={cn(
               "mx-auto size-16 rounded-full p-0",
-              isRecording ? "bg-rose-600 hover:bg-rose-700" : "bg-primary hover:bg-primary/90",
+              isRecording ? "bg-rose-600 hover:bg-rose-700" : "bg-blue-600 hover:bg-blue-700",
             )}
           >
             {isRecording ? <Square className="size-6" /> : <Mic className="size-6" />}
@@ -216,11 +216,11 @@ export function VoiceRecorder({
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-3 text-center md:flex-row md:items-center md:justify-between md:text-left">
+        <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-center md:flex-row md:items-center md:justify-between md:text-left">
           <div className="flex items-center justify-center gap-3 md:justify-start">
             <div
               className={cn(
-                "flex items-end gap-1 text-primary transition-opacity",
+                "flex items-end gap-1 text-blue-600 transition-opacity",
                 isRecording ? "opacity-100" : "opacity-40",
               )}
             >
@@ -246,7 +246,7 @@ export function VoiceRecorder({
         />
 
         {speechError ? (
-          <div className="rounded-3xl border border-rose-200 bg-rose-50 px-4 py-4 text-base text-rose-950">
+          <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-4 text-base text-rose-950">
             <div className="flex flex-col gap-3 md:flex-row md:items-start">
               <CircleAlert className="mt-0.5 size-5 shrink-0" />
               <p>{speechError}</p>

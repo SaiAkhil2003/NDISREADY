@@ -135,7 +135,7 @@ export function NoteEditor({
   );
 
   return (
-    <Card className="w-full self-start border-slate-200 bg-slate-950 text-white xl:sticky xl:top-6">
+    <Card className="w-full self-start border-slate-800 bg-slate-950 text-white xl:sticky xl:top-6">
       <CardHeader>
         <div className="flex flex-wrap items-center gap-3">
           <CardTitle className="text-white">Draft</CardTitle>
@@ -161,7 +161,7 @@ export function NoteEditor({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-slate-200">
+        <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-slate-200">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
             Worker's original words
           </p>
@@ -197,12 +197,12 @@ export function NoteEditor({
           placeholder="The drafted progress note will appear here."
         />
 
-        <div className="rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-base text-slate-300">
+        <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-base text-slate-300">
           {statusMessage}
         </div>
 
         {generationError ? (
-          <div className="rounded-3xl border border-rose-500/30 bg-rose-500/10 px-4 py-4 text-base text-rose-100">
+          <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-4 text-base text-rose-100">
             <div className="flex flex-col gap-3 md:flex-row md:items-start">
               <CircleAlert className="mt-0.5 size-5 shrink-0" />
               <p>{generationError}</p>
@@ -211,7 +211,7 @@ export function NoteEditor({
         ) : null}
 
         {saveError ? (
-          <div className="rounded-3xl border border-rose-500/30 bg-rose-500/10 px-4 py-4 text-base text-rose-100">
+          <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-4 text-base text-rose-100">
             <div className="flex flex-col gap-3 md:flex-row md:items-start">
               <CircleAlert className="mt-0.5 size-5 shrink-0" />
               <p>{saveError}</p>
@@ -220,7 +220,7 @@ export function NoteEditor({
         ) : null}
 
         {!canSave && saveUnavailableMessage ? (
-          <div className="rounded-3xl border border-amber-500/30 bg-amber-500/10 px-4 py-4 text-base text-amber-100">
+          <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-4 text-base text-amber-100">
             <div className="flex flex-col gap-3 md:flex-row md:items-start">
               <CircleAlert className="mt-0.5 size-5 shrink-0" />
               <p>{saveUnavailableMessage}</p>

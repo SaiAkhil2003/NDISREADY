@@ -159,8 +159,7 @@ export async function POST(request: Request) {
       const claudeResult = parseClaimCheckResponse(textContent);
       claudeSummary = claudeResult.summary;
       claudeIssues = claudeResult.issues;
-    } catch (error) {
-      console.warn("Claude validation unavailable for claim checker, falling back to local checks.", error);
+    } catch {
       summaryOverride =
         localIssues.length > 0
           ? `Automated review is temporarily unavailable. ${localIssues.length} issue${localIssues.length === 1 ? "" : "s"} still need attention.`
@@ -173,9 +172,7 @@ export async function POST(request: Request) {
       summary: summaryOverride ?? getClaimCheckSummary(issues, claudeSummary),
       issues,
     });
-  } catch (error) {
-    console.error("Failed to validate claim:", error);
-
+  } catch {
     return NextResponse.json(
       { error: "The claim review could not be completed right now. Please try again." },
       { status: 500 },

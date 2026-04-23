@@ -45,7 +45,6 @@ export async function createParticipantAction(formData: FormData) {
       redirect(buildParticipantsRedirect({ error: "duplicate" }));
     }
 
-    console.error("Failed to create participant:", error);
     redirect(buildParticipantsRedirect({ error: "save" }));
   }
 

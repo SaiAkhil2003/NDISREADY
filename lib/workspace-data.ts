@@ -513,8 +513,8 @@ async function withWorkspaceData<T>(
 }
 
 function logWorkspaceFallback(scope: string, error: unknown) {
-  const message = formatWorkspaceError(error);
-  console.warn(`[workspace:${scope}] ${message}`);
+  void scope;
+  void error;
 }
 
 function formatWorkspaceError(error: unknown) {

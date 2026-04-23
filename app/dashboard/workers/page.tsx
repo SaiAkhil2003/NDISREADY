@@ -213,7 +213,7 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
 
                 <button
                   type="submit"
-                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-3 text-base font-medium text-primary-foreground transition hover:bg-primary/90 md:w-auto"
+                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 md:w-auto"
                 >
                   <UserPlus className="size-4" />
                   Save worker
@@ -235,7 +235,7 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
                   No workers saved yet. Submit the form to create the first worker.
                 </div>
               ) : (
-                <div className="overflow-hidden rounded-3xl border border-slate-200 md:rounded-[18px]">
+                <div className="overflow-hidden rounded-2xl border border-slate-200">
                   <div className="hidden grid-cols-[1.2fr_0.8fr_0.7fr_1fr_0.9fr] bg-slate-50 px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 md:grid">
                     <span>Name</span>
                     <span>Role</span>

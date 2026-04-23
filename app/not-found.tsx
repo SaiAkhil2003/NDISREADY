@@ -11,9 +11,9 @@ export default function NotFound() {
     <main className="px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
         <section className="page-shell px-5 py-10 sm:px-8 sm:py-12">
-          <Card className="border-white/70 bg-white/85">
+          <Card className="border-gray-100 bg-white">
             <CardHeader className="space-y-3">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">
                 {siteName}
               </p>
               <CardTitle className="text-4xl tracking-tight text-slate-950">

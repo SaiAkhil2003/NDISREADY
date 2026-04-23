@@ -95,9 +95,7 @@ export async function POST(request: Request) {
       ai_draft: result.aiDraft,
       goals_addressed: result.goalsAddressed,
     });
-  } catch (error) {
-    console.error("Failed to generate AI note:", error);
-
+  } catch {
     return NextResponse.json(
       { error: "A draft note could not be created. Please try again." },
       { status: 500 },

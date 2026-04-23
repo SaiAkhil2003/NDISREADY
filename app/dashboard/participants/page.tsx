@@ -211,7 +211,7 @@ export default async function ParticipantsPage({ searchParams }: ParticipantsPag
 
                 <button
                   type="submit"
-                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-3 text-base font-medium text-primary-foreground transition hover:bg-primary/90 md:w-auto"
+                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 md:w-auto"
                 >
                   <UserPlus2 className="size-4" />
                   Save participant
@@ -236,7 +236,7 @@ export default async function ParticipantsPage({ searchParams }: ParticipantsPag
                 participants.map((participant) => (
                   <div
                     key={participant.id}
-                    className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 md:rounded-[18px]"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4"
                   >
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                       <div className="space-y-3">
@@ -296,7 +296,7 @@ export default async function ParticipantsPage({ searchParams }: ParticipantsPag
 
                       <Link
                         href={getParticipantDetailUrl(participant.id)}
-                        className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base font-medium text-slate-700 transition hover:border-slate-300 hover:text-slate-950 lg:w-auto"
+                        className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-gray-50 hover:text-slate-950 lg:w-auto"
                       >
                         <Eye className="size-4" />
                         View profile

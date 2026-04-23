@@ -43,7 +43,6 @@ export async function createWorkerAction(formData: FormData) {
       redirect(buildWorkersRedirect({ error: "duplicate" }));
     }
 
-    console.error("Failed to create worker:", error);
     redirect(buildWorkersRedirect({ error: "save" }));
   }
 

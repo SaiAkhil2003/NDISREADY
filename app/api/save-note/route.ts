@@ -105,9 +105,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ saved_note_id: savedNoteId });
-  } catch (error) {
-    console.error("Failed to save note:", error);
-
+  } catch {
     return NextResponse.json(
       { error: "The note could not be saved right now. Please try again." },
       { status: 500 },

@@ -130,11 +130,11 @@ export default async function DashboardPage() {
   ];
   const activeParticipants = participants.filter((participant) => participant.status === "active").length;
   const workerDistribution = [
-    { label: "Active", value: activeWorkers, color: "#0f766e" },
+    { label: "Active", value: activeWorkers, color: "#2563eb" },
     { label: "Inactive", value: Math.max(workers.length - activeWorkers, 0), color: "#94a3b8" },
   ];
   const participantDistribution = [
-    { label: "Active", value: activeParticipants, color: "#0f766e" },
+    { label: "Active", value: activeParticipants, color: "#2563eb" },
     { label: "Inactive", value: Math.max(participants.length - activeParticipants, 0), color: "#cbd5e1" },
   ];
   const notesActivity = buildRecentDailySeries(approvedNoteDates, 7);
@@ -154,7 +154,7 @@ export default async function DashboardPage() {
         <div className="dashboard-page-heading">
           <Badge
             variant="secondary"
-            className="w-fit border border-primary/15 bg-primary/10 px-3 py-1 text-primary shadow-sm"
+            className="w-fit border border-blue-100 bg-blue-50 px-3 py-1 text-blue-700 shadow-sm"
           >
             Overview
           </Badge>
@@ -474,7 +474,7 @@ function buildClaimsStatusDistribution(values: string[]) {
   }
 
   return [
-    { label: "Approved", value: approved, color: "#0f766e" },
+    { label: "Approved", value: approved, color: "#2563eb" },
     { label: "Pending", value: pending, color: "#f59e0b" },
     { label: "Rejected", value: rejected, color: "#dc2626" },
   ];

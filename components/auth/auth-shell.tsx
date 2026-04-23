@@ -24,7 +24,7 @@ export function AuthShell({
   return (
     <main className="relative overflow-hidden px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-7xl">
-        <section className="page-shell bg-hero-grid grid gap-8 px-5 py-8 sm:px-8 sm:py-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:px-10 lg:py-12">
+        <section className="page-shell grid gap-8 px-5 py-8 sm:px-8 sm:py-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:px-10 lg:py-12">
           <div className="space-y-6">
             <Link
               href="/"
@@ -33,7 +33,7 @@ export function AuthShell({
               <Home className="size-4" />
               Back to home
             </Link>
-            <div className="inline-flex items-center rounded-full border border-primary/15 bg-primary/10 px-4 py-1 text-sm font-medium text-primary">
+            <div className="inline-flex items-center rounded-full border border-blue-100 bg-blue-50 px-4 py-1 text-sm font-medium text-blue-700">
               {eyebrow}
             </div>
             <div className="space-y-4">
@@ -44,7 +44,7 @@ export function AuthShell({
                 {description}
               </p>
             </div>
-            <Card className="border-white/70 bg-white/80">
+            <Card className="border-gray-100 bg-white">
               <CardContent className="space-y-2 py-6">
                 <p className="text-base font-semibold text-slate-900">Next destination</p>
                 <p className="text-base leading-7 text-slate-600">
@@ -52,7 +52,7 @@ export function AuthShell({
                 </p>
                 <Link
                   href={secondaryCtaHref}
-                  className="inline-flex pt-2 text-sm font-semibold text-primary"
+                  className="inline-flex pt-2 text-sm font-semibold text-blue-600"
                 >
                   {secondaryCtaLabel}
                 </Link>
