@@ -115,9 +115,9 @@ export function ClaimChecker({
   const totalWarnings = issues.filter((issue) => issue.severity === "warning").length;
 
   return (
-    <div className="space-y-5 md:space-y-6">
-      <section className="dashboard-summary-grid">
-        <Card className="dashboard-stat-surface">
+    <div className="w-full min-w-0 space-y-5 md:space-y-6">
+      <section className="dashboard-summary-grid min-w-0">
+        <Card className="dashboard-stat-surface min-w-0">
           <CardHeader className="flex flex-col gap-3 space-y-0 p-3.5 md:flex-row md:items-start md:justify-between md:p-4">
             <div>
               <CardDescription className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">Participants</CardDescription>
@@ -129,7 +129,7 @@ export function ClaimChecker({
           </CardHeader>
         </Card>
 
-        <Card className="dashboard-stat-surface">
+        <Card className="dashboard-stat-surface min-w-0">
           <CardHeader className="flex flex-col gap-3 space-y-0 p-3.5 md:flex-row md:items-start md:justify-between md:p-4">
             <div>
               <CardDescription className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">Workers</CardDescription>
@@ -141,7 +141,7 @@ export function ClaimChecker({
           </CardHeader>
         </Card>
 
-        <Card className="dashboard-stat-surface">
+        <Card className="dashboard-stat-surface min-w-0">
           <CardHeader className="flex flex-col gap-3 space-y-0 p-3.5 md:flex-row md:items-start md:justify-between md:p-4">
             <div>
               <CardDescription className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">Issues found</CardDescription>
@@ -156,8 +156,8 @@ export function ClaimChecker({
         </Card>
       </section>
 
-      <section className="grid items-start gap-4 lg:grid-cols-[minmax(0,0.95fr)_minmax(19rem,1.05fr)]">
-        <Card className="dashboard-surface">
+      <section className="grid min-w-0 items-start gap-4 2xl:grid-cols-[minmax(0,0.95fr)_minmax(20rem,1.05fr)]">
+        <Card className="dashboard-surface min-w-0 overflow-hidden">
           <CardHeader>
             <CardTitle>Claim details</CardTitle>
             <CardDescription>
@@ -166,35 +166,35 @@ export function ClaimChecker({
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 md:gap-5">
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-              <div className="soft-panel px-4 py-3">
+            <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 2xl:grid-cols-3">
+              <div className="soft-panel min-w-0 px-4 py-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                   Participant
                 </p>
-                <p className="pt-2 text-base font-semibold text-slate-900">
+                <p className="break-words pt-2 text-base font-semibold text-slate-900">
                   {selectedParticipantLabel || "Select participant"}
                 </p>
               </div>
-              <div className="soft-panel px-4 py-3">
+              <div className="soft-panel min-w-0 px-4 py-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                   Worker
                 </p>
-                <p className="pt-2 text-base font-semibold text-slate-900">
+                <p className="break-words pt-2 text-base font-semibold text-slate-900">
                   {selectedWorkerLabel || "Select worker"}
                 </p>
               </div>
-              <div className="soft-panel px-4 py-3">
+              <div className="soft-panel min-w-0 px-4 py-3 sm:col-span-2 2xl:col-span-1">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                   Review state
                 </p>
-                <p className="pt-2 text-base font-semibold text-slate-900">
+                <p className="break-words pt-2 text-base font-semibold text-slate-900">
                   {hasChecked ? "Results ready" : "Awaiting review"}
                 </p>
               </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <label className="space-y-2 text-sm">
+            <div className="grid min-w-0 grid-cols-1 gap-4 2xl:grid-cols-2">
+              <label className="min-w-0 space-y-2 text-sm">
                 <span className="font-medium text-slate-700">Participant</span>
                 <select
                   value={participantId}
@@ -217,7 +217,7 @@ export function ClaimChecker({
                 ) : null}
               </label>
 
-              <label className="space-y-2 text-sm">
+              <label className="min-w-0 space-y-2 text-sm">
                 <span className="font-medium text-slate-700">Worker</span>
                 <select
                   value={workerId}
@@ -237,10 +237,8 @@ export function ClaimChecker({
                   <p className="text-base text-slate-500">{findOptionDetail(workerOptions, workerId)}</p>
                 ) : null}
               </label>
-            </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <label className="space-y-2 text-sm">
+              <label className="min-w-0 space-y-2 text-sm">
                 <span className="font-medium text-slate-700">Claim date</span>
                 <input
                   type="date"
@@ -253,19 +251,18 @@ export function ClaimChecker({
                 />
               </label>
 
-              <label className="space-y-2 text-sm">
+              <label className="min-w-0 space-y-2 text-sm">
                 <span className="font-medium text-slate-700">Amount</span>
                 <input
                   value={amount}
                   onChange={(event) => handleDraftChange(() => setAmount(event.target.value))}
                   className="field-control"
+                  inputMode="decimal"
                   placeholder="135.12"
                 />
               </label>
-            </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <label className="space-y-2 text-sm">
+              <label className="min-w-0 space-y-2 text-sm">
                 <span className="font-medium text-slate-700">Support hours</span>
                 <input
                   value={supportHours}
@@ -273,11 +270,12 @@ export function ClaimChecker({
                     handleDraftChange(() => setSupportHours(event.target.value))
                   }
                   className="field-control"
+                  inputMode="decimal"
                   placeholder="2.5"
                 />
               </label>
 
-              <label className="space-y-2 text-sm">
+              <label className="min-w-0 space-y-2 text-sm">
                 <span className="font-medium text-slate-700">Service code</span>
                 <input
                   value={serviceCode}
@@ -288,30 +286,30 @@ export function ClaimChecker({
                   placeholder="01_011_0107_1_1_T"
                 />
               </label>
+
+              <label className="min-w-0 space-y-2 text-sm 2xl:col-span-2">
+                <span className="font-medium text-slate-700">Reference</span>
+                <input
+                  value={reference}
+                  onChange={(event) => handleDraftChange(() => setReference(event.target.value))}
+                  className="field-control"
+                  placeholder="CLM-260420-001"
+                />
+              </label>
+
+              <label className="min-w-0 space-y-2 text-sm 2xl:col-span-2">
+                <span className="font-medium text-slate-700">Claim notes</span>
+                <textarea
+                  rows={8}
+                  value={claimNotes}
+                  onChange={(event) =>
+                    handleDraftChange(() => setClaimNotes(event.target.value))
+                  }
+                  className="field-textarea"
+                  placeholder="Describe the support that was delivered and why the claim should be valid."
+                />
+              </label>
             </div>
-
-            <label className="space-y-2 text-sm">
-              <span className="font-medium text-slate-700">Reference</span>
-              <input
-                value={reference}
-                onChange={(event) => handleDraftChange(() => setReference(event.target.value))}
-                className="field-control"
-                placeholder="CLM-260420-001"
-              />
-            </label>
-
-            <label className="space-y-2 text-sm">
-              <span className="font-medium text-slate-700">Claim notes</span>
-              <textarea
-                rows={8}
-                value={claimNotes}
-                onChange={(event) =>
-                  handleDraftChange(() => setClaimNotes(event.target.value))
-                }
-                className="field-textarea"
-                placeholder="Describe the support that was delivered and why the claim should be valid."
-              />
-            </label>
 
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <Button
@@ -331,7 +329,7 @@ export function ClaimChecker({
           </CardContent>
         </Card>
 
-        <Card className="w-full self-start border-slate-200 bg-slate-950 text-white md:!rounded-[18px] xl:sticky xl:top-4">
+        <Card className="w-full min-w-0 self-start border-slate-200 bg-slate-950 text-white md:!rounded-[18px] 2xl:sticky 2xl:top-4">
           <CardHeader>
             <div className="flex flex-wrap items-center gap-3">
               <CardTitle className="text-white">Claim review</CardTitle>

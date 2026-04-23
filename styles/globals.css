@@ -107,14 +107,14 @@
   }
 
   .dashboard-surface {
-    @apply border bg-white;
+    @apply min-w-0 border bg-white;
     border-radius: 14px !important;
     border-color: rgba(226, 232, 240, 0.98);
     box-shadow: 0 10px 20px -20px rgba(15, 23, 42, 0.22);
   }
 
   .dashboard-stat-surface {
-    @apply border bg-white;
+    @apply min-w-0 border bg-white;
     border-radius: 12px !important;
     border-color: rgba(226, 232, 240, 0.98);
     box-shadow: 0 8px 16px -18px rgba(15, 23, 42, 0.2);
@@ -184,12 +184,12 @@
   }
 
   .field-control {
-    @apply min-h-12 w-full border border-slate-200 bg-white px-3.5 text-base leading-6 text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10 sm:px-4;
+    @apply min-h-12 min-w-0 w-full border border-slate-200 bg-white px-3.5 text-base leading-6 text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10 sm:px-4;
     border-radius: 16px;
   }
 
   .field-textarea {
-    @apply min-h-[120px] w-full border border-slate-200 bg-white px-3.5 py-3 text-base leading-6 text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10 sm:px-4;
+    @apply min-h-[120px] min-w-0 w-full border border-slate-200 bg-white px-3.5 py-3 text-base leading-6 text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10 sm:px-4;
     border-radius: 16px;
   }
 

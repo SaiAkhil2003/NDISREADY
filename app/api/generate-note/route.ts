@@ -88,6 +88,7 @@ export async function POST(request: Request) {
       participantName,
       participantGoals: participant.goals.map((goal) => goal.title),
       noteType: noteType && isNoteType(noteType) ? noteType : undefined,
+      shiftDate: typeof body.shift_date === "string" ? body.shift_date.trim() : undefined,
     });
 
     return NextResponse.json({

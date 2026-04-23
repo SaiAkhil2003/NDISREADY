@@ -468,5 +468,5 @@ function deriveGoalsAddressed(goals: string[], texts: string[]) {
     return keywords.some((keyword) => haystack.includes(keyword));
   });
 
-  return matchedGoals.length > 0 ? matchedGoals : goals;
+  return matchedGoals;
 }

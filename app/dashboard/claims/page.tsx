@@ -66,7 +66,7 @@ export default async function ClaimsPage() {
         </div>
       </div>
 
-      <Card className="dashboard-surface">
+      <Card className="dashboard-surface min-w-0">
         <CardHeader>
           <CardTitle>Review context</CardTitle>
           <CardDescription>
@@ -94,10 +94,10 @@ export default async function ClaimsPage() {
         </CardContent>
       </Card>
 
-      <section className="grid items-start gap-3 xl:grid-cols-[minmax(0,320px)_minmax(0,1fr)] 2xl:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
+      <section className="grid min-w-0 items-start gap-3 xl:grid-cols-[minmax(0,320px)_minmax(0,1fr)] 2xl:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
         <ClaimAnalyticsPanel
           claims={claims}
-          className="order-2 self-start xl:order-1 xl:sticky xl:top-3"
+          className="order-2 min-w-0 self-start xl:order-1 xl:sticky xl:top-3"
         />
 
         <div className="order-1 min-w-0 space-y-3 xl:order-2">
@@ -106,7 +106,7 @@ export default async function ClaimsPage() {
             workerOptions={claimsData.data.workerOptions}
           />
 
-          <Card className="dashboard-surface">
+          <Card className="dashboard-surface min-w-0">
             <CardHeader>
               <CardTitle>Recent claims</CardTitle>
             </CardHeader>
@@ -119,11 +119,11 @@ export default async function ClaimsPage() {
                 claims.map((claim) => (
                   <div
                     key={claim.id}
-                    className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 md:rounded-[18px]"
+                    className="min-w-0 rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 md:rounded-[18px]"
                   >
-                    <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                      <div className="space-y-2">
-                        <p className="text-lg font-semibold text-slate-950">{claim.participantName}</p>
+                    <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                      <div className="min-w-0 space-y-2">
+                        <p className="break-words text-lg font-semibold text-slate-950">{claim.participantName}</p>
                         <p className="text-base text-slate-600">
                           {claim.workerName
                             ? `${claim.workerName}${claim.workerRole ? ` · ${claim.workerRole}` : ""}`
@@ -133,11 +133,11 @@ export default async function ClaimsPage() {
                           Service date {claim.claimDate} • ${claim.amount.toFixed(2)}
                         </p>
                         {claim.notes ? (
-                          <p className="text-base leading-7 text-slate-700">{claim.notes}</p>
+                          <p className="break-words text-base leading-7 text-slate-700">{claim.notes}</p>
                         ) : null}
                       </div>
 
-                      <div className="flex flex-wrap gap-2 lg:max-w-xs lg:justify-end">
+                      <div className="flex min-w-0 flex-wrap gap-2 lg:max-w-xs lg:justify-end">
                         <span className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600">
                           {formatClaimStatus(claim.status)}
                         </span>

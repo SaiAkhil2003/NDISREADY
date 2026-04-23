@@ -161,6 +161,15 @@ export function NoteEditor({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-slate-200">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+            Worker's original words
+          </p>
+          <p className="mt-2 max-h-32 overflow-y-auto whitespace-pre-wrap text-sm leading-6 sm:text-base sm:leading-7">
+            {rawInput.trim() || "The original worker input will appear here for comparison."}
+          </p>
+        </div>
+
         <div className="flex flex-wrap gap-2">
           {goalsAddressed.length > 0 ? (
             goalsAddressed.map((goal) => (

@@ -14,6 +14,7 @@ type RuleBasedNoteDraftInput = {
   participantName: string;
   participantGoals: string[];
   noteType?: NoteType;
+  shiftDate?: string;
 };
 
 export type RuleBasedNoteDraft = {
@@ -47,73 +48,65 @@ export function formatParticipantName(input: {
   return formatDisplayParticipantName(input);
 }
 
+export const noteDraftingGuidance = [
+  "Use the worker's original words as the source of truth.",
+  "Preserve concrete support activities, participant responses, outcomes, and next steps when stated.",
+  "Do not invent incidents, medical details, behaviours, goals, progress, or follow-up actions.",
+  "Do not replace useful specific details with vague generic summaries.",
+  "If a detail is missing, say it was not stated instead of inferring it.",
+] as const;
+
 export function buildRuleBasedNoteDraft({
   sourceText,
   participantName,
   participantGoals,
   noteType,
+  shiftDate,
 }: RuleBasedNoteDraftInput): RuleBasedNoteDraft {
   const normalisedText = normaliseSourceText(sourceText);
-  const cleanedSentences = extractCleanSentences(normalisedText);
-  const detectedActivities = detectActivities(normalisedText);
-  const detectedBarriers = detectBarriers(normalisedText);
-  const detectedSupports = detectSupportNeeds(normalisedText);
-  const detectedProgress = detectProgressSignals(normalisedText);
-  const mentionsMedication = containsPattern(normalisedText, [
-    /\bmedication\b/i,
-    /\bmeds\b/i,
-    /\breminder\b/i,
-  ]);
-  const mentionsNoIncidents = containsPattern(normalisedText, [
-    /\bno (?:injury|incident|incidents)\b/i,
-    /\bnothing major\b/i,
-    /\bno behaviours?\b/i,
-    /\bno behavioural concerns?\b/i,
-  ]);
+  const sourceFacts = extractCleanSentences(normalisedText);
+  const factBuckets = categoriseSourceFacts(sourceFacts);
   const goalsAddressed = deriveGoalsAddressed(participantGoals, [normalisedText]);
-
-  const summaryParagraph = buildSummaryParagraph({
-    cleanedSentences,
-    detectedActivities,
-    detectedBarriers,
-    detectedSupports,
-    detectedProgress,
-    mentionsMedication,
-    mentionsNoIncidents,
-  });
-  const observations = buildObservationBullets({
-    detectedActivities,
-    detectedBarriers,
-    detectedSupports,
-    detectedProgress,
-    mentionsMedication,
-    mentionsNoIncidents,
-  });
-  const plan = buildPlanBullets({
-    normalisedText,
-    detectedActivities,
-    detectedBarriers,
-    mentionsMedication,
-  });
   const goalsSection =
     participantGoals.length === 0
-      ? "- No goals recorded"
+      ? "- No participant goals were available in the workspace context."
       : goalsAddressed.length > 0
         ? goalsAddressed.map((goal) => `- ${goal}`).join("\n")
-        : "- No specific participant goal was clearly referenced in this update";
+        : "- No participant goal was clearly referenced in the worker's original input.";
 
   const noteTitle = noteType ? getNoteTypeLabel(noteType) : "Support Note";
+  const supportProvided =
+    factBuckets.support.length > 0 ? factBuckets.support : sourceFacts.slice(0, 3);
 
   return {
     aiDraft:
       `${noteTitle}:\n\n` +
       `Participant: ${participantName}\n\n` +
-      `Summary:\n${summaryParagraph}\n\n` +
+      `${shiftDate?.trim() ? `Date: ${shiftDate.trim()}\n\n` : ""}` +
+      formatDraftSection({
+        heading: "What support was provided",
+        bullets: supportProvided,
+        fallback: "Support details were not clearly stated in the worker's original input.",
+      }) +
+      "\n\n" +
+      formatDraftSection({
+        heading: "Participant response / outcome",
+        bullets: factBuckets.response,
+        fallback: "The participant's response or outcome was not stated in the worker's original input.",
+      }) +
+      "\n\n" +
+      formatDraftSection({
+        heading: "Progress / difficulty observed",
+        bullets: factBuckets.progress,
+        fallback: "No specific progress, difficulty, incident, injury, or behavioural concern was stated in the worker's original input.",
+      }) +
+      "\n\n" +
       `Goals addressed:\n${goalsSection}\n\n` +
-      `Observations:\n\n` +
-      `${observations.map((item) => `- ${item}`).join("\n")}\n\n` +
-      `Plan:\n\n` +
-      `${plan.map((item) => `- ${item}`).join("\n")}`,
+      formatDraftSection({
+        heading: "Follow-up / next steps",
+        bullets: factBuckets.followUp,
+        fallback: "No specific follow-up or next step was stated in the worker's original input.",
+      }),
     goalsAddressed,
   };
 }
@@ -134,270 +127,38 @@ export function deriveGoalsAddressed(goals: string[], texts: string[]) {
     const keywords = normalisedGoal
       .split(/[^a-z0-9]+/)
       .map((keyword) => keyword.trim())
-      .filter((keyword) => keyword.length >= 4);
+      .filter((keyword) => keyword.length >= 5 && !goalKeywordStopWords.has(keyword));
 
-    return keywords.some((keyword) => haystack.includes(keyword));
+    if (keywords.length === 0) {
+      return false;
+    }
+
+    const matchedKeywordCount = keywords.filter((keyword) =>
+      getGoalKeywordMatches(keyword).some((match) => haystack.includes(match)),
+    ).length;
+
+    return keywords.length === 1
+      ? matchedKeywordCount === 1
+      : matchedKeywordCount >= Math.min(2, keywords.length) ||
+          keywords.some((keyword) => highConfidenceGoalKeywords.has(keyword) && getGoalKeywordMatches(keyword).some((match) => haystack.includes(match)));
   });
 
   return matchedGoals.length > 0 ? matchedGoals : [];
 }
 
-function buildSummaryParagraph(input: {
-  cleanedSentences: string[];
-  detectedActivities: string[];
-  detectedBarriers: string[];
-  detectedSupports: string[];
-  detectedProgress: string[];
-  mentionsMedication: boolean;
-  mentionsNoIncidents: boolean;
-}) {
-  const summaryParts: string[] = [];
-
-  if (input.detectedActivities.length > 0) {
-    summaryParts.push(
-      `Participant engaged in a support shift focused on ${formatList(input.detectedActivities)}.`,
-    );
-  } else {
-    summaryParts.push(
-      "Participant engaged in a support shift and participated in planned support activities.",
-    );
-  }
-
-  if (input.detectedBarriers.length > 0) {
-    summaryParts.push(
-      `Initial hesitation was observed in relation to ${formatList(input.detectedBarriers)}, however the participant continued with support after discussion and reassurance.`,
-    );
-  }
-
-  if (input.detectedSupports.length > 0) {
-    summaryParts.push(
-      `The participant required support with ${formatList(input.detectedSupports)} during the shift.`,
-    );
-  }
-
-  if (input.detectedProgress.length > 0) {
-    summaryParts.push(
-      `Progress was observed in ${formatList(input.detectedProgress)} when compared with previous support.`,
-    );
-  }
-
-  if (input.mentionsMedication) {
-    summaryParts.push(
-      "Medication reminders were discussed to support consistency with the evening routine.",
-    );
-  }
-
-  if (input.mentionsNoIncidents) {
-    summaryParts.push(
-      "No incidents, injuries, or behavioural concerns were reported during the shift.",
-    );
-  }
-
-  if (summaryParts.length >= 2) {
-    return summaryParts.join(" ");
-  }
-
-  if (input.cleanedSentences.length > 0) {
-    return input.cleanedSentences.slice(0, 4).join(" ");
-  }
-
-  return "Participant engaged in the scheduled support shift. Ongoing support should continue in line with participant needs.";
-}
-
-function buildObservationBullets(input: {
-  detectedActivities: string[];
-  detectedBarriers: string[];
-  detectedSupports: string[];
-  detectedProgress: string[];
-  mentionsMedication: boolean;
-  mentionsNoIncidents: boolean;
-}) {
-  const bullets: string[] = [];
-
-  if (input.detectedActivities.length > 0) {
-    bullets.push(`Support focused on ${formatList(input.detectedActivities)}.`);
-  }
-
-  if (input.detectedBarriers.length > 0) {
-    bullets.push(`Participant initially presented with ${formatList(input.detectedBarriers)}.`);
-  }
-
-  if (input.detectedSupports.length > 0) {
-    bullets.push(`Prompting was required for ${formatList(input.detectedSupports)}.`);
-  }
-
-  if (input.detectedProgress.length > 0) {
-    bullets.push(`Participant showed progress in ${formatList(input.detectedProgress)}.`);
-  }
-
-  if (input.mentionsMedication) {
-    bullets.push("Medication reminder strategies were discussed during the shift.");
-  }
-
-  if (input.mentionsNoIncidents) {
-    bullets.push("No incidents, injuries, or behavioural concerns were observed.");
-  }
-
-  if (bullets.length === 0) {
-    bullets.push("Participant engaged with support activities during the shift.");
-  }
-
-  return dedupeStrings(bullets).slice(0, 5);
-}
-
-function buildPlanBullets(input: {
-  normalisedText: string;
-  detectedActivities: string[];
-  detectedBarriers: string[];
-  mentionsMedication: boolean;
-}) {
-  const plan: string[] = [];
-
-  if (
-    input.detectedActivities.includes("travel training") ||
-    input.detectedActivities.includes("community access")
-  ) {
-    plan.push("Continue community access and travel practice with prompting reduced where appropriate.");
-  }
-
-  if (input.detectedActivities.includes("shopping confidence")) {
-    plan.push("Continue building confidence with shopping and other community-based tasks.");
-  }
-
-  if (input.detectedBarriers.length > 0) {
-    plan.push("Use reassurance, clear planning, and gradual exposure when entering busy environments.");
-  }
-
-  if (input.mentionsMedication) {
-    plan.push("Reinforce the use of reminders to support the evening medication routine.");
-  }
-
-  if (containsPattern(input.normalisedText, [/\bnext shift\b/i, /\bnext week\b/i, /\bcontinue\b/i])) {
-    plan.push("Review progress again at the next shift and update supports as needed.");
-  }
-
-  if (plan.length === 0) {
-    plan.push("Continue current support strategies and monitor progress at the next shift.");
-  }
-
-  return dedupeStrings(plan).slice(0, 4);
-}
-
-function detectActivities(sourceText: string) {
-  const activities: string[] = [];
-
-  if (containsPattern(sourceText, [/\bcommunity access\b/i, /\bcommunity\b/i])) {
-    activities.push("community access");
-  }
-
-  if (containsPattern(sourceText, [/\bdaily living\b/i, /\bindependent living\b/i])) {
-    activities.push("daily living skills");
-  }
-
-  if (containsPattern(sourceText, [/\bbus\b/i, /\bbus stop\b/i, /\btransport\b/i, /\btravel\b/i])) {
-    activities.push("travel training");
-  }
-
-  if (containsPattern(sourceText, [/\bshop\b/i, /\bshopping\b/i, /\bshops\b/i])) {
-    activities.push("shopping confidence");
-  }
-
-  if (containsPattern(sourceText, [/\bmedication\b/i, /\bmeds\b/i, /\breminder\b/i])) {
-    activities.push("medication routine support");
-  }
-
-  return activities;
-}
-
-function detectBarriers(sourceText: string) {
-  const barriers: string[] = [];
-
-  if (containsPattern(sourceText, [/\bquiet at first\b/i])) {
-    barriers.push("low confidence at the start of the shift");
-  }
-
-  if (
-    containsPattern(sourceText, [
-      /\btoo many people\b/i,
-      /\bnoisy\b/i,
-      /\bcrowd(?:ed)?\b/i,
-      /\bbusy\b/i,
-    ])
-  ) {
-    barriers.push("busy or noisy environments");
-  }
-
-  if (
-    containsPattern(sourceText, [
-      /\bnervous\b/i,
-      /\banxious\b/i,
-      /\bdidn.?t really want to go out\b/i,
-      /\breluctant\b/i,
-    ])
-  ) {
-    barriers.push("anxiety with community access");
-  }
-
-  return barriers;
-}
-
-function detectSupportNeeds(sourceText: string) {
-  const supports: string[] = [];
-
-  if (containsPattern(sourceText, [/\bprompt(?:ing|ed|s)?\b/i, /\breminder(?:s)?\b/i])) {
-    supports.push("verbal prompting");
-  }
-
-  if (containsPattern(sourceText, [/\bwhat bus\b/i, /\bwhich bus\b/i, /\bcorrect bus\b/i])) {
-    supports.push("identifying the correct bus");
-  }
-
-  if (containsPattern(sourceText, [/\btalk about the plan\b/i, /\bplan and then went\b/i])) {
-    supports.push("reviewing the activity plan before leaving");
-  }
-
-  return supports;
-}
-
-function detectProgressSignals(sourceText: string) {
-  const progress: string[] = [];
-
-  if (
-    containsPattern(sourceText, [
-      /\bbetter than last time\b/i,
-      /\bmore confident\b/i,
-      /\bimprov(?:ed|ement)?\b/i,
-      /\bsettled\b/i,
-    ])
-  ) {
-    progress.push("confidence with support activities");
-  }
-
-  if (containsPattern(sourceText, [/\bokay\b/i, /\bengaged\b/i, /\bhappy\b/i])) {
-    progress.push("engagement during the shift");
-  }
-
-  return progress;
-}
-
 function extractCleanSentences(sourceText: string) {
-  const cleanedText = sourceText
-    .replace(/\b(?:um|uh|ah|er|mm+)\b/gi, " ")
-    .replace(/\b(?:yeah|like|you know|basically|sort of|kind of)\b/gi, " ")
-    .replace(/\bI think\b/gi, " ")
-    .replace(/\bno actually\b/gi, " ")
-    .replace(/\bthey was\b/gi, "they were")
-    .replace(/\bwe done\b/gi, "support focused on")
-    .replace(/\bthey done\b/gi, "they completed")
-    .replace(/\bmeds\b/gi, "medication")
-    .replace(/\s+/g, " ")
-    .trim();
+  const sourceSegments = sourceText
+    .replace(/[\r\n]+/g, ". ")
+    .split(/(?:[.!?]+|;\s+|\s+-\s+|\s*,\s*(?=(?:then|after that|also|but|however|next|we|i|he|she|they|participant)\b))/i)
+    .flatMap(splitLongVoiceSegment)
+    .map(cleanSourceFact)
+    .filter(Boolean);
 
-  return cleanedText
-    .split(/[.!?]+/)
-    .map((sentence) => sentence.trim())
-    .filter(Boolean)
-    .map((sentence) => sentence.charAt(0).toUpperCase() + sentence.slice(1).trim() + ".");
+  const cleanedSegments = dedupeStrings(sourceSegments).slice(0, 8);
+
+  return cleanedSegments.length > 0
+    ? cleanedSegments
+    : [cleanSourceFact(sourceText)].filter(Boolean);
 }
 
 function normaliseSourceText(sourceText: string) {
@@ -408,24 +169,257 @@ function containsPattern(value: string, patterns: RegExp[]) {
   return patterns.some((pattern) => pattern.test(value));
 }
 
-function formatList(items: string[]) {
-  const values = dedupeStrings(items);
+function formatDraftSection(input: {
+  heading: string;
+  bullets: string[];
+  fallback: string;
+}) {
+  const bullets = input.bullets.length > 0 ? input.bullets : [input.fallback];
 
-  if (values.length === 0) {
+  return `${input.heading}:\n${dedupeStrings(bullets)
+    .slice(0, 5)
+    .map((item) => `- ${item}`)
+    .join("\n")}`;
+}
+
+function categoriseSourceFacts(sourceFacts: string[]) {
+  const buckets = {
+    support: [] as string[],
+    response: [] as string[],
+    progress: [] as string[],
+    followUp: [] as string[],
+  };
+
+  sourceFacts.forEach((fact) => {
+    if (containsPattern(fact, supportPatterns)) {
+      buckets.support.push(fact);
+    }
+
+    if (containsPattern(fact, responsePatterns)) {
+      buckets.response.push(fact);
+    }
+
+    if (containsPattern(fact, progressAndRiskPatterns)) {
+      buckets.progress.push(fact);
+    }
+
+    if (containsPattern(fact, followUpPatterns)) {
+      buckets.followUp.push(fact);
+    }
+  });
+
+  return {
+    support: dedupeStrings(buckets.support),
+    response: dedupeStrings(buckets.response),
+    progress: dedupeStrings(buckets.progress),
+    followUp: dedupeStrings(buckets.followUp),
+  };
+}
+
+function splitLongVoiceSegment(segment: string) {
+  const trimmedSegment = segment.trim();
+
+  if (trimmedSegment.length <= 180) {
+    return [trimmedSegment];
+  }
+
+  return trimmedSegment.split(/\s+(?=(?:and then|then|after that|also|but|next)\b)/i);
+}
+
+function cleanSourceFact(value: string) {
+  const cleanedValue = value
+    .trim()
+    .replace(/\b(?:um|uh|ah|er|mm+)\b/gi, " ")
+    .replace(/\b(?:yeah|you know|basically|sort of|kind of)\b/gi, " ")
+    .replace(/\bthey was\b/gi, "they were")
+    .replace(/\bwe done\b/gi, "we completed")
+    .replace(/\bthey done\b/gi, "they completed")
+    .replace(/\bmeds\b/gi, "medication")
+    .replace(/\bgot him to\b/gi, "supported him to")
+    .replace(/\bgot her to\b/gi, "supported her to")
+    .replace(/\bgot them to\b/gi, "supported them to")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!cleanedValue) {
     return "";
   }
 
-  if (values.length === 1) {
-    return values[0];
-  }
+  return withSentencePunctuation(capitaliseFirst(toProfessionalPerspective(cleanedValue)));
+}
 
-  if (values.length === 2) {
-    return `${values[0]} and ${values[1]}`;
-  }
+function toProfessionalPerspective(value: string) {
+  return value
+    .replace(/^(took|helped|supported|prompted|reminded|assisted|drove|walked|completed|reviewed|discussed)\b/i, (match) => `Worker ${match.toLowerCase()}`)
+    .replace(/^then\s+/i, "Participant then ")
+    .replace(/^i\s+/i, "Worker ")
+    .replace(/\bi\s+/gi, "worker ")
+    .replace(/^we\s+/i, "Worker and participant ")
+    .replace(/\bwe\s+/gi, "worker and participant ")
+    .replace(/\bmy\b/gi, "worker's")
+    .replace(/\bour\b/gi, "the support")
+    .replace(/\bme and ([a-z]+)/gi, "worker and $1")
+    .replace(/\bhad a chat\b/gi, "discussed");
+}
 
-  return `${values.slice(0, -1).join(", ")}, and ${values[values.length - 1]}`;
+function capitaliseFirst(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+function withSentencePunctuation(value: string) {
+  return /[.!?]$/.test(value) ? value : `${value}.`;
 }
 
 function dedupeStrings(items: string[]) {
   return [...new Set(items.map((item) => item.trim()).filter(Boolean))];
 }
+
+const goalKeywordStopWords = new Set([
+  "about",
+  "after",
+  "being",
+  "build",
+  "develop",
+  "improve",
+  "increase",
+  "maintain",
+  "participant",
+  "routine",
+  "skills",
+  "support",
+  "supports",
+  "their",
+  "there",
+  "through",
+  "using",
+  "while",
+]);
+
+const highConfidenceGoalKeywords = new Set([
+  "access",
+  "community",
+  "living",
+  "meal",
+  "medication",
+  "participation",
+  "preparation",
+  "travel",
+]);
+
+const goalKeywordAliases = new Map([
+  ["access", ["access", "community", "shops", "shopping", "bus", "transport"]],
+  ["community", ["community", "shops", "shopping", "bus", "transport"]],
+  ["confidence", ["confidence", "confident", "nervous", "anxious", "settled", "easier"]],
+  ["living", ["living", "cook", "cooking", "clean", "cleaning", "laundry", "kitchen"]],
+  ["meal", ["meal", "cook", "cooking", "pasta", "food", "lunch", "dinner"]],
+  ["medication", ["medication", "meds"]],
+  ["participation", ["participation", "participate", "participated", "community", "shops", "shopping"]],
+  ["preparation", ["preparation", "prepare", "prepared", "cook", "cooking", "pasta"]],
+  ["travel", ["travel", "bus", "transport"]],
+]);
+
+function getGoalKeywordMatches(keyword: string) {
+  return goalKeywordAliases.get(keyword) ?? [keyword];
+}
+
+const supportPatterns = [
+  /\bsupport(?:ed|ing)?\b/i,
+  /\bassist(?:ed|ing)?\b/i,
+  /\bhelp(?:ed|ing)?\b/i,
+  /\bprompt(?:ed|ing|s)?\b/i,
+  /\bremind(?:ed|er|ers)?\b/i,
+  /\bpractic(?:ed|e|ing)\b/i,
+  /\bworked on\b/i,
+  /\bdiscuss(?:ed|ing)?\b/i,
+  /\breview(?:ed|ing)?\b/i,
+  /\bwent to\b/i,
+  /\battended\b/i,
+  /\bcompleted\b/i,
+  /\bcommunity\b/i,
+  /\bshopping?\b/i,
+  /\bshops?\b/i,
+  /\bbus\b/i,
+  /\btransport\b/i,
+  /\btravel\b/i,
+  /\bmeal\b/i,
+  /\bcook(?:ed|ing)?\b/i,
+  /\bclean(?:ed|ing)?\b/i,
+  /\blaundry\b/i,
+  /\bmedication\b/i,
+];
+
+const responsePatterns = [
+  /\brespond(?:ed|ing)?\b/i,
+  /\bengag(?:ed|ing)\b/i,
+  /\bparticipat(?:ed|ing)\b/i,
+  /\bcompleted\b/i,
+  /\bsaid\b/i,
+  /\btold\b/i,
+  /\breported\b/i,
+  /\basked\b/i,
+  /\bwanted\b/i,
+  /\benjoy(?:ed|ing)?\b/i,
+  /\bindependent(?:ly)?\b/i,
+  /\bhappy\b/i,
+  /\bcalm\b/i,
+  /\bsettled\b/i,
+  /\bquiet\b/i,
+  /\bupset\b/i,
+  /\bfrustrated\b/i,
+  /\banxious\b/i,
+  /\bnervous\b/i,
+  /\btired\b/i,
+  /\brefus(?:ed|ing)?\b/i,
+  /\bdeclin(?:ed|ing)?\b/i,
+];
+
+const progressAndRiskPatterns = [
+  /\bprogress\b/i,
+  /\bimprov(?:ed|ing|ement)?\b/i,
+  /\bbetter\b/i,
+  /\bmore confident\b/i,
+  /\bconfidence\b/i,
+  /\bindependent(?:ly)?\b/i,
+  /\bwithout prompt/i,
+  /\bneeded\b.*\bprompt/i,
+  /\bprompting\b/i,
+  /\bdifficult(?:y)?\b/i,
+  /\bstruggl(?:ed|ing)?\b/i,
+  /\bchalleng(?:e|ed|ing)\b/i,
+  /\bbarrier\b/i,
+  /\bbusy\b/i,
+  /\bcrowd(?:ed)?\b/i,
+  /\bnoisy\b/i,
+  /\banxious\b/i,
+  /\bnervous\b/i,
+  /\breluctant\b/i,
+  /\brefus(?:ed|ing)?\b/i,
+  /\bdeclin(?:ed|ing)?\b/i,
+  /\brisk\b/i,
+  /\bincidents?\b/i,
+  /\binjur(?:y|ies|ed)\b/i,
+  /\bfall\b/i,
+  /\bbehaviou?r\b/i,
+  /\bconcern\b/i,
+  /\bprompts?\b/i,
+];
+
+const followUpPatterns = [
+  /\bnext shift\b/i,
+  /\bnext week\b/i,
+  /\btomorrow\b/i,
+  /\bfollow up\b/i,
+  /\bcontinue\b/i,
+  /\bplan to\b/i,
+  /\bwill\b/i,
+  /\bmonitor\b/i,
+  /\bremind\b/i,
+  /\bbook\b/i,
+  /\bcall\b/i,
+  /\breport\b/i,
+  /\bhandover\b/i,
+  /\bteam\b/i,
+  /\bfamily\b/i,
+  /\bcoordinator\b/i,
+  /\bcheck\b/i,
+];
