@@ -115,10 +115,10 @@ export function MobileBottomNav() {
   return (
     <nav
       aria-label="Mobile dashboard navigation"
-      className="fixed inset-x-0 bottom-0 z-[9999] border-t border-slate-200/90 bg-white/95 backdrop-blur-xl supports-[backdrop-filter]:bg-white/80 md:hidden"
+      className="fixed inset-x-0 bottom-0 z-[9999] w-full max-w-full overflow-hidden border-t border-slate-200/90 bg-white/95 backdrop-blur-xl supports-[backdrop-filter]:bg-white/80 md:hidden"
     >
       <div
-        className="mx-auto grid h-[72px] max-w-screen-sm grid-cols-5 gap-1 px-2"
+        className="flex h-[72px] w-full max-w-full items-stretch justify-around gap-0 px-1"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         {navigation.map(({ href, label, icon: Icon }) => {
@@ -130,7 +130,7 @@ export function MobileBottomNav() {
               href={href}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "flex min-w-0 flex-col items-center justify-center gap-1 rounded-[20px] px-1 text-center transition-colors",
+                "flex min-w-0 flex-1 basis-0 flex-col items-center justify-center gap-1 rounded-[20px] px-0.5 text-center transition-colors",
                 isActive
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "text-slate-500 hover:bg-slate-100 hover:text-slate-900",
