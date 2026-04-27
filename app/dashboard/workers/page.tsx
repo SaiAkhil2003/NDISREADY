@@ -235,68 +235,142 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
                   No workers saved yet. Submit the form to create the first worker.
                 </div>
               ) : (
-                <div className="overflow-hidden rounded-2xl border border-slate-200">
-                  <div className="hidden grid-cols-[1.2fr_0.8fr_0.7fr_1fr_0.9fr] bg-slate-50 px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 md:grid">
-                    <span>Name</span>
-                    <span>Role</span>
-                    <span>Status</span>
-                    <span>Email</span>
-                    <span>Phone</span>
+                <div className="space-y-3">
+                  <div className="hidden overflow-hidden rounded-2xl border border-slate-200 md:block">
+                    <div className="max-w-full overflow-x-auto">
+                      <table className="min-w-[760px] w-full table-auto border-collapse text-left">
+                        <thead className="bg-slate-50">
+                          <tr className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                            <th scope="col" className="min-w-[12rem] whitespace-nowrap px-4 py-3 font-semibold">
+                              Name
+                            </th>
+                            <th scope="col" className="min-w-[11rem] whitespace-nowrap px-4 py-3 font-semibold">
+                              Role
+                            </th>
+                            <th scope="col" className="min-w-[8rem] whitespace-nowrap px-4 py-3 font-semibold">
+                              Status
+                            </th>
+                            <th scope="col" className="w-full min-w-[18rem] px-4 py-3 font-semibold">
+                              Email
+                            </th>
+                            <th scope="col" className="min-w-[10rem] whitespace-nowrap px-4 py-3 font-semibold">
+                              Phone
+                            </th>
+                          </tr>
+                        </thead>
+
+                        <tbody className="divide-y divide-slate-200">
+                          {workers.map((worker) => (
+                            <tr key={worker.id} className="align-top text-base text-slate-700">
+                              <td className="min-w-[12rem] whitespace-nowrap px-4 py-4">
+                                <div className="min-w-max">
+                                  <div className="whitespace-nowrap font-medium text-slate-950">
+                                    {worker.firstName} {worker.lastName}
+                                  </div>
+                                  <div className="pt-1 text-xs text-slate-500">
+                                    Added {formatWorkerDate(worker.createdAt)}
+                                  </div>
+                                </div>
+                              </td>
+
+                              <td className="min-w-[11rem] whitespace-nowrap px-4 py-4 text-slate-700">
+                                <span className="whitespace-nowrap">
+                                  {formatWorkerRole(worker.role)}
+                                </span>
+                              </td>
+
+                              <td className="min-w-[8rem] whitespace-nowrap px-4 py-4">
+                                <Badge
+                                  variant="secondary"
+                                  className={`${getStatusBadgeClassName(worker.status)} !whitespace-nowrap !break-normal`}
+                                >
+                                  {formatWorkerStatus(worker.status)}
+                                </Badge>
+                              </td>
+
+                              <td className="w-full min-w-[18rem] px-4 py-4">
+                                <div className="flex min-w-0 items-center gap-2">
+                                  <Mail className="size-4 shrink-0 text-slate-400" />
+                                  <span className="min-w-0 break-words text-slate-700">
+                                    {worker.email}
+                                  </span>
+                                </div>
+                              </td>
+
+                              <td className="min-w-[10rem] whitespace-nowrap px-4 py-4">
+                                <div className="flex items-center gap-2 whitespace-nowrap">
+                                  <Phone className="size-4 shrink-0 text-slate-400" />
+                                  <span className="whitespace-nowrap">
+                                    {worker.phone ?? "Not provided"}
+                                  </span>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
 
-                  <div className="divide-y divide-slate-200">
+                  <div className="space-y-3 md:hidden">
                     {workers.map((worker) => (
                       <div
                         key={worker.id}
-                        className="grid gap-4 px-4 py-4 text-base text-slate-700 md:grid-cols-[1.2fr_0.8fr_0.7fr_1fr_0.9fr] md:items-center"
+                        className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4"
                       >
-                        <div>
-                          <p className="font-medium text-slate-950">
-                            {worker.firstName} {worker.lastName}
-                          </p>
-                          <p className="pt-1 text-xs text-slate-500">
-                            Added {formatWorkerDate(worker.createdAt)}
-                          </p>
-                        </div>
-
-                        <div className="md:text-slate-700">
-                          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400 md:hidden">
-                            Role
-                          </span>
-                          <p className="pt-1 md:pt-0">{formatWorkerRole(worker.role)}</p>
-                        </div>
-
-                        <div>
-                          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400 md:hidden">
-                            Status
-                          </span>
-                          <div className="pt-2 md:pt-0">
-                            <Badge
-                              variant="secondary"
-                              className={getStatusBadgeClassName(worker.status)}
-                            >
-                              {formatWorkerStatus(worker.status)}
-                            </Badge>
+                        <div className="space-y-4">
+                          <div>
+                            <div className="font-medium text-slate-950">
+                              {worker.firstName} {worker.lastName}
+                            </div>
+                            <div className="pt-1 text-xs text-slate-500">
+                              Added {formatWorkerDate(worker.createdAt)}
+                            </div>
                           </div>
-                        </div>
 
-                        <div>
-                          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400 md:hidden">
-                            Email
-                          </span>
-                          <div className="flex items-center gap-2 pt-1 md:pt-0">
-                            <Mail className="size-4 text-slate-400" />
-                            <span className="break-all md:truncate">{worker.email}</span>
-                          </div>
-                        </div>
+                          <div className="grid gap-3 text-sm text-slate-600">
+                            <div className="space-y-1">
+                              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                                Role
+                              </div>
+                              <div className="whitespace-nowrap text-base text-slate-700">
+                                {formatWorkerRole(worker.role)}
+                              </div>
+                            </div>
 
-                        <div>
-                          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400 md:hidden">
-                            Phone
-                          </span>
-                          <div className="flex items-center gap-2 pt-1 md:pt-0">
-                            <Phone className="size-4 text-slate-400" />
-                            <span>{worker.phone ?? "Not provided"}</span>
+                            <div className="space-y-1">
+                              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                                Status
+                              </div>
+                              <Badge
+                                variant="secondary"
+                                className={`${getStatusBadgeClassName(worker.status)} !whitespace-nowrap !break-normal`}
+                              >
+                                {formatWorkerStatus(worker.status)}
+                              </Badge>
+                            </div>
+
+                            <div className="space-y-1">
+                              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                                Email
+                              </div>
+                              <div className="flex min-w-0 items-center gap-2 text-base text-slate-700">
+                                <Mail className="size-4 shrink-0 text-slate-400" />
+                                <span className="min-w-0 break-words">{worker.email}</span>
+                              </div>
+                            </div>
+
+                            <div className="space-y-1">
+                              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                                Phone
+                              </div>
+                              <div className="flex items-center gap-2 whitespace-nowrap text-base text-slate-700">
+                                <Phone className="size-4 shrink-0 text-slate-400" />
+                                <span className="whitespace-nowrap">
+                                  {worker.phone ?? "Not provided"}
+                                </span>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
