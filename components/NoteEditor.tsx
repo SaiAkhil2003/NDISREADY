@@ -165,7 +165,7 @@ export function NoteEditor({
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
             Worker's original words
           </p>
-          <p className="mt-2 max-h-32 overflow-y-auto whitespace-pre-wrap text-sm leading-6 sm:text-base sm:leading-7">
+          <p className="mt-2 break-words whitespace-pre-wrap text-sm leading-6 sm:text-base sm:leading-7">
             {rawInput.trim() || "The original worker input will appear here for comparison."}
           </p>
         </div>

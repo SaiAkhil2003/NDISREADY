@@ -117,270 +117,258 @@ export default async function WorkersPage({ searchParams }: WorkersPageProps) {
         ))}
       </section>
 
-      <section className="grid items-start gap-3 xl:grid-cols-[minmax(0,320px)_minmax(0,1fr)] 2xl:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
+      <section className="grid items-start gap-4 lg:grid-cols-2 xl:grid-cols-[minmax(260px,0.72fr)_minmax(340px,0.9fr)_minmax(0,1.38fr)] xl:gap-5 2xl:grid-cols-[minmax(280px,0.78fr)_minmax(360px,0.94fr)_minmax(0,1.42fr)]">
         <WorkerAnalyticsPanel
           workers={workers}
-          className="order-2 self-start xl:order-1 xl:sticky xl:top-3"
+          className="order-2 self-start lg:order-1 xl:sticky xl:top-4"
         />
 
-        <div className="order-1 min-w-0 space-y-3 xl:order-2 2xl:grid 2xl:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] 2xl:items-start 2xl:gap-3 2xl:space-y-0">
-          <Card className="dashboard-surface">
-            <CardHeader>
-              <CardTitle>Add worker</CardTitle>
-              <CardDescription>
-                Add a worker to the roster and keep the team list up to date.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form action={createWorkerAction} className="grid gap-4">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <label className="space-y-2 text-sm">
-                    <span className="font-medium text-slate-700">First name</span>
-                    <input
-                      required
-                      name="firstName"
-                      autoComplete="given-name"
-                      className="field-control"
-                      placeholder="Olivia"
-                    />
-                  </label>
-
-                  <label className="space-y-2 text-sm">
-                    <span className="font-medium text-slate-700">Last name</span>
-                    <input
-                      required
-                      name="lastName"
-                      autoComplete="family-name"
-                      className="field-control"
-                      placeholder="Martin"
-                    />
-                  </label>
-                </div>
-
+        <Card className="dashboard-surface order-1 min-w-0 self-start lg:order-2">
+          <CardHeader>
+            <CardTitle>Add worker</CardTitle>
+            <CardDescription>
+              Add a worker to the roster and keep the team list up to date.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form action={createWorkerAction} className="grid gap-4">
+              <div className="grid gap-4 md:grid-cols-2">
                 <label className="space-y-2 text-sm">
-                  <span className="font-medium text-slate-700">Email</span>
+                  <span className="font-medium text-slate-700">First name</span>
                   <input
                     required
-                    type="email"
-                    name="email"
-                    autoComplete="email"
+                    name="firstName"
+                    autoComplete="given-name"
                     className="field-control"
-                    placeholder="worker@ndisready.com"
+                    placeholder="Olivia"
                   />
                 </label>
 
                 <label className="space-y-2 text-sm">
-                  <span className="font-medium text-slate-700">Phone</span>
+                  <span className="font-medium text-slate-700">Last name</span>
                   <input
-                    name="phone"
-                    autoComplete="tel"
+                    required
+                    name="lastName"
+                    autoComplete="family-name"
                     className="field-control"
-                    placeholder="0400 000 000"
+                    placeholder="Martin"
                   />
                 </label>
+              </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
-                  <label className="space-y-2 text-sm">
-                    <span className="font-medium text-slate-700">Role</span>
-                    <select
-                      name="role"
-                      defaultValue={workerRoleOptions[0].value}
-                      className="field-control"
-                    >
-                      {workerRoleOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+              <label className="space-y-2 text-sm">
+                <span className="font-medium text-slate-700">Email</span>
+                <input
+                  required
+                  type="email"
+                  name="email"
+                  autoComplete="email"
+                  className="field-control"
+                  placeholder="worker@ndisready.com"
+                />
+              </label>
 
-                  <label className="space-y-2 text-sm">
-                    <span className="font-medium text-slate-700">Status</span>
-                    <select
-                      name="status"
-                      defaultValue={workerStatusOptions[0].value}
-                      className="field-control"
-                    >
-                      {workerStatusOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
+              <label className="space-y-2 text-sm">
+                <span className="font-medium text-slate-700">Phone</span>
+                <input
+                  name="phone"
+                  autoComplete="tel"
+                  className="field-control"
+                  placeholder="0400 000 000"
+                />
+              </label>
 
-                <button
-                  type="submit"
-                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 md:w-auto"
-                >
-                  <UserPlus className="size-4" />
-                  Save worker
-                </button>
-              </form>
-            </CardContent>
-          </Card>
+              <div className="grid gap-4 md:grid-cols-2">
+                <label className="space-y-2 text-sm">
+                  <span className="font-medium text-slate-700">Role</span>
+                  <select
+                    name="role"
+                    defaultValue={workerRoleOptions[0].value}
+                    className="field-control"
+                  >
+                    {workerRoleOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
 
-          <Card className="dashboard-surface min-w-0">
-            <CardHeader>
-              <CardTitle>Saved workers</CardTitle>
-              <CardDescription>
-                Workers are listed with the most recently added records first.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {workers.length === 0 ? (
-                <div className="dashboard-empty-state">
-                  No workers saved yet. Submit the form to create the first worker.
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <div className="hidden overflow-hidden rounded-2xl border border-slate-200 md:block">
-                    <div className="max-w-full overflow-x-auto">
-                      <table className="min-w-[760px] w-full table-auto border-collapse text-left">
-                        <thead className="bg-slate-50">
-                          <tr className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                            <th scope="col" className="min-w-[12rem] whitespace-nowrap px-4 py-3 font-semibold">
-                              Name
-                            </th>
-                            <th scope="col" className="min-w-[11rem] whitespace-nowrap px-4 py-3 font-semibold">
-                              Role
-                            </th>
-                            <th scope="col" className="min-w-[8rem] whitespace-nowrap px-4 py-3 font-semibold">
-                              Status
-                            </th>
-                            <th scope="col" className="w-full min-w-[18rem] px-4 py-3 font-semibold">
-                              Email
-                            </th>
-                            <th scope="col" className="min-w-[10rem] whitespace-nowrap px-4 py-3 font-semibold">
-                              Phone
-                            </th>
-                          </tr>
-                        </thead>
+                <label className="space-y-2 text-sm">
+                  <span className="font-medium text-slate-700">Status</span>
+                  <select
+                    name="status"
+                    defaultValue={workerStatusOptions[0].value}
+                    className="field-control"
+                  >
+                    {workerStatusOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
 
-                        <tbody className="divide-y divide-slate-200">
-                          {workers.map((worker) => (
-                            <tr key={worker.id} className="align-top text-base text-slate-700">
-                              <td className="min-w-[12rem] whitespace-nowrap px-4 py-4">
-                                <div className="min-w-max">
-                                  <div className="whitespace-nowrap font-medium text-slate-950">
-                                    {worker.firstName} {worker.lastName}
-                                  </div>
-                                  <div className="pt-1 text-xs text-slate-500">
-                                    Added {formatWorkerDate(worker.createdAt)}
-                                  </div>
-                                </div>
-                              </td>
+              <button
+                type="submit"
+                className="inline-flex h-11 w-full self-start items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 sm:w-auto"
+              >
+                <UserPlus className="size-4" />
+                Save worker
+              </button>
+            </form>
+          </CardContent>
+        </Card>
 
-                              <td className="min-w-[11rem] whitespace-nowrap px-4 py-4 text-slate-700">
-                                <span className="whitespace-nowrap">
-                                  {formatWorkerRole(worker.role)}
-                                </span>
-                              </td>
+        <Card className="dashboard-surface order-3 min-w-0 lg:col-span-2 xl:col-span-1">
+          <CardHeader>
+            <CardTitle>Saved workers</CardTitle>
+            <CardDescription>
+              Workers are listed with the most recently added records first.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="min-w-0">
+            {workers.length === 0 ? (
+              <div className="dashboard-empty-state">
+                No workers saved yet. Submit the form to create the first worker.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="hidden overflow-hidden rounded-2xl border border-slate-200 bg-white md:block">
+                  <div className="divide-y divide-slate-200">
+                    {workers.map((worker) => {
+                      const fullName = `${worker.firstName} ${worker.lastName}`;
+                      const roleLabel = formatWorkerRole(worker.role);
+                      const statusLabel = formatWorkerStatus(worker.status);
 
-                              <td className="min-w-[8rem] whitespace-nowrap px-4 py-4">
-                                <Badge
-                                  variant="secondary"
-                                  className={`${getStatusBadgeClassName(worker.status)} !whitespace-nowrap !break-normal`}
-                                >
-                                  {formatWorkerStatus(worker.status)}
-                                </Badge>
-                              </td>
-
-                              <td className="w-full min-w-[18rem] px-4 py-4">
-                                <div className="flex min-w-0 items-center gap-2">
-                                  <Mail className="size-4 shrink-0 text-slate-400" />
-                                  <span className="min-w-0 break-words text-slate-700">
-                                    {worker.email}
-                                  </span>
-                                </div>
-                              </td>
-
-                              <td className="min-w-[10rem] whitespace-nowrap px-4 py-4">
-                                <div className="flex items-center gap-2 whitespace-nowrap">
-                                  <Phone className="size-4 shrink-0 text-slate-400" />
-                                  <span className="whitespace-nowrap">
-                                    {worker.phone ?? "Not provided"}
-                                  </span>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3 md:hidden">
-                    {workers.map((worker) => (
-                      <div
-                        key={worker.id}
-                        className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4"
-                      >
-                        <div className="space-y-4">
-                          <div>
-                            <div className="font-medium text-slate-950">
-                              {worker.firstName} {worker.lastName}
+                      return (
+                        <article
+                          key={worker.id}
+                          className="px-5 py-5 xl:px-6"
+                        >
+                          <div className="flex min-w-0 flex-wrap items-start gap-x-5 gap-y-3 xl:gap-x-6">
+                            <div className="min-w-0 flex-1 basis-[16rem]">
+                              <div
+                                className="text-base font-semibold leading-6 text-slate-950"
+                                title={fullName}
+                              >
+                                {fullName}
+                              </div>
+                              <div className="pt-1.5 text-sm text-slate-500">
+                                Added {formatWorkerDate(worker.createdAt)}
+                              </div>
                             </div>
-                            <div className="pt-1 text-xs text-slate-500">
-                              Added {formatWorkerDate(worker.createdAt)}
+
+                            <div
+                              className="shrink-0 whitespace-nowrap pt-0.5 text-sm font-medium leading-6 text-slate-700"
+                              title={roleLabel}
+                            >
+                              {roleLabel}
+                            </div>
+
+                            <div className="flex shrink-0">
+                              <Badge
+                                variant="secondary"
+                                className={`${getStatusBadgeClassName(worker.status)} !w-fit !whitespace-nowrap !break-normal`}
+                              >
+                                {statusLabel}
+                              </Badge>
                             </div>
                           </div>
 
-                          <div className="grid gap-3 text-sm text-slate-600">
-                            <div className="space-y-1">
-                              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                                Role
-                              </div>
-                              <div className="whitespace-nowrap text-base text-slate-700">
-                                {formatWorkerRole(worker.role)}
-                              </div>
-                            </div>
-
-                            <div className="space-y-1">
-                              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                                Status
-                              </div>
-                              <Badge
-                                variant="secondary"
-                                className={`${getStatusBadgeClassName(worker.status)} !whitespace-nowrap !break-normal`}
+                          <div className="mt-4 flex min-w-0 flex-wrap items-start gap-x-8 gap-y-3 border-t border-slate-100 pt-4">
+                            <div className="flex min-w-0 flex-1 basis-[20rem] items-start gap-2.5 text-sm leading-6 text-slate-600">
+                              <Mail className="mt-0.5 size-4 shrink-0 text-slate-400" />
+                              <span
+                                className="min-w-0 break-words text-slate-700"
+                                title={worker.email}
                               >
-                                {formatWorkerStatus(worker.status)}
-                              </Badge>
+                                {worker.email}
+                              </span>
                             </div>
 
-                            <div className="space-y-1">
-                              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                                Email
-                              </div>
-                              <div className="flex min-w-0 items-center gap-2 text-base text-slate-700">
-                                <Mail className="size-4 shrink-0 text-slate-400" />
-                                <span className="min-w-0 break-words">{worker.email}</span>
-                              </div>
+                            <div className="flex shrink-0 items-start gap-2.5 text-sm leading-6 text-slate-600">
+                              <Phone className="mt-0.5 size-4 shrink-0 text-slate-400" />
+                              <span className="whitespace-nowrap text-slate-700">
+                                {worker.phone ?? "Not provided"}
+                              </span>
                             </div>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </div>
 
-                            <div className="space-y-1">
-                              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                                Phone
-                              </div>
-                              <div className="flex items-center gap-2 whitespace-nowrap text-base text-slate-700">
-                                <Phone className="size-4 shrink-0 text-slate-400" />
-                                <span className="whitespace-nowrap">
-                                  {worker.phone ?? "Not provided"}
-                                </span>
-                              </div>
+                <div className="space-y-3 md:hidden">
+                  {workers.map((worker) => (
+                    <div
+                      key={worker.id}
+                      className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4"
+                    >
+                      <div className="space-y-4">
+                        <div>
+                          <div className="font-medium text-slate-950">
+                            {worker.firstName} {worker.lastName}
+                          </div>
+                          <div className="pt-1 text-xs text-slate-500">
+                            Added {formatWorkerDate(worker.createdAt)}
+                          </div>
+                        </div>
+
+                        <div className="grid gap-3 text-sm text-slate-600">
+                          <div className="space-y-1">
+                            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                              Role
+                            </div>
+                            <div className="whitespace-nowrap text-base text-slate-700">
+                              {formatWorkerRole(worker.role)}
+                            </div>
+                          </div>
+
+                          <div className="space-y-1">
+                            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                              Status
+                            </div>
+                            <Badge
+                              variant="secondary"
+                              className={`${getStatusBadgeClassName(worker.status)} !whitespace-nowrap !break-normal`}
+                            >
+                              {formatWorkerStatus(worker.status)}
+                            </Badge>
+                          </div>
+
+                          <div className="space-y-1">
+                            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                              Email
+                            </div>
+                            <div className="flex min-w-0 items-center gap-2 text-base text-slate-700">
+                              <Mail className="size-4 shrink-0 text-slate-400" />
+                              <span className="min-w-0 break-words">{worker.email}</span>
+                            </div>
+                          </div>
+
+                          <div className="space-y-1">
+                            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                              Phone
+                            </div>
+                            <div className="flex min-w-0 items-start gap-2 text-base text-slate-700">
+                              <Phone className="size-4 shrink-0 text-slate-400" />
+                              <span className="break-words">
+                                {worker.phone ?? "Not provided"}
+                              </span>
                             </div>
                           </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </section>
     </div>
   );

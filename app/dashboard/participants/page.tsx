@@ -110,13 +110,13 @@ export default async function ParticipantsPage({ searchParams }: ParticipantsPag
         ))}
       </section>
 
-      <section className="grid items-start gap-3 xl:grid-cols-[minmax(0,320px)_minmax(0,1fr)] 2xl:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
+      <section className="grid items-start gap-4 xl:grid-cols-[minmax(280px,320px)_minmax(0,1fr)] xl:gap-5 2xl:grid-cols-[minmax(300px,340px)_minmax(0,1fr)]">
         <ParticipantAnalyticsPanel
           participants={participants}
-          className="order-2 self-start xl:order-1 xl:sticky xl:top-3"
+          className="order-2 self-start xl:order-1 xl:sticky xl:top-4"
         />
 
-        <div className="order-1 min-w-0 space-y-3 xl:order-2 2xl:grid 2xl:grid-cols-[minmax(0,0.86fr)_minmax(0,1.14fr)] 2xl:items-start 2xl:gap-3 2xl:space-y-0">
+        <div className="order-1 min-w-0 space-y-4 xl:order-2 xl:grid xl:grid-cols-[minmax(0,0.84fr)_minmax(0,1.16fr)] xl:items-start xl:gap-4 xl:space-y-0">
           <Card className="dashboard-surface">
             <CardHeader>
               <CardTitle>Add participant</CardTitle>
@@ -238,10 +238,10 @@ export default async function ParticipantsPage({ searchParams }: ParticipantsPag
                     key={participant.id}
                     className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4"
                   >
-                    <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                      <div className="space-y-3">
+                    <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                      <div className="min-w-0 space-y-3">
                         <div>
-                          <p className="text-lg font-semibold text-slate-950">
+                          <p className="break-words text-lg font-semibold text-slate-950">
                             {participant.preferredName?.trim()
                               ? `${participant.preferredName} (${participant.firstName} ${participant.lastName})`
                               : `${participant.firstName} ${participant.lastName}`}
@@ -256,40 +256,35 @@ export default async function ParticipantsPage({ searchParams }: ParticipantsPag
                         </div>
 
                         <div className="grid gap-2 text-sm text-slate-600 sm:text-base">
-                          <div className="flex items-center gap-2">
+                          <div className="flex min-w-0 items-center gap-2">
                             <Hash className="size-4 shrink-0 text-slate-400" />
-                            <p>
+                            <p className="break-words">
                               <span className="font-medium text-slate-700">NDIS:</span>{" "}
                               {formatParticipantNdisNumber(participant.ndisNumber) ?? "Not provided"}
                             </p>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex min-w-0 items-center gap-2">
                             <Goal className="size-4 shrink-0 text-slate-400" />
-                            <p>
+                            <p className="break-words">
                               {participant.goals.length} goal{participant.goals.length === 1 ? "" : "s"} recorded
                             </p>
                           </div>
                         </div>
 
                         {participant.goals.length > 0 ? (
-                          <div className="rounded-[14px] border border-white/80 bg-white px-4 py-3 text-base text-slate-600">
+                          <div className="min-w-0 rounded-[14px] border border-white/80 bg-white px-4 py-3 text-base text-slate-600">
                             <p className="font-medium text-slate-700">Goals</p>
                             <div className="mt-2 space-y-2">
-                              {participant.goals.slice(0, 3).map((goal, index) => (
+                              {participant.goals.map((goal, index) => (
                                 <p
                                   key={`${participant.id}-${goal.title}-${index}`}
-                                  className="leading-6 text-slate-600"
+                                  className="break-words leading-6 text-slate-600"
                                 >
                                   <span className="font-medium text-slate-700">Goal {index + 1}:</span>{" "}
                                   {goal.title}
                                 </p>
                               ))}
                             </div>
-                            {participant.goals.length > 3 ? (
-                              <p className="mt-3 text-sm text-slate-500">
-                                +{participant.goals.length - 3} more goal{participant.goals.length - 3 === 1 ? "" : "s"}
-                              </p>
-                            ) : null}
                           </div>
                         ) : null}
                       </div>

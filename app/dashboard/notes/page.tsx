@@ -111,14 +111,14 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
         ))}
       </section>
 
-      <section className="grid items-start gap-3 xl:grid-cols-[minmax(0,320px)_minmax(0,1fr)] 2xl:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
+      <section className="grid items-start gap-4 xl:grid-cols-[minmax(280px,320px)_minmax(0,1fr)] xl:gap-5 2xl:grid-cols-[minmax(300px,340px)_minmax(0,1fr)]">
         <NoteAnalyticsPanel
           notes={notes}
           participantCount={participantOptions.length}
-          className="order-2 self-start xl:order-1 xl:sticky xl:top-3"
+          className="order-2 self-start xl:order-1 xl:sticky xl:top-4"
         />
 
-        <div className="order-1 min-w-0 space-y-3 xl:order-2">
+        <div className="order-1 min-w-0 space-y-4 xl:order-2">
           <Card className="dashboard-surface">
             <CardHeader>
               <CardTitle>Filters</CardTitle>
@@ -127,7 +127,7 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form className="grid gap-4 lg:grid-cols-[1.2fr_0.9fr_0.9fr_0.8fr_auto_auto]">
+              <form className="grid gap-4 md:grid-cols-2 2xl:grid-cols-[1.2fr_0.9fr_0.9fr_0.8fr_auto_auto] 2xl:items-end">
                 <label className="space-y-2 text-sm">
                   <span className="font-medium text-slate-700">Search</span>
                   <div className="flex h-11 items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 text-sm text-slate-900 shadow-sm transition focus-within:border-blue-600 focus-within:ring-4 focus-within:ring-blue-600/10">
@@ -236,7 +236,7 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
                     key={note.id}
                     className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4"
                   >
-                    <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                    <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                       <div className="space-y-3">
                         <div>
                           <div className="flex flex-wrap items-center gap-2">
@@ -284,7 +284,7 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
                         ) : null}
                       </div>
 
-                      <div className="min-w-0 space-y-3 rounded-2xl border border-gray-100 bg-white px-4 py-4 text-sm text-slate-600 sm:text-base lg:w-full lg:max-w-[18rem]">
+                      <div className="min-w-0 space-y-3 rounded-2xl border border-gray-100 bg-white px-4 py-4 text-sm text-slate-600 sm:text-base xl:w-full xl:max-w-[20rem]">
                         <div>
                           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                             Worker's original words

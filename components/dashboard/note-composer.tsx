@@ -217,7 +217,7 @@ export function NoteComposer({
         </Card>
       </section>
 
-      <section className="grid items-start gap-4 lg:grid-cols-[minmax(0,0.95fr)_minmax(19rem,1.05fr)]">
+      <section className="grid items-start gap-4 xl:grid-cols-[minmax(0,0.96fr)_minmax(20rem,1.04fr)] xl:gap-5">
         <Card className="dashboard-surface">
           <CardHeader>
             <CardTitle>Capture and structure</CardTitle>
@@ -226,7 +226,7 @@ export function NoteComposer({
               into a clear draft note.
             </CardDescription>
           </CardHeader>
-            <CardContent className="grid gap-4 md:gap-5">
+          <CardContent className="grid gap-4 md:gap-5">
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
               <div className="soft-panel px-4 py-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">

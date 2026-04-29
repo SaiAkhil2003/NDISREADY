@@ -156,7 +156,7 @@ export function ClaimChecker({
         </Card>
       </section>
 
-      <section className="grid min-w-0 items-start gap-4 2xl:grid-cols-[minmax(0,0.95fr)_minmax(20rem,1.05fr)]">
+      <section className="grid min-w-0 items-start gap-4 xl:grid-cols-[minmax(0,0.96fr)_minmax(20rem,1.04fr)] xl:gap-5">
         <Card className="dashboard-surface min-w-0 overflow-hidden">
           <CardHeader>
             <CardTitle>Claim details</CardTitle>
@@ -166,7 +166,7 @@ export function ClaimChecker({
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 md:gap-5">
-            <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 2xl:grid-cols-3">
+            <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
               <div className="soft-panel min-w-0 px-4 py-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                   Participant
@@ -183,7 +183,7 @@ export function ClaimChecker({
                   {selectedWorkerLabel || "Select worker"}
                 </p>
               </div>
-              <div className="soft-panel min-w-0 px-4 py-3 sm:col-span-2 2xl:col-span-1">
+              <div className="soft-panel min-w-0 px-4 py-3 sm:col-span-2 xl:col-span-1">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                   Review state
                 </p>
@@ -193,7 +193,7 @@ export function ClaimChecker({
               </div>
             </div>
 
-            <div className="grid min-w-0 grid-cols-1 gap-4 2xl:grid-cols-2">
+            <div className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-2">
               <label className="min-w-0 space-y-2 text-sm">
                 <span className="font-medium text-slate-700">Participant</span>
                 <select
@@ -287,7 +287,7 @@ export function ClaimChecker({
                 />
               </label>
 
-              <label className="min-w-0 space-y-2 text-sm 2xl:col-span-2">
+              <label className="min-w-0 space-y-2 text-sm xl:col-span-2">
                 <span className="font-medium text-slate-700">Reference</span>
                 <input
                   value={reference}
@@ -297,7 +297,7 @@ export function ClaimChecker({
                 />
               </label>
 
-              <label className="min-w-0 space-y-2 text-sm 2xl:col-span-2">
+              <label className="min-w-0 space-y-2 text-sm xl:col-span-2">
                 <span className="font-medium text-slate-700">Claim notes</span>
                 <textarea
                   rows={8}
@@ -329,7 +329,7 @@ export function ClaimChecker({
           </CardContent>
         </Card>
 
-        <Card className="w-full min-w-0 self-start border-slate-800 bg-slate-950 text-white 2xl:sticky 2xl:top-4">
+        <Card className="w-full min-w-0 self-start border-slate-800 bg-slate-950 text-white xl:sticky xl:top-4">
           <CardHeader>
             <div className="flex flex-wrap items-center gap-3">
               <CardTitle className="text-white">Claim review</CardTitle>

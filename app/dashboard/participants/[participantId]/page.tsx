@@ -62,7 +62,7 @@ export default async function ParticipantDetailPage({ params }: ParticipantDetai
         </Badge>
       </div>
 
-      <section className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+      <section className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
         <Card className="dashboard-surface">
           <CardHeader>
             <CardTitle>Profile</CardTitle>

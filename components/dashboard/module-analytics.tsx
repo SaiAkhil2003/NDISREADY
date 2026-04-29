@@ -582,7 +582,7 @@ function LegendList({
               className="size-2.5 shrink-0 rounded-full"
               style={{ backgroundColor: item.color ?? "#2563eb" }}
             />
-            <p className="truncate text-sm font-medium text-slate-700">{item.label}</p>
+            <p className="break-words text-sm font-medium leading-5 text-slate-700">{item.label}</p>
           </div>
           <p className="shrink-0 text-sm font-semibold text-slate-950">
             {formatCompactNumber(item.value)}
@@ -689,7 +689,7 @@ function ProgressRows({
         return (
           <div key={item.label} className="space-y-1.5">
             <div className="flex items-center justify-between gap-3">
-              <p className="truncate text-sm font-medium text-slate-700">{item.label}</p>
+              <p className="break-words pr-2 text-sm font-medium leading-5 text-slate-700">{item.label}</p>
               <p className="shrink-0 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
                 {formatValue(item.value)}
               </p>

@@ -94,13 +94,13 @@ export default async function ClaimsPage() {
         </CardContent>
       </Card>
 
-      <section className="grid min-w-0 items-start gap-3 xl:grid-cols-[minmax(0,320px)_minmax(0,1fr)] 2xl:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
+      <section className="grid min-w-0 items-start gap-4 xl:grid-cols-[minmax(280px,320px)_minmax(0,1fr)] xl:gap-5 2xl:grid-cols-[minmax(300px,340px)_minmax(0,1fr)]">
         <ClaimAnalyticsPanel
           claims={claims}
-          className="order-2 min-w-0 self-start xl:order-1 xl:sticky xl:top-3"
+          className="order-2 min-w-0 self-start xl:order-1 xl:sticky xl:top-4"
         />
 
-        <div className="order-1 min-w-0 space-y-3 xl:order-2">
+        <div className="order-1 min-w-0 space-y-4 xl:order-2">
           <ClaimChecker
             participantOptions={claimsData.data.participantOptions}
             workerOptions={claimsData.data.workerOptions}
@@ -121,7 +121,7 @@ export default async function ClaimsPage() {
                     key={claim.id}
                     className="min-w-0 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4"
                   >
-                    <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                    <div className="flex min-w-0 flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                       <div className="min-w-0 space-y-2">
                         <p className="break-words text-lg font-semibold text-slate-950">{claim.participantName}</p>
                         <p className="text-base text-slate-600">
@@ -129,28 +129,65 @@ export default async function ClaimsPage() {
                             ? `${claim.workerName}${claim.workerRole ? ` · ${claim.workerRole}` : ""}`
                             : "No worker assigned"}
                         </p>
-                        <p className="text-base text-slate-600">
-                          Service date {claim.claimDate} • ${claim.amount.toFixed(2)}
-                        </p>
                         {claim.notes ? (
                           <p className="break-words text-base leading-7 text-slate-700">{claim.notes}</p>
                         ) : null}
                       </div>
 
-                      <div className="flex min-w-0 flex-wrap gap-2 lg:max-w-xs lg:justify-end">
-                        <span className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600">
-                          {formatClaimStatus(claim.status)}
-                        </span>
-                        {claim.reference ? (
-                          <span className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600">
-                            {claim.reference}
-                          </span>
-                        ) : null}
-                        {claim.supportHours ? (
-                          <span className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600">
-                            {claim.supportHours} hrs
-                          </span>
-                        ) : null}
+                      <div className="grid min-w-0 gap-2 sm:grid-cols-2 xl:w-full xl:max-w-[28rem]">
+                        <div className="rounded-xl border border-white/80 bg-white px-3.5 py-3">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                            Status
+                          </p>
+                          <p className="pt-1.5 text-sm font-medium text-slate-700">
+                            {formatClaimStatus(claim.status)}
+                          </p>
+                        </div>
+
+                        <div className="rounded-xl border border-white/80 bg-white px-3.5 py-3">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                            Service date
+                          </p>
+                          <p className="pt-1.5 text-sm font-medium text-slate-700">
+                            {claim.claimDate}
+                          </p>
+                        </div>
+
+                        <div className="rounded-xl border border-white/80 bg-white px-3.5 py-3">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                            Amount
+                          </p>
+                          <p className="pt-1.5 text-sm font-medium text-slate-700">
+                            ${claim.amount.toFixed(2)}
+                          </p>
+                        </div>
+
+                        <div className="rounded-xl border border-white/80 bg-white px-3.5 py-3">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                            Support hours
+                          </p>
+                          <p className="pt-1.5 text-sm font-medium text-slate-700">
+                            {claim.supportHours ? `${claim.supportHours} hrs` : "Not provided"}
+                          </p>
+                        </div>
+
+                        <div className="rounded-xl border border-white/80 bg-white px-3.5 py-3">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                            Service code
+                          </p>
+                          <p className="break-words pt-1.5 text-sm font-medium text-slate-700">
+                            {claim.serviceCode || "Not provided"}
+                          </p>
+                        </div>
+
+                        <div className="rounded-xl border border-white/80 bg-white px-3.5 py-3">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                            Reference
+                          </p>
+                          <p className="break-words pt-1.5 text-sm font-medium text-slate-700">
+                            {claim.reference || "Not provided"}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>

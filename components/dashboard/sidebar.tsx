@@ -118,7 +118,7 @@ export function MobileBottomNav() {
       className="fixed inset-x-0 bottom-0 z-[9999] w-full max-w-full overflow-hidden border-t border-slate-200/90 bg-white/95 backdrop-blur-xl supports-[backdrop-filter]:bg-white/80 md:hidden"
     >
       <div
-        className="flex h-[72px] w-full max-w-full items-stretch justify-around gap-0 px-1"
+        className="flex h-[var(--dashboard-mobile-nav-height)] w-full max-w-full items-stretch justify-around gap-0 px-1"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         {navigation.map(({ href, label, icon: Icon }) => {

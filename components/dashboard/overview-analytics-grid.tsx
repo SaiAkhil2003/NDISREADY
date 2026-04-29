@@ -338,7 +338,7 @@ function LegendPanel({
                 className="size-2.5 shrink-0 rounded-full"
                 style={{ backgroundColor: item.color }}
               />
-              <p className="truncate text-sm font-medium text-slate-700">{item.label}</p>
+              <p className="break-words text-sm font-medium leading-5 text-slate-700">{item.label}</p>
             </div>
             <div className="text-right">
               <p className="text-sm font-semibold text-slate-950">{item.value}</p>
